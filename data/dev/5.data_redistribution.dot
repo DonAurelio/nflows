@@ -1,0 +1,17 @@
+digraph DataRedistribution {
+    root [label="Root Task", size=500];  // 500 FLOPs
+    Task1 [label="Task 1", size=500];    // 500 FLOPs
+    Task2 [label="Task 2", size=500];    // 500 FLOPs
+    Task3 [label="Task 3", size=500];    // 500 FLOPs
+    Task4 [label="Task 4", size=500];    // 500 FLOPs
+    end [label="End Task", size=500];    // 500 FLOPs
+
+    root -> Task1 [size=300];  // 300 units of data from root to Task 1
+    root -> Task2 [size=300];  // 300 units of data from root to Task 2
+    Task1 -> Task3 [size=400]; // 400 units of data from Task 1 to Task 3
+    Task1 -> Task4 [size=400]; // 400 units of data from Task 1 to Task 4
+    Task2 -> Task3 [size=400]; // 400 units of data from Task 2 to Task 3
+    Task2 -> Task4 [size=400]; // 400 units of data from Task 2 to Task 4
+    Task3 -> end [size=300];   // 300 units of data from Task 3 to end
+    Task4 -> end [size=300];   // 300 units of data from Task 4 to end
+}
