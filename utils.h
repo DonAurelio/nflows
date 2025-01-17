@@ -8,6 +8,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <ctime> // For timestamp
 
 struct locality_s
 {
@@ -35,3 +36,5 @@ int get_hwloc_numa_id_from_hwloc_core_id(hwloc_topology_t *topology, int hwloc_c
 locality_t get_hwloc_locality_info(hwloc_topology_t *topology);
 
 std::pair<std::string, std::string> split_by_arrow(const std::string &input);
+
+std::string generate_timestamped_filename(const std::string &base_name);

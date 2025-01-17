@@ -588,73 +588,75 @@ void print_matrix(const matrix_t &matrix, const std::string &label)
 }
 
 // Function to print comm_name_to_numa_id mapping
-void print_comm_name_to_numa_id(const comm_name_to_numa_id_t &mapping)
+void print_comm_name_to_numa_id(const comm_name_to_numa_id_t &mapping, std::ostream &out)
 {
-    std::cout << "comm_name_to_numa_id:\n";
+    out << "comm_name_to_numa_id:\n";
     for (const auto &[key, value] : mapping)
     {
-        std::cout << "  " << key << ": NUMA ID = " << value << "\n";
+        out << "  " << key << ": NUMA ID = " << value << "\n";
     }
-    std::cout << std::endl;
+    out << std::endl;
 }
 
 // Function to print exec_name_to_locality mapping
-void print_exec_name_to_locality(const exec_name_to_locality_t &mapping)
+void print_exec_name_to_locality(const exec_name_to_locality_t &mapping, std::ostream &out)
 {
-    std::cout << "exec_name_to_locality:\n";
+    out << "exec_name_to_locality:\n";
     for (const auto &[key, loc] : mapping)
     {
-        std::cout << "  " << key << ": NUMA ID = " << loc.numa_id << ", Core ID = " << loc.core_id << ", Voluntary CS = " << loc.voluntary_context_switches << ", Involuntary CS = " << loc.involuntary_context_switches << ", Core Migrations = " << loc.core_migrations << "\n";
+        out << "  " << key << ": NUMA ID = " << loc.numa_id << ", Core ID = " << loc.core_id
+            << ", Voluntary CS = " << loc.voluntary_context_switches << ", Involuntary CS = " << loc.involuntary_context_switches
+            << ", Core Migrations = " << loc.core_migrations << "\n";
     }
-    std::cout << std::endl;
+    out << std::endl;
 }
 
 // Function to print comm_name_to_read_time mapping
-void print_comm_name_to_read_time(const comm_name_to_time_t &mapping)
+void print_comm_name_to_read_time(const comm_name_to_time_t &mapping, std::ostream &out)
 {
-    std::cout << "comm_name_to_read_time:\n";
+    out << "comm_name_to_read_time:\n";
     for (const auto &[key, value] : mapping)
     {
         auto [start, end, bytes] = value;
-        std::cout << "  " << key << ": Start = " << start << ", End = " << end << ", Bytes = " << bytes << "\n";
+        out << "  " << key << ": Start = " << start << ", End = " << end << ", Bytes = " << bytes << "\n";
     }
-    std::cout << std::endl;
+    out << std::endl;
 }
 
 // Function to print exec_name_to_compute_time mapping
-void print_exec_name_to_compute_time(const exec_name_to_compute_time_t &mapping)
+void print_exec_name_to_compute_time(const exec_name_to_compute_time_t &mapping, std::ostream &out)
 {
-    std::cout << "exec_name_to_compute_time:\n";
+    out << "exec_name_to_compute_time:\n";
     for (const auto &[key, value] : mapping)
     {
         auto [start, end, flops] = value;
-        std::cout << "  " << key << ": Start = " << start << ", End = " << end << ", FLOPS = " << flops << "\n";
+        out << "  " << key << ": Start = " << start << ", End = " << end << ", FLOPS = " << flops << "\n";
     }
-    std::cout << std::endl;
+    out << std::endl;
 }
 
 // Function to print comm_name_to_write_time mapping
-void print_comm_name_to_write_time(const comm_name_to_time_t &mapping)
+void print_comm_name_to_write_time(const comm_name_to_time_t &mapping, std::ostream &out)
 {
-    std::cout << "comm_name_to_write_time:\n";
+    out << "comm_name_to_write_time:\n";
     for (const auto &[key, value] : mapping)
     {
         auto [start, end, bytes] = value;
-        std::cout << "  " << key << ": Start = " << start << ", End = " << end << ", Bytes = " << bytes << "\n";
+        out << "  " << key << ": Start = " << start << ", End = " << end << ", Bytes = " << bytes << "\n";
     }
-    std::cout << std::endl;
+    out << std::endl;
 }
 
 // Function to print exec_name_to_time mapping
-void print_exec_name_to_time(const exec_name_to_time_t &mapping)
+void print_exec_name_to_time(const exec_name_to_time_t &mapping, std::ostream &out)
 {
-    std::cout << "exec_name_to_time:\n";
+    out << "exec_name_to_time:\n";
     for (const auto &[key, value] : mapping)
     {
         auto [start, end] = value;
-        std::cout << "  " << key << ": Start = " << start << ", End = " << end << "\n";
+        out << "  " << key << ": Start = " << start << ", End = " << end << "\n";
     }
-    std::cout << std::endl;
+    out << std::endl;
 }
 
 void print_unavailable_cores(const hwloc_core_ids_availability_t &hwloc_core_ids_availability)

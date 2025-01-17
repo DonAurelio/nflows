@@ -286,3 +286,15 @@ std::pair<std::string, std::string> split_by_arrow(const std::string &input)
     std::string second = input.substr(pos + delimiter.length());
     return {first, second};
 }
+
+// Helper function to generate a timestamped filename
+std::string generate_timestamped_filename(const std::string &base_name)
+{
+    std::time_t now = std::time(nullptr);
+    char buf[100];
+    if (std::strftime(buf, sizeof(buf), "%Y%m%d_%H%M%S", std::localtime(&now)))
+    {
+        return base_name + "_" + buf + ".yml";
+    }
+    return base_name + ".yml";
+}

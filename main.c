@@ -146,13 +146,17 @@ int main(int argc, char *argv[])
     pthread_mutex_unlock(&mutex);
 
     /* Print statistics. */
-    std::cout << std::endl;
-    print_comm_name_to_numa_id(comm_name_to_numa_id);
-    print_exec_name_to_locality(exec_name_to_locality);
-    print_comm_name_to_read_time(comm_name_to_read_time);
-    print_exec_name_to_compute_time(exec_name_to_compute_time);
-    print_comm_name_to_write_time(comm_name_to_write_time);
-    print_exec_name_to_time(exec_name_to_time);
+    // std::cout << std::endl;
+    // Generate timestamped file name
+    std::string filename = generate_timestamped_filename("output");
+    std::ofstream file(filename);
+    print_comm_name_to_numa_id(comm_name_to_numa_id, file);
+    print_exec_name_to_locality(exec_name_to_locality, file);
+    print_comm_name_to_read_time(comm_name_to_read_time, file);
+    print_exec_name_to_compute_time(exec_name_to_compute_time, file);
+    print_comm_name_to_write_time(comm_name_to_write_time, file);
+    print_exec_name_to_time(exec_name_to_time, file);
+    file.close();
 
     /* CLEAN UP */
     // Cleanup hwloc resources
