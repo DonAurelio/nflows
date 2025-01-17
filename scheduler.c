@@ -321,6 +321,9 @@ void *thread_function(void *arg)
     exec_data_t *data = (exec_data_t *)arg;
 
     printf("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d: started.\n", getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_from_os_pu_id(data->common_data->topology, sched_getcpu()));
+    
+    std::string mem_policy = get_hwloc_thread_mem_policy(data->common_data->topology);
+    printf("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => %s.\n", getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_from_os_pu_id(data->common_data->topology, sched_getcpu()), mem_policy.c_str());
 
     /* 1. READ FROM MEMORY. */
 
