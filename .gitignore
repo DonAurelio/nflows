@@ -1,5 +1,6 @@
 .vscode
 *.yml
+*.txt
 
 # Prerequisites
 *.d
