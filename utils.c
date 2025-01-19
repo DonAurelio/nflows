@@ -148,32 +148,38 @@ unsigned long get_current_core_speed_from_hwloc_core_id(hwloc_topology_t *topolo
     return current_core_speed;
 }
 
-int get_hwloc_numa_id_from_ptr(hwloc_topology_t *topology, char *address, size_t size)
+std::vector<int> get_hwloc_numa_ids_from_ptr(hwloc_topology_t *topology, char *address, size_t size)
 {
-    /* Get data locality (NUMA node) were the data was allocated */
-    hwloc_nodeset_t nodeset;
-    int numa_node;
+    /* Get data locality (NUMA nodes) were data pages are allocated */
+    hwloc_nodeset_t nodeset = hwloc_bitmap_alloc();
+    std::vector<int> numa_nodes;
 
-    // Get the NUMA node(s) on which the memory is located.
-    nodeset = hwloc_bitmap_alloc();
+    // Get memory binding for the buffer
+    // Get the NUMA nodes where memory identified by (addr, len ) is physically
+    // allocated. The bitmap set (previously allocated by the caller) is filled
+    // according to the NUMA nodes where the memory area pages are physically
+    // allocated. If no page is actually allocated yet, set may be empty.
 
-    if (hwloc_get_area_memlocation(*topology, address, size, nodeset, 0) != 0)
+    // If pages spread to multiple nodes, it is not specified whether they spread
+    // equitably, or whether most of them are on a single node, etc.
+    int ret = hwloc_get_area_memlocation(*topology, address, size, nodeset, HWLOC_MEMBIND_BYNODESET);
+    if (ret == 0)
     {
-        fprintf(stderr, "Failed to get memory location\n");
-        hwloc_bitmap_free(nodeset);
-        hwloc_topology_destroy(*topology);
-        numa_node = -2;
+        int node;
+        hwloc_bitmap_foreach_begin(node, nodeset) {
+            numa_nodes.push_back(node); // Add NUMA node ID to the vector
+        }
+        hwloc_bitmap_foreach_end();
     }
     else
     {
-        // If -1, memory is not bound to any specify NUMA node.
-        numa_node = hwloc_bitmap_first(nodeset);
+        std::cerr << "Error retrieving memory binding.\n";
     }
 
     // Cleanup
     hwloc_bitmap_free(nodeset);
 
-    return numa_node;
+    return numa_nodes;
 }
 
 int get_hwloc_numa_id_from_hwloc_core_id(hwloc_topology_t *topology, int hwloc_core_id)
@@ -206,6 +212,73 @@ int get_hwloc_numa_id_from_hwloc_core_id(hwloc_topology_t *topology, int hwloc_c
     hwloc_bitmap_free(cpuset);
 
     return hwloc_numa_id;
+}
+
+std::string get_hwloc_thread_mem_policy(hwloc_topology_t *topology)
+{
+    hwloc_bitmap_t nodeset;
+    hwloc_membind_policy_t policy;
+    std::ostringstream output; // String stream to build the output
+
+    // Allocate nodeset
+    nodeset = hwloc_bitmap_alloc();
+
+    // Get the NUMA memory binding for the current thread
+    int ret = hwloc_get_membind(*topology, nodeset, &policy, HWLOC_MEMBIND_THREAD);
+    if (ret == 0) {
+        // Add memory policy to the output string
+        output << "Memory policy: ";
+        switch (policy) {
+            case HWLOC_MEMBIND_DEFAULT:
+                output << "DEFAULT (system default allocation policy), ";
+                break;
+            case HWLOC_MEMBIND_FIRSTTOUCH:
+                output << "FIRSTTOUCH (memory allocated on first-touch NUMA node), ";
+                break;
+            case HWLOC_MEMBIND_BIND:
+                output << "BIND (memory allocated on specific NUMA nodes only), ";
+                break;
+            case HWLOC_MEMBIND_INTERLEAVE:
+                output << "INTERLEAVE (memory interleaved across specific NUMA nodes), ";
+                break;
+            case HWLOC_MEMBIND_NEXTTOUCH:
+                output << "NEXTTOUCH (memory moved to the NUMA node of the next access), ";
+                break;
+            case HWLOC_MEMBIND_MIXED:
+                output << "MIXED (multiple memory policies apply), ";
+                break;
+            default:
+                output << "UNKNOWN, ";
+                break;
+        }
+
+        // Add NUMA nodes the thread is bound to
+        output << "Thread is bound to NUMA nodes: ";
+        int found = 0; // Track if any NUMA node is found
+        int node;
+        hwloc_bitmap_foreach_begin(node, nodeset) {
+            hwloc_obj_t obj = hwloc_get_obj_inside_cpuset_by_type(
+                *topology, nodeset, HWLOC_OBJ_NUMANODE, node
+            );
+            if (obj) {
+                output << obj->logical_index << " "; // Add NUMA node ID
+                found = 1;
+            }
+        }
+        hwloc_bitmap_foreach_end();
+
+        if (!found) {
+            output << "None (not bound to any specific NUMA node)";
+        }
+
+    } else {
+        output << "Error retrieving memory policy.\n";
+    }
+
+    // Clean up
+    hwloc_bitmap_free(nodeset);
+
+    return output.str(); // Return the constructed string
 }
 
 locality_t get_hwloc_locality_info(hwloc_topology_t *topology)

@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 
     common_data->numa_nodes_num = &numa_nodes_num;
     common_data->latency_matrix = &NUMALatency;
-    common_data->bandwdith_matrix = &NUMABandwidth;
+    common_data->bandwidth_matrix = &NUMABandwidth;
 
     common_data->comm_name_to_ptr = &comm_name_to_ptr;
     common_data->comm_name_to_numa_id = &comm_name_to_numa_id;

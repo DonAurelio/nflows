@@ -12,7 +12,7 @@
 #include "utils.h"
 
 typedef std::unordered_map<std::string, char *> comm_name_to_ptr_t;
-typedef std::unordered_map<std::string, int> comm_name_to_numa_id_t;
+typedef std::unordered_map<std::string, std::vector<int>> comm_name_to_numa_id_t;
 
 // start_time, end_time, bytes/flops.
 typedef std::tuple<std::string, uint64_t, uint64_t, uint64_t> comm_name_time_range_t;
@@ -57,7 +57,7 @@ struct common_data_s
 
     int *numa_nodes_num;
     matrix_t *latency_matrix;
-    matrix_t *bandwdith_matrix;
+    matrix_t *bandwidth_matrix;
 
     comm_name_to_ptr_t *comm_name_to_ptr;
     comm_name_to_numa_id_t *comm_name_to_numa_id;
