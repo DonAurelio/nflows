@@ -125,13 +125,35 @@ hwloc_core_id_completion_time_t get_best_hwloc_core_id(const common_data_t *comm
 
             char *read_buffer = (*common_data->comm_name_to_ptr)[comm_name];
 
-            // Get NUMA node where data is allocated.
-            int hwloc_read_src_numa_id = get_hwloc_numa_id_from_ptr(common_data->topology, read_buffer, (size_t)bytes_to_read);
-            // Get NUMA node of the code that will perform the reading operation.
+            // ASSUMPTION:
+            // Since the pages of the data to be read can be spread across several numa nodes,
+            // accroding to the memory policy, the worst-case scenario is assumed for this estimation.
+            // Although the data can be spread, we assume the whole data pages are located in one of the
+            // NUMA nodes, i.e., the one with the highest latency relative to the NUMA node of the core
+            // who is requesting it. This will be the upper bound of the reading operation  which is a good estimate.
+
+            // Get NUMA nodes where data is allocated.
+            std::vector<int> hwloc_read_src_numa_ids = get_hwloc_numa_ids_from_ptr(common_data->topology, read_buffer, (size_t)bytes_to_read);
+
+            // Get NUMA node of the core that will perform the reading operation.
             int hwloc_read_dst_numa_id = get_hwloc_numa_id_from_hwloc_core_id(common_data->topology, hwloc_core_id);
 
-            double read_latency = (*(common_data->latency_matrix))[hwloc_read_src_numa_id][hwloc_read_dst_numa_id];
-            double read_bandwidth = (*(common_data->latency_matrix))[hwloc_read_src_numa_id][hwloc_read_dst_numa_id];
+            // Find the source NUMA node which corrspond to the worst-case escenario.
+            int hwloc_read_src_numa_id = -1;
+            int max_read_latency = -1;
+
+            for (int i : hwloc_read_src_numa_ids)
+            {
+                double r_latency = (*(common_data->latency_matrix))[i][hwloc_read_dst_numa_id];
+                if (r_latency > max_read_latency)
+                {
+                    max_read_latency = r_latency;
+                    hwloc_read_src_numa_id = i;
+                }
+            }
+
+            double read_latency = max_read_latency;
+            double read_bandwidth = (*(common_data->bandwidth_matrix))[hwloc_read_src_numa_id][hwloc_read_dst_numa_id];
 
             // TODO: Need to check bandwidth and latency units.
             double estimated_read_time = (bytes_to_read / read_bandwidth) + read_latency;
@@ -159,10 +181,10 @@ hwloc_core_id_completion_time_t get_best_hwloc_core_id(const common_data_t *comm
 
         for (size_t i = 0; i < (*(common_data->latency_matrix))[0].size(); ++i)
         {
-            double latency = (*(common_data->latency_matrix))[hwloc_write_src_numa_id][i];
-            if (latency > max_write_latency)
+            double w_latency = (*(common_data->latency_matrix))[hwloc_write_src_numa_id][i];
+            if (w_latency > max_write_latency)
             {
-                max_write_latency = latency;
+                max_write_latency = w_latency;
                 hwloc_write_dst_numa_id = i;
             }
         }
@@ -174,7 +196,7 @@ hwloc_core_id_completion_time_t get_best_hwloc_core_id(const common_data_t *comm
         }
 
         double write_latency = (*(common_data->latency_matrix))[hwloc_write_src_numa_id][hwloc_write_dst_numa_id];
-        double write_bandwidth = (*(common_data->bandwdith_matrix))[hwloc_write_src_numa_id][hwloc_write_dst_numa_id];
+        double write_bandwidth = (*(common_data->bandwidth_matrix))[hwloc_write_src_numa_id][hwloc_write_dst_numa_id];
 
         double max_estimated_time_from_write_operations_us = 0.0;
         for (const auto &parent : exec->get_successors())
@@ -481,7 +503,7 @@ void *thread_function(void *arg)
         {
             char *address = (*data->common_data->comm_name_to_ptr)[succ->get_cname()];
             size_t size = (size_t)succ->get_remaining();
-            (*data->common_data->comm_name_to_numa_id)[succ->get_cname()] = get_hwloc_numa_id_from_ptr(data->common_data->topology, address, size);
+            (*data->common_data->comm_name_to_numa_id)[succ->get_cname()] = get_hwloc_numa_ids_from_ptr(data->common_data->topology, address, size);
         }
     }
 
@@ -590,13 +612,17 @@ void print_matrix(const matrix_t &matrix, const std::string &label)
     std::cout << std::endl;
 }
 
-// Function to print comm_name_to_numa_id mapping
 void print_comm_name_to_numa_id(const comm_name_to_numa_id_t &mapping, std::ostream &out)
 {
     out << "comm_name_to_numa_id:\n";
-    for (const auto &[key, value] : mapping)
+    for (const auto &[key, values] : mapping)
     {
-        out << "  " << key << ": NUMA ID = " << value << "\n";
+        out << "  " << key << ": NUMA IDs = ";
+        for (const int numa_id : values)
+        {
+            out << numa_id << " ";
+        }
+        out << "\n";
     }
     out << std::endl;
 }

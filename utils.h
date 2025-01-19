@@ -31,7 +31,7 @@ unsigned long get_cpu_frequency_from_os_core_id(int os_core_id);                
 unsigned long get_current_core_speed_from_hwloc_core_id(hwloc_topology_t *topology, int hwloc_core_id); // Speed in flops (float point operations per second).
 
 // TODO: data pages can be allocated in different numa nodes, so this function must be updated.
-int get_hwloc_numa_id_from_ptr(hwloc_topology_t *topology, char *address, size_t size);  // Hwloc (logical) NUMA id from memory address.
+std::vector<int> get_hwloc_numa_ids_from_ptr(hwloc_topology_t *topology, char *address, size_t size);  // Hwloc (logical) NUMA id from memory address.
 int get_hwloc_numa_id_from_hwloc_core_id(hwloc_topology_t *topology, int hwloc_core_id); // Hwloc (logical) NUMA id associated with the given core.
 std::string get_hwloc_thread_mem_policy(hwloc_topology_t *topology);
 
