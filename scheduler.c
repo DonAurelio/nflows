@@ -386,6 +386,9 @@ void *thread_function(void *arg)
         // Used to check data (pages) migration. Migration is trigered once the data is read.
         std::vector<int> numa_nodes_after_read = get_hwloc_numa_ids_from_ptr(data->common_data->topology, read_buffer, bytes_to_read);
 
+        // Stored to check pages migration
+        (*data->common_data->comm_name_to_numa_id_read)[comm_name] = numa_nodes_after_read;
+
         // Compute read time, assuming reads are carried out in parallel.
         // The total read time is determined by the longest individual read time.
         uint64_t read_time_us = read_end_time_us - read_start_time_us;
@@ -618,9 +621,9 @@ void print_matrix(const matrix_t &matrix, const std::string &label)
     std::cout << std::endl;
 }
 
-void print_comm_name_to_numa_id(const comm_name_to_numa_id_t &mapping, std::ostream &out)
+void print_comm_name_to_numa_id(const comm_name_to_numa_id_t &mapping, std::string header, std::ostream &out)
 {
-    out << "comm_name_to_numa_id:\n";
+    out << header << ":\n";
     for (const auto &[key, values] : mapping)
     {
         out << "  " << key << ": NUMA IDs = ";

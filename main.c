@@ -15,6 +15,7 @@ int main(int argc, char *argv[])
     /* TRACK THREADS EXECUTION TIME AND TASK/DATA LOCALITY. */
     comm_name_to_ptr_t comm_name_to_ptr;
     comm_name_to_numa_id_t comm_name_to_numa_id;
+    comm_name_to_numa_id_t comm_name_to_numa_id_read;
     exec_name_to_locality_t exec_name_to_locality;
 
     comm_name_to_time_t comm_name_to_read_time;
@@ -69,6 +70,9 @@ int main(int argc, char *argv[])
 
     common_data->comm_name_to_ptr = &comm_name_to_ptr;
     common_data->comm_name_to_numa_id = &comm_name_to_numa_id;
+    // Since data migration may take place the numa node ids from which data 
+    // is read be a thread may change.
+    common_data->comm_name_to_numa_id_read = &comm_name_to_numa_id_read;
     common_data->exec_name_to_locality = &exec_name_to_locality;
 
     common_data->comm_name_to_read_time = &comm_name_to_read_time;
@@ -162,7 +166,8 @@ int main(int argc, char *argv[])
     // Generate timestamped file name
     std::string filename = generate_timestamped_filename("output");
     std::ofstream file(filename);
-    print_comm_name_to_numa_id(comm_name_to_numa_id, file);
+    print_comm_name_to_numa_id(comm_name_to_numa_id, "comm_name_to_numa_id_write", file);
+    print_comm_name_to_numa_id(comm_name_to_numa_id_read, "comm_name_to_numa_id_read", file);
     print_exec_name_to_locality(exec_name_to_locality, file);
     print_comm_name_to_read_time(comm_name_to_read_time, file);
     print_exec_name_to_compute_time(exec_name_to_compute_time, file);
