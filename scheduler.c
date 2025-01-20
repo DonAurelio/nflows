@@ -698,21 +698,19 @@ void print_unavailable_cores(const hwloc_core_ids_availability_t &hwloc_core_ids
 {
     std::vector<int> unavailable_cores = get_hwloc_core_ids_by_availability(hwloc_core_ids_availability, false);
 
-    if (unavailable_cores.empty())
+    if (!unavailable_cores.empty())
+        std::cout << "Non-available Core IDs: ";
+
+    for (size_t i = 0; i < unavailable_cores.size(); ++i)
     {
-        std::cout << "All cores are available." << std::endl;
-    }
-    else
-    {
-        std::cout << "Unavailable cores: ";
-        for (size_t i = 0; i < unavailable_cores.size(); ++i)
+        std::cout << unavailable_cores[i];
+        if (i != unavailable_cores.size() - 1)
         {
-            std::cout << unavailable_cores[i];
-            if (i != unavailable_cores.size() - 1)
-            {
-                std::cout << ", ";
-            }
+            std::cout << ", ";
         }
-        std::cout << std::endl;
     }
+
+    if (!unavailable_cores.empty())
+        std::cout << std::endl;
+
 }
