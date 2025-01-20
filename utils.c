@@ -227,7 +227,7 @@ std::string get_hwloc_thread_mem_policy(hwloc_topology_t *topology)
     int ret = hwloc_get_membind(*topology, nodeset, &policy, HWLOC_MEMBIND_THREAD);
     if (ret == 0) {
         // Add memory policy to the output string
-        output << "Memory policy: ";
+        output << "memory policy: ";
         switch (policy) {
             case HWLOC_MEMBIND_DEFAULT:
                 output << "DEFAULT (system default allocation policy), ";
@@ -253,7 +253,7 @@ std::string get_hwloc_thread_mem_policy(hwloc_topology_t *topology)
         }
 
         // Add NUMA nodes the thread is bound to
-        output << "Thread is bound to NUMA nodes: ";
+        output << "thread is bound to NUMA nodes: ";
         int found = 0; // Track if any NUMA node is found
         int node;
         hwloc_bitmap_foreach_begin(node, nodeset) {
@@ -278,7 +278,25 @@ std::string get_hwloc_thread_mem_policy(hwloc_topology_t *topology)
     // Clean up
     hwloc_bitmap_free(nodeset);
 
-    return output.str(); // Return the constructed string
+    std::string result = output.str();
+    if (!result.empty()) result.pop_back(); // Remove the last space
+
+    return result; // Return the constructed string
+}
+
+// Function to concatenate vector elements into a single string
+std::string join_vector_elements(const std::vector<int>& vec, const std::string& delimiter)
+{
+    std::ostringstream oss;
+
+    for (size_t i = 0; i < vec.size(); ++i) {
+        oss << vec[i];
+        if (i != vec.size() - 1) { // Avoid adding a delimiter after the last element
+            oss << delimiter;
+        }
+    }
+
+    return oss.str();
 }
 
 locality_t get_hwloc_locality_info(hwloc_topology_t *topology)

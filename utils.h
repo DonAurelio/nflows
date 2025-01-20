@@ -35,6 +35,8 @@ std::vector<int> get_hwloc_numa_ids_from_ptr(hwloc_topology_t *topology, char *a
 int get_hwloc_numa_id_from_hwloc_core_id(hwloc_topology_t *topology, int hwloc_core_id); // Hwloc (logical) NUMA id associated with the given core.
 std::string get_hwloc_thread_mem_policy(hwloc_topology_t *topology);
 
+std::string join_vector_elements(const std::vector<int>& vec, const std::string& delimiter = " ");
+
 locality_t get_hwloc_locality_info(hwloc_topology_t *topology);
 
 std::pair<std::string, std::string> split_by_arrow(const std::string &input);

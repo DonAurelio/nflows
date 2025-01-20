@@ -370,6 +370,9 @@ void *thread_function(void *arg)
         // TODO: Achieving maximum throughput depends on code efficiency.
         char *read_buffer = (*data->common_data->comm_name_to_ptr)[comm_name];
 
+        // Used to check data (pages) migration.
+        std::vector<int> numa_nodes_before_read = get_hwloc_numa_ids_from_ptr(data->common_data->topology, read_buffer, bytes_to_read);
+
         uint64_t read_start_time_us = get_time_us();
 
         size_t sum = 0;
@@ -379,6 +382,9 @@ void *thread_function(void *arg)
         }
 
         uint64_t read_end_time_us = get_time_us();
+
+        // Used to check data (pages) migration. Migration is trigered once the data is read.
+        std::vector<int> numa_nodes_after_read = get_hwloc_numa_ids_from_ptr(data->common_data->topology, read_buffer, bytes_to_read);
 
         // Compute read time, assuming reads are carried out in parallel.
         // The total read time is determined by the longest individual read time.
@@ -392,7 +398,7 @@ void *thread_function(void *arg)
         // Clean up.
         free(read_buffer);
 
-        printf("Process ID: %d, Thread ID: %d, Task ID: %s => dependency (%s): read %zu bytes from memory, sum (%ld)\n", getpid(), gettid(), data->exec->get_cname(), left.c_str(), bytes_to_read, sum);
+        printf("Process ID: %d, Thread ID: %d, Task ID: %s => dependency: %s, read: %zu bytes, sum: %ld, numa_nodes_before_read: %s, numa_nodes_after_read: %s, data (pages) migration: %s\n", getpid(), gettid(), data->exec->get_cname(), left.c_str(), bytes_to_read, sum, join_vector_elements(numa_nodes_before_read).c_str(), join_vector_elements(numa_nodes_after_read).c_str(), numa_nodes_before_read != numa_nodes_after_read ? "yes" : "no");
     }
 
     /* 2. PERFORM CPU INTENSIVE COMPUTATION. */
