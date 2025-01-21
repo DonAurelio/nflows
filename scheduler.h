@@ -101,7 +101,7 @@ comm_name_time_ranges_t find_matching_time_ranges(const comm_name_to_time_t *map
 
 void read_matrix_from_file(const std::string &filename, matrix_t &matrix);
 void print_workflow(const simgrid_execs_t &execs);
-void print_matrix(const matrix_t &matrix, const std::string &label);
+void print_matrix(const matrix_t &matrix, const std::string &key, std::ostream &out = std::cout);
 void print_comm_name_to_numa_id(const comm_name_to_numa_id_t &mapping, std::string header, std::ostream &out = std::cout);
 void print_exec_name_to_locality(const exec_name_to_locality_t &mapping, std::ostream &out = std::cout);
 void print_comm_name_to_read_time(const comm_name_to_time_t &mapping, std::ostream &out = std::cout);

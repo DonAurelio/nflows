@@ -607,18 +607,24 @@ void print_workflow(const simgrid_execs_t &execs)
     std::cout << std::endl;
 }
 
-void print_matrix(const matrix_t &matrix, const std::string &label)
-{
-    std::cout << label << ":\n";
-    for (const auto &row : matrix)
-    {
-        for (const auto &value : row)
-        {
-            std::cout << std::setw(10) << value << " ";
+void print_matrix(const matrix_t &matrix, const std::string &key, std::ostream &out) {
+    // Write the key
+    out << key << ":\n";
+    // Write the dimension
+    out << "  dimension: " << matrix.size() << "\n";
+    // Write the matrix
+    out << "  matrix:\n";
+    for (const auto &row : matrix) {
+        out << "    - [";
+        for (size_t i = 0; i < row.size(); ++i) {
+            out << row[i];
+            if (i != row.size() - 1) {
+                out << ", ";
+            }
         }
-        std::cout << "\n";
+        out << "]\n";
     }
-    std::cout << std::endl;
+    out << std::endl;
 }
 
 void print_comm_name_to_numa_id(const comm_name_to_numa_id_t &mapping, std::string header, std::ostream &out)

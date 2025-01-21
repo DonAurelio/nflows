@@ -49,10 +49,6 @@ int main(int argc, char *argv[])
     read_matrix_from_file(latency_file, NUMALatency);
     read_matrix_from_file(bandwidth_file, NUMABandwidth);
 
-    // Latency in seconds, and bandwidth in bytes per second.
-    print_matrix(NUMALatency, "numa_latency");
-    print_matrix(NUMABandwidth, "numa_bandwidth");
-
     int numa_nodes_num = NUMALatency.size();
 
     /* INITIALIZE COMMON DATA. */
@@ -166,6 +162,9 @@ int main(int argc, char *argv[])
     // Generate timestamped file name
     std::string filename = generate_timestamped_filename("output");
     std::ofstream file(filename);
+    // Latency in seconds, and bandwidth in bytes per second.
+    print_matrix(NUMALatency, "numa_latency", file);
+    print_matrix(NUMABandwidth, "numa_bandwidth", file);
     print_comm_name_to_numa_id(comm_name_to_numa_id, "comm_name_to_numa_id_write", file);
     print_comm_name_to_numa_id(comm_name_to_numa_id_read, "comm_name_to_numa_id_read", file);
     print_exec_name_to_locality(exec_name_to_locality, file);
