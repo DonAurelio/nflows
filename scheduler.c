@@ -126,37 +126,31 @@ hwloc_core_id_completion_time_t get_best_hwloc_core_id(const common_data_t *comm
             char *read_buffer = (*common_data->comm_name_to_ptr)[comm_name];
 
             // ASSUMPTION:
-            // Since the pages of the data to be read can be spread across several numa nodes,
-            // accroding to the memory policy, the worst-case scenario is assumed for this estimation.
-            // Although the data can be spread, we assume the whole data pages are located in one of the
-            // NUMA nodes, i.e., the one with the highest latency relative to the NUMA node of the core
-            // who is requesting it. This will be the upper bound of the reading operation  which is a good estimate.
+            // The pages of the data to be read can be distributed across multiple NUMA nodes,
+            // depending on the memory allocation policy. For this estimation, the worst-case scenario is assumed.
+            // Specifically, it is assumed that all data pages are located in a single NUMA node—the one with the
+            // highest read time relative to the NUMA node of the requesting core. This approach provides an 
+            // upper-bound estimate of the reading operation.
 
-            // Get NUMA nodes where data is allocated.
+            // Retrieve the NUMA nodes where the data pages to be read are allocated.
             std::vector<int> hwloc_read_src_numa_ids = get_hwloc_numa_ids_from_ptr(common_data->topology, read_buffer, (size_t)bytes_to_read);
 
-            // Get NUMA node of the core that will perform the reading operation.
+            // Determine the NUMA node corresponding to the core that will perform the reading operation.
             int hwloc_read_dst_numa_id = get_hwloc_numa_id_from_hwloc_core_id(common_data->topology, hwloc_core_id);
 
-            // Find the source NUMA node which corrspond to the worst-case escenario.
-            int hwloc_read_src_numa_id = -1;
-            int max_read_latency = -1;
+            // Identify the source NUMA node representing the worst-case scenario, i.e.,
+            // the node from which reading will incur the highest time cost, assuming all pages
+            // are allocated on this NUMA node.
+            double estimated_read_time = -1;
 
             for (int i : hwloc_read_src_numa_ids)
             {
-                double r_latency = (*(common_data->latency_matrix))[i][hwloc_read_dst_numa_id];
-                if (r_latency > max_read_latency)
-                {
-                    max_read_latency = r_latency;
-                    hwloc_read_src_numa_id = i;
-                }
+                double read_latency = (*(common_data->latency_matrix))[i][hwloc_read_dst_numa_id];
+                double read_bandwidth = (*(common_data->bandwidth_matrix))[i][hwloc_read_dst_numa_id];
+
+                // TODO: Validate the consistency of bandwidth and latency units.
+                double estimated_read_time = (bytes_to_read / read_bandwidth) + read_latency;
             }
-
-            double read_latency = max_read_latency;
-            double read_bandwidth = (*(common_data->bandwidth_matrix))[hwloc_read_src_numa_id][hwloc_read_dst_numa_id];
-
-            // TODO: Need to check bandwidth and latency units.
-            double estimated_read_time = (bytes_to_read / read_bandwidth) + read_latency;
 
             if (estimated_read_time > max_estimated_time_from_read_operations_us)
                 max_estimated_time_from_read_operations_us = estimated_read_time;
