@@ -108,4 +108,4 @@ void print_comm_name_to_read_time(const comm_name_to_time_t &mapping, std::ostre
 void print_exec_name_to_compute_time(const exec_name_to_compute_time_t &mapping, std::ostream &out = std::cout);
 void print_comm_name_to_write_time(const comm_name_to_time_t &mapping, std::ostream &out = std::cout);
 void print_exec_name_to_time(const exec_name_to_time_t &mapping, std::ostream &out = std::cout);
-void print_unavailable_cores(const hwloc_core_ids_availability_t &core_ids_availability);
+void print_cores_availability(const hwloc_core_ids_availability_t &hwloc_core_ids_availability, bool availability, std::string header);

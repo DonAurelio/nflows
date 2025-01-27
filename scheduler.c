@@ -695,12 +695,12 @@ void print_exec_name_to_time(const exec_name_to_time_t &mapping, std::ostream &o
     out << std::endl;
 }
 
-void print_unavailable_cores(const hwloc_core_ids_availability_t &hwloc_core_ids_availability)
+void print_cores_availability(const hwloc_core_ids_availability_t &hwloc_core_ids_availability, bool availability, std::string header)
 {
-    std::vector<int> unavailable_cores = get_hwloc_core_ids_by_availability(hwloc_core_ids_availability, false);
+    std::vector<int> unavailable_cores = get_hwloc_core_ids_by_availability(hwloc_core_ids_availability, availability);
 
     if (!unavailable_cores.empty())
-        std::cout << "Non-available Core IDs: ";
+        std::cout << header << ": ";
 
     for (size_t i = 0; i < unavailable_cores.size(); ++i)
     {
