@@ -125,7 +125,6 @@ hwloc_core_id_completion_time_t get_best_hwloc_core_id(const common_data_t *comm
 
         for (const auto &[comm_name, _start_time, _end_time, bytes_to_read] : read_comm_name_time_ranges)
         {
-r 
             auto [pred_exec_name, self_exec_name] = split_by_arrow(std::string(comm_name));
             uint64_t pred_exec_actual_finish_time = std::get<1>((*common_data->exec_name_to_time)[pred_exec_name]);
             earliest_start_time_us = std::max(earliest_start_time_us, pred_exec_actual_finish_time);
