@@ -135,7 +135,7 @@ hwloc_core_id_completion_time_t get_best_hwloc_core_id(const common_data_t *comm
         // ASSUMPTION:
         // While readings are performed sequentially, the timing calculations assume they are 
         // executed in parallel. Specifically, the read time of a task is determined as the 
-        // maximum finish time among its predecessors.
+        // maximum finish time among the reading operations.
 
         double estimated_read_time = 0;
 
@@ -180,7 +180,7 @@ hwloc_core_id_completion_time_t get_best_hwloc_core_id(const common_data_t *comm
         // ASSUMPTION:
         // While readings are performed sequentially, the timing calculations assume they are 
         // executed in parallel. Specifically, the read time of a task is determined as the 
-        // maximum finish time among its predecessors.
+        // maximum finish time among the readings to be performed.
 
         double estimated_write_time = 0;
 
