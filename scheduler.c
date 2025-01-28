@@ -334,8 +334,8 @@ void *thread_function(void *arg)
 {
     exec_data_t *data = (exec_data_t *)arg;
 
-    printf("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => started.\n", getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_from_os_pu_id(data->common_data->topology, sched_getcpu()));
-    printf("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => %s.\n", getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_from_os_pu_id(data->common_data->topology, sched_getcpu()), get_hwloc_thread_mem_policy(data->common_data->topology).c_str());
+    printf("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => message: started.\n", getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_from_os_pu_id(data->common_data->topology, sched_getcpu()));
+    printf("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => message: %s.\n", getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_from_os_pu_id(data->common_data->topology, sched_getcpu()), get_hwloc_thread_mem_policy(data->common_data->topology).c_str());
 
     /* 1. READ FROM MEMORY. */
 
@@ -349,7 +349,7 @@ void *thread_function(void *arg)
     {
         if (!data->common_data->comm_name_to_ptr->contains(comm_name))
         {
-            fprintf(stderr, "Process ID: %d, Thread ID: %d, Task ID: %s => dependency (%s): unable to read,  pointer not found\n", getpid(), gettid(), data->exec->get_cname(), comm_name.c_str());
+            fprintf(stderr, "Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => dependency: %s, message: pointer not found.\n", getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_from_os_pu_id(data->common_data->topology, sched_getcpu()), comm_name.c_str());
             return NULL;
         }
 
@@ -386,7 +386,7 @@ void *thread_function(void *arg)
         // Clean up.
         free(read_buffer);
 
-        printf("Process ID: %d, Thread ID: %d, Task ID: %s => dependency: %s, read: %zu bytes, sum: %ld, numa_nodes_before_read: %s, numa_nodes_after_read: %s, data (pages) migration: %s\n", getpid(), gettid(), data->exec->get_cname(), std::get<0>(split_by_arrow(std::string(comm_name))).c_str(), bytes_to_read, sum, join_vector_elements(numa_nodes_before_read).c_str(), join_vector_elements(numa_nodes_after_read).c_str(), numa_nodes_before_read != numa_nodes_after_read ? "yes" : "no");
+        printf("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => dependency: %s, read (bytes): %zu, sum: %ld, numa_nodes_before_read: %s, numa_nodes_after_read: %s, data (pages) migration: %s\n", getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_from_os_pu_id(data->common_data->topology, sched_getcpu()), std::get<0>(split_by_arrow(std::string(comm_name))).c_str(), bytes_to_read, sum, join_vector_elements(numa_nodes_before_read).c_str(), join_vector_elements(numa_nodes_after_read).c_str(), numa_nodes_before_read != numa_nodes_after_read ? "yes" : "no");
     }
 
     /* 2. PERFORM CPU INTENSIVE COMPUTATION. */
@@ -428,7 +428,7 @@ void *thread_function(void *arg)
 
             if (!write_buffer)
             {
-                fprintf(stderr, "Process ID: %d, Thread ID: %d, Task ID: %s => successor (%s): unable to create write buffer.\n", getpid(), gettid(), data->exec->get_cname(), succ->get_cname());
+                fprintf(stderr, "Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => successor: %s, message: unable to create write buffer.\n", getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_from_os_pu_id(data->common_data->topology, sched_getcpu()), std::get<1>(split_by_arrow(std::string(succ->get_cname()))).c_str());
                 return NULL;
             }
 
@@ -465,11 +465,13 @@ void *thread_function(void *arg)
             // Save address for subsequent reading.
             (*data->common_data->comm_name_to_ptr)[succ->get_cname()] = write_buffer;
 
-            printf("Process ID: %d, Thread ID: %d, Task ID: %s => wrote %zu bytes to memory\n", getpid(), gettid(), data->exec->get_cname(), bytes_to_write);
+            std::vector<int> numa_nodes_after_write = get_hwloc_numa_ids_from_ptr(data->common_data->topology, write_buffer, bytes_to_write);
+
+            printf("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => successor: %s, write (bytes): %zu, numa_nodes_after_write: %s.\n", getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_from_os_pu_id(data->common_data->topology, sched_getcpu()), std::get<1>(split_by_arrow(std::string(succ->get_cname()))).c_str(), bytes_to_write, join_vector_elements(numa_nodes_after_write).c_str());
         }
         else
         {
-            printf("Process ID: %d, Thread ID: %d, Task ID: %s => skipt writing operation for end task\n", getpid(), gettid(), data->exec->get_cname());
+            printf("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => successor: %s, message: skipt writing operation for end task\n", getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_from_os_pu_id(data->common_data->topology, sched_getcpu()), std::get<1>(split_by_arrow(std::string(succ->get_cname()))).c_str());
         }
     }
 
@@ -502,7 +504,7 @@ void *thread_function(void *arg)
 
     (*data->common_data->exec_name_to_locality)[data->exec->get_cname()] = get_hwloc_locality_info(data->common_data->topology);
 
-    printf("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => finished.\n", getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_from_os_pu_id(data->common_data->topology, sched_getcpu()));
+    printf("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => message: finished.\n", getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_from_os_pu_id(data->common_data->topology, sched_getcpu()));
 
     /* 7. SET EXEC AS COMPLETED. */
     for (const auto &succ_ptr : data->exec->get_successors())
