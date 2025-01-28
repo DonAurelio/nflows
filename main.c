@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 
     // hwloc_core_ids_availability_t hwloc_core_ids_availability(get_all_hwloc_core_ids(&topology).size(), true);
     // hwloc_core_ids_availability_t hwloc_core_ids_availability(24, true);
-    std::vector<bool> hwloc_core_ids_availability = {
+    std::vector<bool> hwloc_cores_availability = {
             true, false, false, false, false, false,
             false, false, false, false, false, false,
             false, false, false, false, false, false,
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
             false, false, false, false, false, true,
     };
 
-    hwloc_core_ids_availability_t hwloc_core_ids_availability(hwloc_core_ids_availability);
+    hwloc_core_ids_availability_t hwloc_core_ids_availability(hwloc_cores_availability);
 
     /* NUMA BANDWIDTHS AND LATENCIES. */
     matrix_t NUMALatency;
