@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 
     // hwloc_core_ids_availability_t hwloc_core_ids_availability(get_all_hwloc_core_ids(&topology).size(), true);
     // hwloc_core_ids_availability_t hwloc_core_ids_availability(24, true);
-    std::vector<bool> v = {
+    std::vector<bool> hwloc_cores_availability = {
             true, false, false, false, false, false,
             false, false, false, false, false, false,
             false, false, false, false, false, false,
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
             false, false, false, false, false, true,
     };
 
-    hwloc_core_ids_availability_t hwloc_core_ids_availability(v);
+    hwloc_core_ids_availability_t hwloc_core_ids_availability(hwloc_cores_availability);
 
     /* NUMA BANDWIDTHS AND LATENCIES. */
     matrix_t NUMALatency;
@@ -90,10 +90,13 @@ int main(int argc, char *argv[])
     simgrid::s4u::Host *dummy_host = dummy_net_zone->create_host("host0", "1Gf")->seal();
     dummy_net_zone->seal();
 
+    print_cores_availability(hwloc_core_ids_availability, true, "Available Core IDs");
+
     while (execs.size() != 0)
     {
         simgrid_execs_t ready_execs = get_ready_execs(execs);
-        printf("There are %ld ready tasks\n", ready_execs.size());
+        printf("Ready tasks: %ld\n", ready_execs.size());
+        
 
         if (not ready_execs.empty())
         {
@@ -112,7 +115,6 @@ int main(int argc, char *argv[])
 
             if (selected_hwloc_core_id != -1)
             {
-                
 
                 uint64_t assigment_start_time_us = get_time_us();
 
@@ -132,9 +134,9 @@ int main(int argc, char *argv[])
 
                 uint64_t assigment_end_time_us = get_time_us();
 
-                printf("Task '%s' assigned to hwloc_core_id: %d (%f us), selection_time: %ld us, assigment_time: %ld us, ready_tasks: %ld, progress: %ld/%d.\n", 
+                printf("Assigned: %s, hwloc_core_id: %d, earliest_finish_time (us): %f, selection_time (us): %ld, assigment_time (us): %ld, progress: %ld/%d.\n", 
                     selected_exec->get_cname(), selected_hwloc_core_id, min_expected_completion_time, (selection_end_time_us-selection_start_time_us),
-                    (assigment_end_time_us - assigment_start_time_us), ready_execs.size(), num_tasks - execs.size(), num_tasks);
+                    (assigment_end_time_us - assigment_start_time_us), num_tasks - execs.size(), num_tasks);
             }
             else
             {
@@ -147,8 +149,6 @@ int main(int argc, char *argv[])
             printf("There are not ready tasks, waiting 5 seconds....\n");
             sleep(5);
         }
-
-        print_unavailable_cores(hwloc_core_ids_availability);
     }
 
     // Wait for all threads to finish

@@ -99,30 +99,48 @@ exec_hwloc_core_id_completion_time_t get_min_exec(const common_data_t *common_da
 hwloc_core_id_completion_time_t get_best_hwloc_core_id(const common_data_t *common_data, const simgrid_exec_t *exec)
 {
     int best_hwloc_core_id = -1;
-    double min_expected_completion_time = std::numeric_limits<double>::max();
+    double earliest_finish_time_us = std::numeric_limits<double>::max();
+    std::vector<int> available_hwloc_core_ids = get_hwloc_core_ids_by_availability(*(common_data->hwloc_core_ids_availability), true);
 
-    // Estimate exec completion time for every hwloc_core_id.
-    for (int hwloc_core_id : get_hwloc_core_ids_by_availability(*(common_data->hwloc_core_ids_availability), true))
+    // Estimate exec earliest_finish_time for every hwloc_core_id.
+    for (int hwloc_core_id : available_hwloc_core_ids)
     {
         // Match all communication names (Task1->Task2) where this task_name is the destination.
-        comm_name_time_ranges_t matched_comms = find_matching_time_ranges(common_data->comm_name_to_write_time, exec->get_name(), SECOND);
+        comm_name_time_ranges_t read_comm_name_time_ranges = find_matching_time_ranges(common_data->comm_name_to_write_time, exec->get_name(), SECOND);
 
-        uint64_t estimated_start_time_us = 0;
-        double max_estimated_time_from_read_operations_us = 0.0;
+        /* 1. ESTIMATE EARLIEST_START_TIME(n_i). */
 
-        for (const auto &[comm_name, _start_time, _end_time, bytes_to_read] : matched_comms)
+        // ASSUMPTION:
+        // EST(n_i,p_i) = max{ avail[j], max_{n_{m} e pred(n_i)}( AFT(n_{m}) + c_{m,i} ) };
+        // - avail[j]  => earliest time which processor j will be ready for task execution.
+        // - pred(n_i) => set of immediate predecessor tasks of task n_{i}.
+
+        // This model do not consider avail[j] as the selection of the best core is performed
+        // with the set of current available cores.
+
+        // Since we already have the time at which communication all dependent communication finished:
+        // EST(n_i) = max_{n_{m} e pred(n_i)} { AFT(c_{m,i}) ) };
+
+        uint64_t earliest_start_time_us = 0;
+
+        for (const auto &[comm_name, _start_time, _end_time, bytes_to_read] : read_comm_name_time_ranges)
         {
-            /* 1. ESTIMATE EXEC START TIME. */
-            auto [parent_exec_name, self_exec_name] = split_by_arrow(std::string(comm_name));
-            uint64_t prev_exec_finish_time = std::get<1>((*common_data->exec_name_to_time)[parent_exec_name]);
-            if (prev_exec_finish_time > estimated_start_time_us)
-                estimated_start_time_us = prev_exec_finish_time;
+            auto [pred_exec_name, self_exec_name] = split_by_arrow(std::string(comm_name));
+            uint64_t pred_exec_actual_finish_time = std::get<1>((*common_data->exec_name_to_time)[pred_exec_name]);
+            earliest_start_time_us = std::max(earliest_start_time_us, pred_exec_actual_finish_time);
+        }
 
-            /* 2. ESTIMATE EXEC READ TIME
-            The start time of the current exec (task) will be
-            start_time = estimated_start_time_us + read_max_estimated_time;
-            */
+        /* 2. ESTIMATE READ_TIME(EXEC) */
 
+        // ASSUMPTION:
+        // While readings are performed sequentially, the timing calculations assume they are 
+        // executed in parallel. Specifically, the read time of a task is determined as the 
+        // maximum finish time among the reading operations.
+
+        double estimated_read_time = 0;
+
+        for (const auto &[comm_name, _start_time, _end_time, bytes_to_read] : read_comm_name_time_ranges)
+        {
             char *read_buffer = (*common_data->comm_name_to_ptr)[comm_name];
 
             // ASSUMPTION:
@@ -141,7 +159,6 @@ hwloc_core_id_completion_time_t get_best_hwloc_core_id(const common_data_t *comm
             // Identify the source NUMA node representing the worst-case scenario, i.e.,
             // the node from which reading will incur the highest time cost, assuming all pages
             // are allocated on this NUMA node.
-            double estimated_read_time = -1;
 
             for (int i : hwloc_read_src_numa_ids)
             {
@@ -149,73 +166,54 @@ hwloc_core_id_completion_time_t get_best_hwloc_core_id(const common_data_t *comm
                 double read_bandwidth = (*(common_data->bandwidth_matrix))[i][hwloc_read_dst_numa_id];
 
                 // TODO: Validate the consistency of bandwidth and latency units.
-                double estimated_read_time = (bytes_to_read / read_bandwidth) + read_latency;
+                estimated_read_time = std::max(estimated_read_time, read_latency + (bytes_to_read / read_bandwidth));
             }
-
-            if (estimated_read_time > max_estimated_time_from_read_operations_us)
-                max_estimated_time_from_read_operations_us = estimated_read_time;
         }
 
-        /* 3. ESTIMATE COMPUTE TIME. */
+        /* 3. ESTIMATE COMPUTE_TIME(EXEC). */
 
         // TODO: Check units of core speed (it must be in FLOPS).
         double estimated_compute_time = exec->get_remaining() / get_current_core_speed_from_hwloc_core_id(common_data->topology, hwloc_core_id);
 
-        /* 4. MAXIMUM DATA WRITE TIME (ESTIMATED).
-        The finish time of the task is bound by the write operation taking the most.
-        */
+        /* 4. ESTIMATE WRITE_TIME(EXEC) */
 
         // ASSUMPTION:
-        // Since it is uncertain which NUMA node will handle the write operations for this task,
-        // the worst-case scenario is assumed: the data is written to the farthest NUMA node,
-        // i.e., the one with the highest latency relative to the specified hwloc core ID.
-        int hwloc_write_src_numa_id = get_hwloc_numa_id_from_hwloc_core_id(common_data->topology, hwloc_core_id);
-        int hwloc_write_dst_numa_id = -1;
-        double max_write_latency = -1;
+        // While readings are performed sequentially, the timing calculations assume they are 
+        // executed in parallel. Specifically, the read time of a task is determined as the 
+        // maximum finish time among the readings to be performed.
 
-        for (size_t i = 0; i < (*(common_data->latency_matrix))[0].size(); ++i)
+        double estimated_write_time = 0;
+
+        for (const auto &succ : exec->get_successors())
         {
-            double w_latency = (*(common_data->latency_matrix))[hwloc_write_src_numa_id][i];
-            if (w_latency > max_write_latency)
+            const simgrid_comm_t *succ_comm = dynamic_cast<simgrid_comm_t *>(succ.get());
+            double bytes_to_write = succ_comm->get_remaining();
+
+            // Retrieve the NUMA node that will perform the write operation.
+            int hwloc_write_src_numa_id = get_hwloc_numa_id_from_hwloc_core_id(common_data->topology, hwloc_core_id);
+
+            // Determine the NUMA node that will handle the write operation.
+            // ASSUMPTION:
+            // Since it is uncertain which NUMA node will handle the write operations for this task,
+            // the worst-case scenario is assumed: the data is written to the farthest NUMA node,
+            // i.e., the one with the highest write time relative to the specified hwloc core ID.
+
+            for (size_t i = 0; i < (*(common_data->latency_matrix))[0].size(); ++i)
             {
-                max_write_latency = w_latency;
-                hwloc_write_dst_numa_id = i;
+                double write_latency = (*(common_data->latency_matrix))[hwloc_write_src_numa_id][i];
+                double write_bandwidth = (*(common_data->bandwidth_matrix))[hwloc_write_src_numa_id][i];
+
+                // TODO: Validate the consistency of bandwidth and latency units.
+                estimated_write_time = std::max(estimated_write_time, write_latency + (bytes_to_write / write_bandwidth));
             }
         }
 
-        if (hwloc_write_src_numa_id < 0 || hwloc_write_dst_numa_id < 0)
-        {
-            fprintf(stderr, "Error: invalid index hwloc_write_src_numa_id: '%d', hwloc_write_dst_numa_id: '%d'.\n", hwloc_write_src_numa_id, hwloc_write_dst_numa_id);
-            std::exit(EXIT_FAILURE); // Exit with failure status
-        }
-
-        double write_latency = (*(common_data->latency_matrix))[hwloc_write_src_numa_id][hwloc_write_dst_numa_id];
-        double write_bandwidth = (*(common_data->bandwidth_matrix))[hwloc_write_src_numa_id][hwloc_write_dst_numa_id];
-
-        double max_estimated_time_from_write_operations_us = 0.0;
-        for (const auto &parent : exec->get_successors())
-        {
-            const simgrid_comm_t *out_comm = dynamic_cast<simgrid_comm_t *>(parent.get());
-            double bytes_to_write = out_comm->get_remaining();
-
-            // TODO: Need to check bandwidth and latency units.
-            // Bandwidth can be defined in Gbips or GBytes/s.
-            double write_time = (bytes_to_write / write_bandwidth) + write_latency;
-
-            if (write_time > max_estimated_time_from_write_operations_us)
-                max_estimated_time_from_write_operations_us = write_time;
-        }
-
-        double estimated_completion_time_for_hwloc_core_id = estimated_start_time_us + max_estimated_time_from_read_operations_us + estimated_compute_time + max_estimated_time_from_write_operations_us;
-
-        if (estimated_completion_time_for_hwloc_core_id < min_expected_completion_time)
-        {
-            min_expected_completion_time = estimated_completion_time_for_hwloc_core_id;
-            best_hwloc_core_id = hwloc_core_id;
-        }
+        double finish_time_us = earliest_start_time_us + estimated_read_time + estimated_compute_time + estimated_write_time;
+        best_hwloc_core_id = (finish_time_us < earliest_finish_time_us) ? hwloc_core_id : best_hwloc_core_id;
+        earliest_finish_time_us = std::min(finish_time_us, earliest_finish_time_us);
     }
 
-    return std::make_pair(best_hwloc_core_id, min_expected_completion_time);
+    return std::make_pair(best_hwloc_core_id, earliest_finish_time_us);
 }
 
 hwloc_core_ids_t get_hwloc_core_ids_by_availability(const hwloc_core_ids_availability_t &hwloc_core_ids_availability, bool available)
@@ -697,12 +695,12 @@ void print_exec_name_to_time(const exec_name_to_time_t &mapping, std::ostream &o
     out << std::endl;
 }
 
-void print_unavailable_cores(const hwloc_core_ids_availability_t &hwloc_core_ids_availability)
+void print_cores_availability(const hwloc_core_ids_availability_t &hwloc_core_ids_availability, bool availability, std::string header)
 {
-    std::vector<int> unavailable_cores = get_hwloc_core_ids_by_availability(hwloc_core_ids_availability, false);
+    std::vector<int> unavailable_cores = get_hwloc_core_ids_by_availability(hwloc_core_ids_availability, availability);
 
     if (!unavailable_cores.empty())
-        std::cout << "Non-available Core IDs: ";
+        std::cout << header << ": ";
 
     for (size_t i = 0; i < unavailable_cores.size(); ++i)
     {
