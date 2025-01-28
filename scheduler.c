@@ -314,14 +314,14 @@ int assign_exec(exec_data_t *exec_data, simgrid_host_t *dummy_host)
  * @brief Emulate the activities involved in executing a workflow task.
  *
  * 1. Read the required data from memory by accessing a previously created address.
- *    Reads are performed sequentially. But the time is taken they were performed in parallel.
+ *    Reads are performed sequentially, but the time recorded assumes they were performed in parallel.
  *
  * 2. Perform the FMA (Fused Multiply-Add) operation to emulate computation.
  *
  * 3. Write the required data to memory, creating a pointer to be accessed by successor tasks.
- *    Writes are performed sequentially. But the time is taken they were performed in parallel.
+ *    Writes are performed sequentially, but the time recorded assumes they were performed in parallel.
  *
- * 4. Record read, write, and execution times.
+ * 4. Record the read, write, and execution times.
  *
  * 5. Save thread locality information, including the last NUMA node, core ID, and context switches.
  *
@@ -335,18 +335,16 @@ void *thread_function(void *arg)
     exec_data_t *data = (exec_data_t *)arg;
 
     printf("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => started.\n", getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_from_os_pu_id(data->common_data->topology, sched_getcpu()));
-    
-    std::string mem_policy = get_hwloc_thread_mem_policy(data->common_data->topology);
-    printf("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => %s.\n", getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_from_os_pu_id(data->common_data->topology, sched_getcpu()), mem_policy.c_str());
+    printf("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => %s.\n", getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_from_os_pu_id(data->common_data->topology, sched_getcpu()), get_hwloc_thread_mem_policy(data->common_data->topology).c_str());
 
     /* 1. READ FROM MEMORY. */
 
-    // Retrieve writings (dependencies) where this execution is the destination.
+    // Retrieve execution dependencies (names TaskN->TaskN+1, where TaskN+1 is the destination).
     comm_name_time_ranges_t matched_comms = find_matching_time_ranges(data->common_data->comm_name_to_write_time, data->exec->get_name(), SECOND);
 
     // TODO: Investigate if parallel reads are possible when accessing `matched_comms` entries.
-    uint64_t max_time_from_read_operations_us = 0;
-    std::vector<std::string> dependency_names;
+    uint64_t actual_read_time_us = 0;
+
     for (const auto &[comm_name, _start_time, _end_time, bytes_to_read] : matched_comms)
     {
         if (!data->common_data->comm_name_to_ptr->contains(comm_name))
@@ -354,9 +352,6 @@ void *thread_function(void *arg)
             fprintf(stderr, "Process ID: %d, Thread ID: %d, Task ID: %s => dependency (%s): unable to read,  pointer not found\n", getpid(), gettid(), data->exec->get_cname(), comm_name.c_str());
             return NULL;
         }
-
-        auto [left, right] = split_by_arrow(std::string(comm_name));
-        dependency_names.push_back(left);
 
         // Emulate memory reading by accessing the buffer.
         // TODO: Achieving maximum throughput depends on code efficiency.
@@ -383,9 +378,7 @@ void *thread_function(void *arg)
 
         // Compute read time, assuming reads are carried out in parallel.
         // The total read time is determined by the longest individual read time.
-        uint64_t read_time_us = read_end_time_us - read_start_time_us;
-        if (read_time_us > max_time_from_read_operations_us)
-            max_time_from_read_operations_us = read_time_us;
+        actual_read_time_us = std::max(actual_read_time_us, read_end_time_us - read_start_time_us);
 
         // Save read time.
         (*data->common_data->comm_name_to_read_time)[comm_name] = time_range_t{read_start_time_us, read_end_time_us, bytes_to_read};
@@ -393,7 +386,7 @@ void *thread_function(void *arg)
         // Clean up.
         free(read_buffer);
 
-        printf("Process ID: %d, Thread ID: %d, Task ID: %s => dependency: %s, read: %zu bytes, sum: %ld, numa_nodes_before_read: %s, numa_nodes_after_read: %s, data (pages) migration: %s\n", getpid(), gettid(), data->exec->get_cname(), left.c_str(), bytes_to_read, sum, join_vector_elements(numa_nodes_before_read).c_str(), join_vector_elements(numa_nodes_after_read).c_str(), numa_nodes_before_read != numa_nodes_after_read ? "yes" : "no");
+        printf("Process ID: %d, Thread ID: %d, Task ID: %s => dependency: %s, read: %zu bytes, sum: %ld, numa_nodes_before_read: %s, numa_nodes_after_read: %s, data (pages) migration: %s\n", getpid(), gettid(), data->exec->get_cname(), std::get<0>(split_by_arrow(std::string(comm_name))).c_str(), bytes_to_read, sum, join_vector_elements(numa_nodes_before_read).c_str(), join_vector_elements(numa_nodes_after_read).c_str(), numa_nodes_before_read != numa_nodes_after_read ? "yes" : "no");
     }
 
     /* 2. PERFORM CPU INTENSIVE COMPUTATION. */
@@ -420,7 +413,7 @@ void *thread_function(void *arg)
 
     /* 3. WRITE TO MEMORY. */
 
-    uint64_t max_time_from_write_operations_us = 0;
+    uint64_t actual_write_time_us = 0;
     for (const auto &succ_ptr : data->exec->get_successors())
     {
         const simgrid_activity_t *succ = succ_ptr.get();
@@ -436,7 +429,6 @@ void *thread_function(void *arg)
             if (!write_buffer)
             {
                 fprintf(stderr, "Process ID: %d, Thread ID: %d, Task ID: %s => successor (%s): unable to create write buffer.\n", getpid(), gettid(), data->exec->get_cname(), succ->get_cname());
-
                 return NULL;
             }
 
@@ -458,14 +450,14 @@ void *thread_function(void *arg)
             */
 
             uint64_t write_start_time_us = get_time_us();
+
             memset(write_buffer, 0, bytes_to_write);
+
             uint64_t write_end_time_us = get_time_us();
 
             // Compute write time, assuming reads are carried out in parallel.
             // The total read time is determined by the longest individual read time.
-            uint64_t write_time_us = write_end_time_us - write_start_time_us;
-            if (write_time_us > max_time_from_write_operations_us)
-                max_time_from_write_operations_us = write_time_us;
+            actual_write_time_us = std::max(actual_write_time_us, write_end_time_us - write_start_time_us);
 
             // Save write time.
             (*data->common_data->comm_name_to_write_time)[succ->get_cname()] = time_range_t{write_start_time_us, write_end_time_us, bytes_to_write};
@@ -482,19 +474,19 @@ void *thread_function(void *arg)
     }
 
     /* 5. SAVE EXEC START TIME, AND COMPLETION TIME */
-    uint64_t start_time_us = 0;
-    for (auto &prev_exec_name : dependency_names)
+    uint64_t actual_start_time_us = 0;
+
+    for (const auto &[comm_name, _start_time, _end_time, bytes_to_read] : matched_comms)
     {
-        uint64_t prev_exec_finish_time = std::get<1>((*data->common_data->exec_name_to_time)[prev_exec_name]);
-        if (prev_exec_finish_time > start_time_us)
-            start_time_us = prev_exec_finish_time;
+        auto [parent_exec_name, self_exec_name] = split_by_arrow(std::string(comm_name)); 
+        actual_start_time_us = std::max(actual_start_time_us, std::get<1>((*data->common_data->exec_name_to_time)[parent_exec_name]));
     }
 
-    uint64_t finish_time_us = start_time_us + max_time_from_read_operations_us + compute_time_us + max_time_from_write_operations_us;
+    uint64_t actual_finish_time_us = actual_start_time_us + actual_read_time_us + compute_time_us + actual_finish_time_us;
 
-    (*data->common_data->exec_name_to_time)[data->exec->get_cname()] = time_interval_t{start_time_us, finish_time_us};
+    (*data->common_data->exec_name_to_time)[data->exec->get_cname()] = time_interval_t{actual_start_time_us, actual_finish_time_us};
 
-    /* 5. SAVE DATA LOCALITY INFO. */
+    /* 6. SAVE THREAD/DATA LOCALITY INFO. */
     for (const auto &succ_ptr : data->exec->get_successors())
     {
         const simgrid_activity_t *succ = succ_ptr.get();
@@ -521,8 +513,10 @@ void *thread_function(void *arg)
 
     // Decrement the active thread counter and signal if no more threads
     update_active_threads_counter(data->common_data, -1);
+
     // Mark the selected hwloc_core_id as available.
     update_hwloc_core_availability(data->common_data, data->assigned_hwloc_core_id, true);
+
     // this pointer was created in the thread caller 'assign_exec'
     free(data);
 
