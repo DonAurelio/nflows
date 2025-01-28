@@ -482,7 +482,7 @@ void *thread_function(void *arg)
         actual_start_time_us = std::max(actual_start_time_us, std::get<1>((*data->common_data->exec_name_to_time)[parent_exec_name]));
     }
 
-    uint64_t actual_finish_time_us = actual_start_time_us + actual_read_time_us + compute_time_us + actual_finish_time_us;
+    uint64_t actual_finish_time_us = actual_start_time_us + actual_read_time_us + compute_time_us + actual_write_time_us;
 
     (*data->common_data->exec_name_to_time)[data->exec->get_cname()] = time_interval_t{actual_start_time_us, actual_finish_time_us};
 
