@@ -43,6 +43,12 @@ int main(int argc, char *argv[])
     matrix_t NUMALatency;
     matrix_t NUMABandwidth;
 
+    // Reference: https://www.intel.la/content/www/xl/es/architecture-and-technology/avx-512-overview.html
+    // Applications can pack 32 double precision and 64 single precision floating point operations per clock
+    // cycle within the 512-bit vectors.
+    double flops_per_cycle = 32;
+    double clock_frequency_hz = ;
+
     const std::string latency_file = "latency_matrix.txt";
     const std::string bandwidth_file = "bandwidth_matrix.txt";
 

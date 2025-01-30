@@ -59,6 +59,9 @@ struct common_data_s
     matrix_t *latency_matrix;
     matrix_t *bandwidth_matrix;
 
+    unsigned long flops_per_cycle;
+    unsigned long clock_frequency_hz;
+
     comm_name_to_ptr_t *comm_name_to_ptr;
     comm_name_to_numa_id_t *comm_name_to_numa_id;
     comm_name_to_numa_id_t *comm_name_to_numa_id_read;

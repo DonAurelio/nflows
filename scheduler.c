@@ -607,7 +607,7 @@ void thread_function_simulated(void *arg)
             // the worst-case scenario is assumed: the data is written to the farthest NUMA node,
             // i.e., the one with the highest write time relative to the specified hwloc core ID.
 
-            size_t bytes_to_write = (size_t)succ->get_remaining();
+            size_t write_data_size_bytes = (size_t)succ->get_remaining();
             uint64_t write_start_time_us = exec_end_time_us;
             uint64_t write_end_time_us = 0;
 
@@ -616,8 +616,8 @@ void thread_function_simulated(void *arg)
                 double write_latency = (*(common_data->latency_matrix))[hwloc_write_src_numa_id][i];
                 double write_bandwidth = (*(common_data->bandwidth_matrix))[hwloc_write_src_numa_id][i];
 
-                hwloc_write_dst_numa_id = write_end_time_us > (uint64_t) (write_latency + (bytes_to_write / write_bandwidth)) ? hwloc_write_dst_numa_id : i;
-                write_end_time_us = std::max(write_end_time_us, (uint64_t) (write_latency + (bytes_to_write / write_bandwidth)));
+                hwloc_write_dst_numa_id = write_end_time_us > (uint64_t) (write_latency + (write_data_size_bytes / write_bandwidth)) ? hwloc_write_dst_numa_id : i;
+                write_end_time_us = std::max(write_end_time_us, (uint64_t) (write_latency + (write_data_size_bytes / write_bandwidth)));
             }
 
             // Compute write time, assuming reads are carried out in parallel.
@@ -625,15 +625,15 @@ void thread_function_simulated(void *arg)
             estimated_write_time_us = std::max(estimated_write_time_us, write_end_time_us - write_start_time_us);
 
             // Save write time.
-            (*data->common_data->comm_name_to_write_time)[succ->get_cname()] = time_range_t{write_start_time_us, write_end_time_us, bytes_to_write};
+            (*data->common_data->comm_name_to_write_time)[succ->get_cname()] = time_range_t{write_start_time_us, write_end_time_us, write_data_size_bytes};
 
             // The address is saved to recond the comm_name in the data structure, althougth the address does not exists.
             (*data->common_data->comm_name_to_ptr)[succ->get_cname()] = NULL;
 
             // Sava data locality information.
-            (*data->common_data->comm_name_to_numa_id)[succ->get_cname()] = get_hwloc_numa_ids_from_ptr(data->common_data->topology, NULL, bytes_to_write);
+            (*data->common_data->comm_name_to_numa_id)[succ->get_cname()] = get_hwloc_numa_ids_from_ptr(data->common_data->topology, NULL, write_data_size_bytes);
 
-            printf("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => successor: %s, write (bytes): %zu, numa_nodes_after_write: %d.\n", getpid(), gettid(), data->exec->get_cname(), data->assigned_hwloc_core_id, std::get<1>(split_by_arrow(std::string(succ->get_cname()))).c_str(), bytes_to_write, hwloc_write_dst_numa_id);
+            printf("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => successor: %s, write (bytes): %zu, numa_nodes_after_write: %d.\n", getpid(), gettid(), data->exec->get_cname(), data->assigned_hwloc_core_id, std::get<1>(split_by_arrow(std::string(succ->get_cname()))).c_str(), write_data_size_bytes, hwloc_write_dst_numa_id);
         }
         else
         {
