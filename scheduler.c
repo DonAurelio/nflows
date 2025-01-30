@@ -525,6 +525,137 @@ void *thread_function(void *arg)
     return NULL;
 }
 
+void thread_function_simulated(void *arg)
+{
+    exec_data_t *data = (exec_data_t *)arg;
+
+    printf("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => message: started.\n", getpid(), gettid(), data->exec->get_cname(), data->assigned_hwloc_core_id);
+
+    // Retrieve execution dependencies (names TaskN->TaskN+1, where TaskN+1 is the destination).
+    comm_name_time_ranges_t read_comm_name_time_ranges = find_matching_time_ranges(data->common_data->comm_name_to_write_time, data->exec->get_name(), SECOND);
+
+    /* 1. ACTUAL_START_TIME AST(n_i). */
+    uint64_t actual_start_time_us = 0;
+
+    for (const auto &[comm_name, _start_time, _end_time, bytes_to_read] : read_comm_name_time_ranges)
+    {
+        auto [pred_exec_name, _self_exec_name] = split_by_arrow(std::string(comm_name));
+        uint64_t pred_exec_actual_finish_time = std::get<1>((*common_data->exec_name_to_time)[pred_exec_name]);
+        actual_start_time_us = std::max(actual_start_time_us, pred_exec_actual_finish_time);
+    }
+
+    /* 1. READ_TIME RT(n_i). */
+    uint64_t estimated_read_time_us = 0;
+
+    for (const auto &[comm_name, _start_time, _end_time, read_data_size_bytes] : read_comm_name_time_ranges)
+    {
+        uint64_t read_start_time_us = actual_start_time_us;
+        uint64_t read_end_time_us = read_start_time_us;
+
+        std::vector<int> hwloc_read_src_numa_ids = data->common_data->comm_name_to_numa_id[comm_name];
+        int hwloc_read_dst_numa_id = get_hwloc_numa_id_from_hwloc_core_id(common_data->topology, data->assigned_hwloc_core_id);
+
+        for (int hwloc_src_read_numa_id : hwloc_read_src_numa_ids)
+        {
+            double read_latency = (*(common_data->latency_matrix))[hwloc_src_read_numa_id][hwloc_read_dst_numa_id];
+            double read_bandwidth = (*(common_data->bandwidth_matrix))[hwloc_src_read_numa_id][hwloc_read_dst_numa_id];
+
+            // ASSUMPTION: 
+            // Data pages are assumed to be evenly distributed, although some NUMA nodes may hold more pages.
+            
+            double read_page_size_bytes = read_data_size_bytes / hwloc_read_src_numa_ids.size();
+            read_end_time_us += (uint64_t) (read_latency + (read_page_size_bytes / read_bandwidth));
+
+            // Compute read time, assuming reads are carried out in parallel.
+            // The total read time is determined by the longest individual read time.
+            estimated_read_time_us = std::max(estimated_read_time_us, read_end_time_us - read_start_time_us);
+        }
+
+        // Save read time.
+        (*data->common_data->comm_name_to_read_time)[comm_name] = time_range_t{read_start_time_us, read_end_time_us, bytes_to_read};
+
+        printf("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => dependency: %s, read (bytes): %zu, sum: %ld, numa_nodes_before_read: %s, numa_nodes_after_read: %s, data (pages) migration: %s\n", getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_from_os_pu_id(data->common_data->topology, sched_getcpu()), std::get<0>(split_by_arrow(std::string(comm_name))).c_str(), bytes_to_read, sum, hwloc_read_src_numa_id, hwloc_read_src_numa_id, "no");
+    }
+
+    /* 2. PERFORM CPU INTENSIVE COMPUTATION. */
+    double flops = data->exec->get_remaining();
+    double clock_speed_flops_per_second = data->common_data->flops_per_cycle * data->common_data->clock_frequncy_hz;
+    double estimated_compute_time_us = (uint64_t) ((flops / clock_speed_flops_per_second) * 1000000);
+
+    uint64_t exec_start_time_us = actual_read_time_us;
+    uint64_t exec_end_time_us = exec_start_time_us + estimated_compute_time_us;
+
+    // Save compute time.
+    (*data->common_data->exec_name_to_compute_time)[data->exec->get_cname()] = time_range_t{exec_start_time_us, exec_end_time_us, flops};
+
+    /* 3. WRITE TO MEMORY. */
+    uint64_t estimated_write_time_us = 0;
+    for (const auto &succ_ptr : data->exec->get_successors())
+    {
+        const simgrid_activity_t *succ = succ_ptr.get();
+        auto [exec_name, succ_exec_name] = split_by_arrow(std::string{succ->get_cname()});
+
+        if (succ_exec_name != std::string{"end"})
+        {
+            // Retrieve the NUMA node that will perform the write operation.
+            int hwloc_write_src_numa_id = get_hwloc_numa_id_from_hwloc_core_id(common_data->topology, data->assigned_hwloc_core_id);
+            int hwloc_write_dst_numa_id = -1;
+    
+            // Determine the NUMA node that will handle the write operation.
+            // ASSUMPTION:
+            // Since it is uncertain which NUMA node will handle the write operations for this task,
+            // the worst-case scenario is assumed: the data is written to the farthest NUMA node,
+            // i.e., the one with the highest write time relative to the specified hwloc core ID.
+
+            size_t bytes_to_write = (size_t)succ->get_remaining();
+            uint64_t write_start_time_us = exec_end_time_us;
+            uint64_t write_end_time_us = 0;
+
+            for (size_t i = 0; i < (*(common_data->latency_matrix))[0].size(); ++i)
+            {
+                double write_latency = (*(common_data->latency_matrix))[hwloc_write_src_numa_id][i];
+                double write_bandwidth = (*(common_data->bandwidth_matrix))[hwloc_write_src_numa_id][i];
+
+                hwloc_write_dst_numa_id = write_end_time_us > (uint64_t) (write_latency + (bytes_to_write / write_bandwidth)) ? hwloc_write_dst_numa_id : i;
+                write_end_time_us = std::max(write_end_time_us, (uint64_t) (write_latency + (bytes_to_write / write_bandwidth)));
+            }
+
+            // Compute write time, assuming reads are carried out in parallel.
+            // The total read time is determined by the longest individual read time.
+            estimated_write_time_us = std::max(estimated_write_time_us, write_end_time_us - write_start_time_us);
+
+            // Save write time.
+            (*data->common_data->comm_name_to_write_time)[succ->get_cname()] = time_range_t{write_start_time_us, write_end_time_us, bytes_to_write};
+
+            // The address is saved to recond the comm_name in the data structure, althougth the address does not exists.
+            (*data->common_data->comm_name_to_ptr)[succ->get_cname()] = NULL;
+
+            // Sava data locality information.
+            (*data->common_data->comm_name_to_numa_id)[succ->get_cname()] = get_hwloc_numa_ids_from_ptr(data->common_data->topology, NULL, bytes_to_write);
+
+            printf("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => successor: %s, write (bytes): %zu, numa_nodes_after_write: %d.\n", getpid(), gettid(), data->exec->get_cname(), data->assigned_hwloc_core_id, std::get<1>(split_by_arrow(std::string(succ->get_cname()))).c_str(), bytes_to_write, hwloc_write_dst_numa_id);
+        }
+        else
+        {
+            printf("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => successor: %s, message: skipt writing operation for end task\n", getpid(), gettid(), data->exec->get_cname(), data->assigned_hwloc_core_id, std::get<1>(split_by_arrow(std::string(succ->get_cname()))).c_str());
+        }
+    }
+
+    /* 5. SAVE EXEC START TIME, AND COMPLETION TIME */
+    uint64_t actual_finish_time_us = actual_start_time_us + estimated_read_time_us + estimated_compute_time_us + estimated_write_time_us;
+    (*data->common_data->exec_name_to_time)[data->exec->get_cname()] = time_interval_t{actual_start_time_us, actual_finish_time_us};
+
+    /* 6. THREAD LOCALITY DATA. */
+    (*data->common_data->exec_name_to_locality)[data->exec->get_cname()] = get_hwloc_locality_info(data->common_data->topology);
+
+    printf("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => message: finished.\n", getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_from_os_pu_id(data->common_data->topology, sched_getcpu()));
+
+    /* 7. SET EXEC AS COMPLETED. */
+    for (const auto &succ_ptr : data->exec->get_successors())
+        (succ_ptr.get())->complete(simgrid::s4u::Activity::State::FINISHED);
+    data->exec->complete(simgrid::s4u::Activity::State::FINISHED);
+}
+
 void update_active_threads_counter(const common_data_t *common_data, int value)
 {
     pthread_mutex_lock(common_data->mutex);
