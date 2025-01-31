@@ -34,51 +34,42 @@ typedef simgrid::s4u::Comm simgrid_comm_t;
 typedef simgrid::s4u::Host simgrid_host_t;
 typedef simgrid::s4u::Activity simgrid_activity_t;
 typedef simgrid::s4u::ActivityPtr simgrid_activity_ptr_t;
-typedef std::vector<simgrid_activity_ptr_t> simgrid_activity_ptrs_t;
 typedef std::vector<simgrid_exec_t *> simgrid_execs_t;
-typedef std::vector<std::vector<double>> matrix_t;
-typedef std::vector<std::vector<double>> matrix_t;
-typedef std::vector<bool> hwloc_core_ids_availability_t;
-typedef std::vector<int> hwloc_core_ids_t;
 
-typedef std::pair<int, double> hwloc_core_id_completion_time_t;
-typedef std::tuple<simgrid_exec_t *, int, double> exec_hwloc_core_id_completion_time_t;
+typedef std::vector<std::vector<double>> distance_matrix_t;
 
-enum MatchPart
+struct common_s
 {
-    FIRST,
-    SECOND
-};
-
-struct common_data_s
-{
+    // Harware locality config.
     hwloc_topology_t *topology;
 
+    // Pthreads config.
     int *active_threads;
     pthread_mutex_t *mutex;
     pthread_cond_t *cond;
 
-    int *numa_nodes_num;
-    matrix_t *latency_matrix;
-    matrix_t *bandwidth_matrix;
-
+    // To be initialized by the user.
     unsigned long flops_per_cycle;
     unsigned long clock_frequency_hz;
 
-    comm_name_to_ptr_t *comm_name_to_ptr;
-    comm_name_to_numa_id_t *comm_name_to_numa_id;
-    comm_name_to_numa_id_t *comm_name_to_numa_id_read;
-    exec_name_to_locality_t *exec_name_to_locality;
+    distance_matrix_t *latency_matrix;
+    distance_matrix_t *bandwidth_matrix;
 
-    comm_name_to_time_t *comm_name_to_read_time;
-    exec_name_to_compute_time_t *exec_name_to_compute_time;
-    comm_name_to_time_t *comm_name_to_write_time;
+    std::vector<bool> *hwloc_core_avail;
 
-    // Example: Root->Task1
-    // Root: start = 0, finish = read_time + compute_time + write_time.
-    // Task1: start = finish(Root), finish = read_time + compute_time + write_time.
-    exec_name_to_time_t *exec_name_to_time;
+    // Locality information collections.
+    name_to_address_t *comm_name_to_address;
+    name_to_numa_ids_t *comm_name_to_numa_ids_r;
+    name_to_numa_ids_t *comm_name_to_numa_ids_w;
+    name_to_thread_locality_t *exec_name_to_thread_locality;
 
-    hwloc_core_ids_availability_t *hwloc_core_ids_availability;
+    // Timing (absolute timestamp) information collections.
+    name_to_time_range_payload_t *comm_name_to_r_ts_range_payload;
+    name_to_time_range_payload_t *comm_name_to_w_ts_range_payload;
+    name_to_time_range_payload_t *exec_name_to_c_ts_range_payload;
+
+    // Timing (relative durations/offset) information collections.
+    name_to_time_range_payload_t *exec_name_to_time_offset_payload;
+    name_to_time_range_payload_t *comm_name_to_time_offset_payload;
 };
-typedef struct common_data_s common_data_t;
+typedef struct common_s common_t;
