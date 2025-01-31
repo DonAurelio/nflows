@@ -9,26 +9,26 @@ MIN_MIN_Scheduler::MIN_MIN_Scheduler(std::string dot_file_path)
 
 std::tuple<std::string, unsigned int, unsigned long> MIN_MIN_Scheduler::next()
 {
-    simgrid_exec_t *selected_task = nullptr;
-    int int selected_core_id = -1;
-    double estimated_finish_time = std::numeric_limits<double>::max();
+    simgrid_exec_t *selected_exec = nullptr;
+    unsigned int selected_core_id = std::numeric_limits<unsigned int>::max();
+    unsigned long estimated_finish_time = std::numeric_limits<unsigned long>::max();
 
     for (simgrid_exec_t *exec : common_get_ready_tasks(this->dag))
     {
         int core_id;
         double finish_time;
 
-        std::tie(core_id, finish_time) = get_best_core_id(common_data, exec);
+        std::tie(core_id, finish_time) = get_best_core_id(this->common, exec);
 
-        if (finish_time < min_expected_completion_time)
+        if (finish_time < estimated_finish_time)
         {
-            min_expected_completion_time = finish_time;
             selected_exec = exec;
-            selected_hwloc_core_id = hwloc_core_id;
+            selected_core_id = core_id;
+            estimated_finish_time = finish_time;
         }
     }
 
-    return std::make_tuple(selected_exec, selected_hwloc_core_id, min_expected_completion_time);
+    return std::make_tuple(selected_exec, selected_core_id, estimated_finish_time);
 }
 
 /**
@@ -57,17 +57,16 @@ std::tuple<std::string, unsigned int, unsigned long> MIN_MIN_Scheduler::next()
  * ### Notes:
  * Control dependencies with size -1 or 0, as defined in SimGrid, are not supported and may introduce unexpected behavior.
  */
-std::tuple<std::string, unsigned int, unsigned long> get_best_core_id(const common_t *common, const simgrid_exec_t *exec)
+std::tuple<unsigned int, unsigned long> get_best_core_id(const simgrid_exec_t *exec)
 {
-    int best_core_id = -1;
-    double earliest_finish_time_us = std::numeric_limits<double>::max();
-    std::vector<int> available_hwloc_core_ids = get_hwloc_core_ids_by_availability(*(common_data->hwloc_core_ids_availability), true);
+    unsigned int best_core_id = std::numeric_limits<unsigned int>::max();
+    unsigned double earliest_finish_time_us = std::numeric_limits<unsigned double>::max();
 
     // Estimate exec earliest_finish_time for every hwloc_core_id.
-    for (int hwloc_core_id : available_hwloc_core_ids)
+    for (int core_id : common_get_avail_core_ids(this->common))
     {
         // Match all communication names (Task1->Task2) where this task_name is the destination.
-        comm_name_time_ranges_t read_comm_name_time_ranges = find_matching_time_ranges(common_data->comm_name_to_write_time, exec->get_name(), SECOND);
+        comm_name_time_ranges_t read_comm_name_time_ranges = common_get_name_ts_range_payload(this->common, exec->get_name());
 
         /* 1. ESTIMATE EARLIEST_START_TIME(n_i). */
 

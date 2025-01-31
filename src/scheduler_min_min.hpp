@@ -3,6 +3,7 @@
 
 class MIN_MIN_Scheduler {
     private:
+        common_t *common;
         simgrid_execs_t dag;
     public:
         MIN_MIN_Scheduler(std::string dot_file_path);

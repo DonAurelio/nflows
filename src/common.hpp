@@ -52,10 +52,11 @@ struct common_s
     unsigned long flops_per_cycle;
     unsigned long clock_frequency_hz;
 
-    distance_matrix_t *latency_matrix;
-    distance_matrix_t *bandwidth_matrix;
+    // Units are aligned with the reporting units used by Intel Memory Checker.
+    distance_matrix_t *distance_lat_ns;
+    distance_matrix_t *distance_bw_gbps;
 
-    std::vector<bool> *hwloc_core_avail;
+    std::vector<bool> *core_avail;
 
     // Locality information collections.
     name_to_address_t *comm_name_to_address;
@@ -76,3 +77,23 @@ typedef struct common_s common_t;
 
 simgrid_execs_t common_read_dag_from_dot(const char *file_path);
 simgrid_execs_t common_get_ready_tasks(const simgrid_execs_t &execs);
+
+enum CommonVectorType
+{
+    COMM_READ,
+    COMM_WRITE,
+    EXEC
+};
+
+enum CommonCommNameMatch
+{
+    FIRST,
+    SECOND
+};
+
+std::vector<int> common_get_avail_core_ids(const commot_t *common);
+std::vector<name_to_time_range_payload_t> common_get_name_ts_range_payload(
+    const common_t *common,
+    const std::string &name,
+    CommonVectorType type = CommonVectorType.COMM, 
+    CommonCommNameMatch comm_name = CommonCommNameMatch.SECOND);
