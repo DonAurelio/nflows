@@ -1,7 +1,7 @@
 #include <sys/resource.h> // For getrusage
 
 #include "common.hpp"
-#include "utils.h"
+#include "utils.hpp"
 
 
 int get_hwloc_core_id_by_pu_id(common_t* common, int os_pu_id);

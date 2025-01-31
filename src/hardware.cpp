@@ -48,7 +48,7 @@ int get_hwloc_numa_id_by_core_id(common_t *common, int hwloc_core_id)
 
     // Use hwloc_get_next_obj_covering_cpuset_by_type to find the NUMA node
     hwloc_obj_t numa_node = NULL;
-    while ((numa_node = hwloc_get_next_obj_covering_cpuset_by_type(*topology, cpuset, HWLOC_OBJ_NUMANODE, numa_node)) != NULL)
+    while ((numa_node = hwloc_get_next_obj_covering_cpuset_by_type(topology, cpuset, HWLOC_OBJ_NUMANODE, numa_node)) != NULL)
     {
         if (hwloc_bitmap_isincluded(cpuset, numa_node->cpuset))
             hwloc_numa_id = numa_node->logical_index;
@@ -101,8 +101,8 @@ unsigned long get_hwloc_core_speed_by_id(common_t *common, int hwloc_core_id)
 
         return common->flops_per_cycle * frequency_hz;
     }
-   
-    return common->flops_per_cycle * data->clock_frequency_hz;
+
+    return common->flops_per_cycle * common->clock_frequency_hz;
 }
 
 std::vector<int> get_hwloc_numa_ids_by_address(common_t *common, char *address, size_t size)

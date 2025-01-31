@@ -73,3 +73,6 @@ struct common_s
     name_to_time_range_payload_t *comm_name_to_time_offset_payload;
 };
 typedef struct common_s common_t;
+
+simgrid_execs_t common_read_dag_from_dot(const char *file_path);
+simgrid_execs_t common_get_ready_tasks(const simgrid_execs_t &execs);
