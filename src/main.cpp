@@ -1,8 +1,45 @@
 #include "scheduler_min_min.hpp"
 
 
-int main (int argc, char* argv[]) {
+int main (int argc, char* argv[])
+{
+    /* INITIALIZE COMMON DATA. */
+    common_t *common = (common_t *)malloc(sizeof(common_t));
 
-    MIN_MIN_Scheduler scheduler("/home/cc/runtime_workflow_scheduler/data/test/0.distribution.dot");
+    /* HWLOC TOPOLOGY */
+    hwloc_topology_init(&common->topology);
+    hwloc_topology_load(common->topology);
+
+    /* TRACK ACTIVE THREADS. */
+    common->active_threads = 0;
+    common->cond = PTHREAD_COND_INITIALIZER;
+    common->mutex = PTHREAD_MUTEX_INITIALIZER;
+
+    // Reference: https://www.intel.la/content/www/xl/es/architecture-and-technology/avx-512-overview.html
+    // Applications can pack 32 double precision and 64 single precision floating point operations per clock
+    // cycle within the 512-bit vectors.
+    common->flops_per_cycle = 32;
+    common->clock_frequency_hz = 0; // Dynamic (0) clock frequency.
+
+    // Latency (ns), Bandwidth (GB/s).
+    common->distance_lat_ns = common_read_distance_matrix_from_file(
+        "/home/cc/runtime_workflow_scheduler/data/latency_matrix.txt");
+    common->distance_bw_gbps = common_read_distance_matrix_from_file(
+        "/home/cc/runtime_workflow_scheduler/data/bandwidth_matrix.txt");
+
+    common->core_avail = {
+        true, false, false, false, false, false,
+        false, false, false, false, false, false,
+        false, false, false, false, false, false,
+        false, false, false, false, false, false,
+        false, false, false, false, false, false,
+        false, false, false, false, false, false,
+        false, false, false, false, false, false,
+        false, false, false, false, false, true,
+    };
+
+    simgrid_execs_t dag = common_read_dag_from_dot("/home/cc/runtime_workflow_scheduler/data/test/0.distribution.dot");
+    MIN_MIN_Scheduler scheduler(dag, common);
+
     return 0;
 }

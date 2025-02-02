@@ -1,4 +1,7 @@
 #include "common.hpp"
+#include "utils.hpp"
+
+#include <ranges>
 
 
 simgrid_execs_t common_read_dag_from_dot(const char *file_path)
@@ -18,10 +21,6 @@ simgrid_execs_t common_read_dag_from_dot(const char *file_path)
     root->complete(simgrid::s4u::Activity::State::FINISHED);
     execs.erase(execs.begin());
 
-    // simgrid_exec_t *end = execs.back();
-    // for (const auto &ances_ptr : end->get_dependencies())
-    //     (ances_ptr.get())->complete(simgrid::s4u::Activity::State::FINISHED);
-    // end->complete(simgrid::s4u::Activity::State::FINISHED);
     execs.pop_back();
 
     return execs;
@@ -37,36 +36,74 @@ simgrid_execs_t common_get_ready_tasks(const simgrid_execs_t &execs)
     return ready_execs;
 }
 
-std::vector<int> common_get_avail_core_ids(commot_t *common)
+std::vector<int> common_get_avail_core_ids(common_t *common)
 {
+    unsigned int i = 0;
     std::vector<int> avail_core_ids;
-    for (auto i, value : std::views::enumerate(common->core_avail))
+    for (auto value : common->core_avail)
+    {
         if (value) avail_core_ids.push_back(i);
+        ++i;
+    }
 
     return avail_core_ids;
 }
 
-std::vector<name_to_time_range_payload_t> common_get_name_ts_range_payload(common_t *common)
+name_to_time_range_payload_t common_filter_name_ts_range_payload(
+    const common_t *common,
+    const std::string &name,
+    CommonVectorType type,
+    CommonCommNameMatch comm_part_to_match)
 {
+    name_to_time_range_payload_t matches;
+    name_to_time_range_payload_t map;
 
-}
+    switch (type) {
+        case COMM_READ:
+            map = common->comm_name_to_r_ts_range_payload;
+            break;
+        case COMM_WRITE:
+            map = common->comm_name_to_w_ts_range_payload;
+            break;
+        default:
+            map = common->exec_name_to_c_ts_range_payload;
+            break;
+    }
 
-comm_name_time_ranges_t find_matching_time_ranges(const comm_name_to_time_t *map, const std::string &name, MatchPart partToMatch)
-{
-    comm_name_time_ranges_t matches;
-
-    for (const auto &entry : *map)
+    for (const auto &[key, value] : map)
     {
-        std::string key = entry.first; // Convert to std::string for easy manipulation
-        const time_range_t &timeRange = entry.second;
+        auto [left, right] = split(key,"->");
 
-        auto [firstName, secondName] = split_by_arrow(key);
-
-        // Check if the specified part matches the name
-        if ((partToMatch == FIRST && firstName == name) || (partToMatch == SECOND && secondName == name))
+        std::string name_to_match = left.empty() ? name : (comm_part_to_match == SRC) ? left : right;
+        if (name_to_match == name)
         {
-            matches.push_back(std::make_tuple(key.c_str(), std::get<0>(timeRange), std::get<1>(timeRange), std::get<2>(timeRange)));
+            matches[key] = value;
         }
     }
+
     return matches;
+}
+
+std::vector<std::vector<double>> common_read_distance_matrix_from_file(const std::string &filename)
+{
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open file " << filename << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    int n;
+    file >> n; // Read matrix dimensions from the first line
+
+    std::vector<std::vector<double>> matrix(n, std::vector<double>(n));
+
+    // Read matrix values
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            file >> matrix[i][j];
+        }
+    }
+    file.close();
+    
+    return matrix;
 }

@@ -41,59 +41,61 @@ typedef std::vector<std::vector<double>> distance_matrix_t;
 struct common_s
 {
     // Harware locality config.
-    hwloc_topology_t *topology;
+    hwloc_topology_t topology;
 
     // Pthreads config.
-    int *active_threads;
-    pthread_mutex_t *mutex;
-    pthread_cond_t *cond;
+    int active_threads;
+    pthread_mutex_t mutex;
+    pthread_cond_t cond;
 
     // To be initialized by the user.
     unsigned long flops_per_cycle;
     unsigned long clock_frequency_hz;
 
     // Units are aligned with the reporting units used by Intel Memory Checker.
-    distance_matrix_t *distance_lat_ns;
-    distance_matrix_t *distance_bw_gbps;
+    // Latency (ns), Bandwidth (GB/s).
+    distance_matrix_t distance_lat_ns;
+    distance_matrix_t distance_bw_gbps;
 
-    std::vector<bool> *core_avail;
+    std::vector<bool> core_avail;
 
     // Locality information collections.
-    name_to_address_t *comm_name_to_address;
-    name_to_numa_ids_t *comm_name_to_numa_ids_r;
-    name_to_numa_ids_t *comm_name_to_numa_ids_w;
-    name_to_thread_locality_t *exec_name_to_thread_locality;
+    name_to_address_t comm_name_to_address;
+    name_to_numa_ids_t comm_name_to_numa_ids_r;
+    name_to_numa_ids_t comm_name_to_numa_ids_w;
+    name_to_thread_locality_t exec_name_to_thread_locality;
 
     // Timing (absolute timestamp) information collections.
-    name_to_time_range_payload_t *comm_name_to_r_ts_range_payload;
-    name_to_time_range_payload_t *comm_name_to_w_ts_range_payload;
-    name_to_time_range_payload_t *exec_name_to_c_ts_range_payload;
+    name_to_time_range_payload_t comm_name_to_r_ts_range_payload;
+    name_to_time_range_payload_t comm_name_to_w_ts_range_payload;
+    name_to_time_range_payload_t exec_name_to_c_ts_range_payload;
 
     // Timing (relative durations/offset) information collections.
-    name_to_time_range_payload_t *exec_name_to_time_offset_payload;
-    name_to_time_range_payload_t *comm_name_to_time_offset_payload;
+    name_to_time_range_payload_t exec_name_to_time_offset_payload;
+    name_to_time_range_payload_t comm_name_to_time_offset_payload;
 };
 typedef struct common_s common_t;
 
-simgrid_execs_t common_read_dag_from_dot(const char *file_path);
-simgrid_execs_t common_get_ready_tasks(const simgrid_execs_t &execs);
+simgrid_execs_t common_read_dag_from_dot(const std::string &filename);
+simgrid_execs_t common_get_ready_tasks(const simgrid_execs_t &dag);
+std::vector<std::vector<double>> common_read_distance_matrix_from_file(const std::string &filename);
 
 enum CommonVectorType
 {
     COMM_READ,
     COMM_WRITE,
-    EXEC
+    COMPUTE
 };
 
 enum CommonCommNameMatch
 {
-    FIRST,
-    SECOND
+    SRC,
+    DST
 };
 
-std::vector<int> common_get_avail_core_ids(const commot_t *common);
-std::vector<name_to_time_range_payload_t> common_get_name_ts_range_payload(
+std::vector<int> common_get_avail_core_ids(const common_t *common);
+name_to_time_range_payload_t common_filter_name_ts_range_payload(
     const common_t *common,
     const std::string &name,
-    CommonVectorType type = CommonVectorType.COMM, 
-    CommonCommNameMatch comm_name = CommonCommNameMatch.SECOND);
+    CommonVectorType type, 
+    CommonCommNameMatch comm_name);
