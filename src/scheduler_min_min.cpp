@@ -1,10 +1,9 @@
 #include "scheduler_min_min.hpp"
 
 
-MIN_MIN_Scheduler::MIN_MIN_Scheduler(const simgrid_execs_t &dag, const common_t *common)
+MIN_MIN_Scheduler::MIN_MIN_Scheduler(const simgrid_execs_t &dag, const common_t *common) : dag(dag), common(common)
 {
-    this->dag = dag;
-    this->common = common;
+
 }
 
 std::tuple<std::string, unsigned int, unsigned long> MIN_MIN_Scheduler::next()
@@ -18,7 +17,7 @@ std::tuple<std::string, unsigned int, unsigned long> MIN_MIN_Scheduler::next()
         int core_id;
         double finish_time;
 
-        std::tie(core_id, finish_time) = get_best_core_id(this->common, exec);
+        std::tie(core_id, finish_time) = this->get_best_core_id(exec);
 
         if (finish_time < estimated_finish_time)
         {
@@ -28,7 +27,7 @@ std::tuple<std::string, unsigned int, unsigned long> MIN_MIN_Scheduler::next()
         }
     }
 
-    return std::make_tuple(selected_exec, selected_core_id, estimated_finish_time);
+    return std::make_tuple(selected_exec->get_cname(), selected_core_id, estimated_finish_time);
 }
 
 /**
@@ -57,18 +56,18 @@ std::tuple<std::string, unsigned int, unsigned long> MIN_MIN_Scheduler::next()
  * ### Notes:
  * Control dependencies with size -1 or 0, as defined in SimGrid, are not supported and may introduce unexpected behavior.
  */
-std::tuple<unsigned int, unsigned long> get_best_core_id(const simgrid_exec_t *exec)
+std::tuple<unsigned int, unsigned long> MIN_MIN_Scheduler::get_best_core_id(const simgrid_exec_t *exec)
 {
     unsigned int best_core_id = std::numeric_limits<unsigned int>::max();
-    unsigned double earliest_finish_time_us = std::numeric_limits<unsigned double>::max();
+    double earliest_finish_time_us = std::numeric_limits<double>::max();
 
     // Estimate exec earliest_finish_time for every core_id.
     for (int core_id : common_get_avail_core_ids(this->common))
     {
         // Match all communication (Task1->Task2) where this task_name is the destination.
-        comm_name_time_ranges_t read_comm_name_time_ranges = common_get_name_ts_range_payload(
+        name_to_time_range_payload_t read_comm_name_time_ranges = common_filter_name_ts_range_payload(
             this->common, exec->get_name(), COMM_WRITE, DST);
     }
 
-    return {0,0}
+    return {0,0};
 }

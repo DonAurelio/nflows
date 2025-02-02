@@ -1,10 +1,12 @@
 #include "scheduler_min_min.hpp"
 
+#include <iostream>
+
 
 int main (int argc, char* argv[])
 {
     /* INITIALIZE COMMON DATA. */
-    common_t *common = (common_t *)malloc(sizeof(common_t));
+    common_t *common = new common_t;
 
     /* HWLOC TOPOLOGY */
     hwloc_topology_init(&common->topology);
@@ -40,6 +42,15 @@ int main (int argc, char* argv[])
 
     simgrid_execs_t dag = common_read_dag_from_dot("/home/cc/runtime_workflow_scheduler/data/test/0.distribution.dot");
     MIN_MIN_Scheduler scheduler(dag, common);
+
+    std::string task_name;
+    unsigned int core_id;
+    unsigned long estimated_completion_time;
+    std::tie(task_name, core_id,estimated_completion_time) = scheduler.next();
+
+    std::cout << "Task: " << task_name << std::endl;
+
+    delete common;
 
     return 0;
 }

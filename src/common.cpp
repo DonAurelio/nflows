@@ -4,10 +4,10 @@
 #include <ranges>
 
 
-simgrid_execs_t common_read_dag_from_dot(const char *file_path)
+simgrid_execs_t common_read_dag_from_dot(const std::string &file_name)
 {
     simgrid_execs_t execs;
-    for (auto &activity : simgrid::s4u::create_DAG_from_dot(file_path))
+    for (auto &activity : simgrid::s4u::create_DAG_from_dot(file_name.c_str()))
         if (auto *exec = dynamic_cast<simgrid::s4u::Exec *>(activity.get()))
             execs.push_back((simgrid_exec_t *)exec);
 
@@ -36,7 +36,7 @@ simgrid_execs_t common_get_ready_tasks(const simgrid_execs_t &execs)
     return ready_execs;
 }
 
-std::vector<int> common_get_avail_core_ids(common_t *common)
+std::vector<int> common_get_avail_core_ids(const common_t *common)
 {
     unsigned int i = 0;
     std::vector<int> avail_core_ids;
