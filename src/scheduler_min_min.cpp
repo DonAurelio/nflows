@@ -1,4 +1,5 @@
 #include "scheduler_min_min.hpp"
+#include "hardware.hpp"
 
 
 MIN_MIN_Scheduler::MIN_MIN_Scheduler(const simgrid_execs_t &dag, const common_t *common) : dag(dag), common(common)
@@ -61,12 +62,77 @@ std::tuple<unsigned int, unsigned long> MIN_MIN_Scheduler::get_best_core_id(cons
     unsigned int best_core_id = std::numeric_limits<unsigned int>::max();
     double earliest_finish_time_us = std::numeric_limits<double>::max();
 
+    // Match all communication (Task1->Task2) where this task_name is the destination.
+    name_to_time_range_payload_t name_to_ts_range_payload = common_filter_name_ts_range_payload(
+        this->common, exec->get_name(), COMM_WRITE, DST);
+
     // Estimate exec earliest_finish_time for every core_id.
     for (int core_id : common_get_avail_core_ids(this->common))
     {
-        // Match all communication (Task1->Task2) where this task_name is the destination.
-        name_to_time_range_payload_t read_comm_name_time_ranges = common_filter_name_ts_range_payload(
-            this->common, exec->get_name(), COMM_WRITE, DST);
+        /* 1. ESTIMATE EARLIEST_START_TIME(n_i). */
+
+        // ASSUMPTION:
+        // EST(n_i,p_i) = max{ avail[j], max_{n_{m} e pred(n_i)}( AFT(n_{m}) + c_{m,i} ) };
+        // - avail[j]  => earliest time which processor j will be ready for task execution.
+        // - pred(n_i) => set of immediate predecessor tasks of task n_{i}.
+
+        // This model do not consider avail[j] as the selection of the best core is performed
+        // with the set of current available cores.
+
+        // Since we already have the time at which communication all dependent communication finished:
+        // EST(n_i) = max_{n_{m} e pred(n_i)} { AFT(c_{m,i}) ) };
+
+        uint64_t earliest_start_time_us = 0;
+
+        for (const auto &[comm_name, time_range_payload] : name_to_ts_range_payload)
+        {
+            auto [parent_exec_name, self_exec_name] = common_split(comm_name,"->");
+            uint64_t parent_exec_actual_finish_time = std::get<1>(this->common->exec_name_to_time_offset_payload.at(parent_exec_name));
+            earliest_start_time_us = std::max(earliest_start_time_us, parent_exec_actual_finish_time);
+        }
+
+        /* 2. ESTIMATE READ_TIME(EXEC) */
+
+        // ASSUMPTION:
+        // While readings are performed sequentially, the timing calculations assume they are 
+        // executed in parallel. Specifically, the read time of a task is determined as the 
+        // maximum finish time among the reading operations.
+
+        double estimated_read_time = 0;
+
+        for (const auto &[comm_name, time_range_payload] : name_to_ts_range_payload)
+        {
+            char *read_buffer = this->common->comm_name_to_address[comm_name];
+
+            // ASSUMPTION:
+            // The pages of the data to be read can be distributed across multiple NUMA nodes,
+            // depending on the memory allocation policy. For this estimation, the worst-case scenario is assumed.
+            // Specifically, it is assumed that all data pages are located in a single NUMA node—the one with the
+            // highest read time relative to the NUMA node of the requesting core. This approach provides an 
+            // upper-bound estimate of the reading operation.
+
+            // Retrieve the NUMA nodes where the data pages to be read are allocated.
+            std::vector<int> hwloc_read_src_numa_ids = get_hwloc_numa_ids_by_address(
+                this->common, read_buffer, (size_t)(std::get<2>(time_range_payload)));
+
+            // // Determine the NUMA node corresponding to the core that will perform the reading operation.
+            // int hwloc_read_dst_numa_id = get_hwloc_numa_id_from_hwloc_core_id(common_data->topology, hwloc_core_id);
+
+            // // Identify the source NUMA node representing the worst-case scenario, i.e.,
+            // // the node from which reading will incur the highest time cost, assuming all pages
+            // // are allocated on this NUMA node.
+
+            // for (int i : hwloc_read_src_numa_ids)
+            // {
+            //     double read_latency = (*(common_data->latency_matrix))[i][hwloc_read_dst_numa_id];
+            //     double read_bandwidth = (*(common_data->bandwidth_matrix))[i][hwloc_read_dst_numa_id];
+
+            //     // TODO: Validate the consistency of bandwidth and latency units.
+            //     estimated_read_time = std::max(estimated_read_time, read_latency + (bytes_to_read / read_bandwidth));
+            // }
+        }
+
+
     }
 
     return {0,0};
