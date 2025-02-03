@@ -128,14 +128,57 @@ std::tuple<unsigned int, unsigned long> MIN_MIN_Scheduler::get_best_core_id(cons
 
                 double read_latency_us = read_latency_ns / 1000; // To microseconds
                 double read_bandwidth_bpus = read_bandwidth_gbps * 1000; // To B/us
-                size_t payload_bytes = (size_t) std::get<2>(time_range_payload);
+                size_t read_payload_bytes = (size_t) std::get<2>(time_range_payload);
 
-                estimated_read_time_us = std::max(estimated_read_time_us, read_latency_us + (payload_bytes / read_bandwidth_bpus));
+                estimated_read_time_us = std::max(estimated_read_time_us, read_latency_us + (read_payload_bytes / read_bandwidth_bpus));
             }
         }
 
+        /* 3. ESTIMATE COMPUTE_TIME(EXEC). */
+        size_t flops = (size_t) exec->get_remaining(); // # of Float operations to be performed.
+        unsigned long flops_per_second = get_hwloc_core_performance_by_id(this->common, core_id); // # of flops the system can perform in one second.
 
+        double estimated_compute_time_us = (flops / flops_per_second) * 1000000;
+
+        /* 4. ESTIMATE WRITE_TIME(EXEC) */
+
+        // ASSUMPTION:
+        // While readings are performed sequentially, the timing calculations assume they are 
+        // executed in parallel. Specifically, the read time of a task is determined as the 
+        // maximum finish time among the readings to be performed.
+
+        double estimated_write_time_us = 0;
+
+        for (const auto &succ : exec->get_successors())
+        {
+            const simgrid_comm_t *succ_comm = dynamic_cast<simgrid_comm_t *>(succ.get());
+            size_t write_payload_bytes = (size_t) succ_comm->get_remaining();
+
+            // Retrieve the NUMA node that will perform the write operation.
+            int write_src_numa_id = get_hwloc_numa_id_by_core_id(this->common, core_id);
+
+            // Determine the NUMA node that will handle the write operation.
+            // ASSUMPTION:
+            // Since it is uncertain which NUMA node will handle the write operations for this task,
+            // the worst-case scenario is assumed: the data is written to the farthest NUMA node,
+            // i.e., the one with the highest write time relative to the specified hwloc core ID.
+
+            for (size_t i = 0; i < this->common->distance_lat_ns.size(); ++i)
+            {
+                double write_latency_ns = this->common->distance_lat_ns[write_src_numa_id][i];
+                double write_bandwidth_gbps = this->common->distance_bw_gbps[write_src_numa_id][i];
+
+                double write_latency_us = write_latency_ns / 1000; // To microseconds
+                double write_bandwidth_bpus = write_bandwidth_gbps * 1000; // To B/us
+
+                estimated_write_time_us = std::max(estimated_write_time_us, write_latency_us + (write_payload_bytes / write_bandwidth_bpus));
+            }
+        }
+
+        double finish_time_us = earliest_start_time_us + estimated_read_time_us + estimated_compute_time_us + estimated_write_time_us;
+        best_core_id = (finish_time_us < earliest_finish_time_us) ? core_id : best_core_id;
+        earliest_finish_time_us = std::min(finish_time_us, earliest_finish_time_us);
     }
 
-    return {0,0};
+    return {best_core_id, earliest_finish_time_us};
 }

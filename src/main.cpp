@@ -46,9 +46,11 @@ int main (int argc, char* argv[])
     std::string task_name;
     unsigned int core_id;
     unsigned long estimated_completion_time;
-    std::tie(task_name, core_id,estimated_completion_time) = scheduler.next();
+    std::tie(task_name, core_id, estimated_completion_time) = scheduler.next();
 
     std::cout << "Task: " << task_name << std::endl;
+    std::cout << "Core ID: " << core_id << std::endl;
+    std::cout << "ECT (us): " << estimated_completion_time << std::endl;
 
     delete common;
 

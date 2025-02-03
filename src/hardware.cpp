@@ -60,7 +60,7 @@ int get_hwloc_numa_id_by_core_id(const common_t *common, int hwloc_core_id)
     return hwloc_numa_id;
 }
 
-unsigned long get_hwloc_core_speed_by_id(const common_t *common, int hwloc_core_id)
+unsigned long get_hwloc_core_performance_by_id(const common_t *common, int hwloc_core_id)
 {
     hwloc_topology_t topology = common->topology;
 
@@ -102,6 +102,7 @@ unsigned long get_hwloc_core_speed_by_id(const common_t *common, int hwloc_core_
         return common->flops_per_cycle * frequency_hz;
     }
 
+    // # of flops the system can perform in one second.
     return common->flops_per_cycle * common->clock_frequency_hz;
 }
 
