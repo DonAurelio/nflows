@@ -277,3 +277,88 @@ thread_locality_t get_hwloc_thread_locality(const common_t *common)
     // Return locality and context switch information along with core migrations
     return {numa_node, core_id, voluntary_context_switches, involuntary_context_switches, core_migrations};
 }
+
+// int assign_task(thread_data_t *data, simgrid_host_t *dummy_host)
+// {
+//     int pu;
+//     pthread_t thread;
+//     pthread_attr_t attr;
+
+//     cpu_set_t cpuset;
+
+//     hwloc_obj_t core;
+//     hwloc_cpuset_t hwloc_cpuset;
+
+//     // Initialize thread attributes
+//     pthread_attr_init(&attr);
+
+//     // Retrieve the core object based on the core index
+//     core = hwloc_get_obj_by_type(*(exec_data->common_data->topology), HWLOC_OBJ_CORE, exec_data->assigned_hwloc_core_id);
+//     if (!core)
+//     {
+//         fprintf(stderr, "Core %d not found!\n", exec_data->assigned_hwloc_core_id);
+//         std::exit(EXIT_FAILURE); // Exit with failure status
+//     }
+
+//     // Get the cpuset of the core (includes all PUs associated with the core)
+//     hwloc_cpuset = hwloc_bitmap_dup(core->cpuset);
+
+//     // Remove hyperthreads (keep only the first PU in each core)
+//     hwloc_bitmap_singlify(hwloc_cpuset);
+
+//     // Clear the CPU set
+//     CPU_ZERO(&cpuset);
+
+//     // Convert hwloc cpuset to Linux cpu_set_t using glibc function
+//     // Manually iterate over the cpuset and set the corresponding bits in the Linux CPU set
+//     for (pu = hwloc_bitmap_first(hwloc_cpuset); pu != -1; pu = hwloc_bitmap_next(hwloc_cpuset, pu))
+//     {
+//         CPU_SET(pu, &cpuset); // Set the corresponding processing unit in the CPU set
+//     }
+
+//     // Free the hwloc cpuset object as it's no longer needed
+//     hwloc_bitmap_free(hwloc_cpuset);
+
+//     // Set thread affinity
+//     int ret = pthread_attr_setaffinity_np(&attr, sizeof(cpu_set_t), &cpuset);
+//     if (ret != 0)
+//     {
+//         perror("pthread_attr_setaffinity_np");
+//         std::exit(EXIT_FAILURE); // Exit with failure status
+//     }
+
+//     exec_data->exec->set_host(dummy_host);
+
+//     // Mark the selected hwloc_core_id as unavailable (the thread will release it upon completion).
+//     update_hwloc_core_availability(exec_data->common_data, exec_data->assigned_hwloc_core_id, false);
+
+//     if (pthread_create(&thread, &attr, thread_function, exec_data) == 0)
+//     {
+//         // Increment the active thread counter (inside mutex)
+//         update_active_threads_counter(exec_data->common_data, 1);
+//     }
+//     else
+//     {
+//         fprintf(stderr, "Error: Unable to create thread for '%s'.\n", exec_data->exec->get_cname());
+//         std::exit(EXIT_FAILURE); // Exit with failure status
+//     }
+
+//     // Destroy the attributes object since it's no longer needed.
+//     // Destroy the pthread_attr_t immediately after creating the thread:
+//     // This is safe because the thread's attributes are copied into the new
+//     // thread when pthread_create is called. After that, the pthread_attr_t
+//     // object is no longer required.
+
+//     // You do not need to wait for the thread to finish in order to call pthread_attr_destroy.
+//     // The attributes object can be destroyed right after thread creation without affecting the thread itself.
+//     pthread_attr_destroy(&attr);
+
+//     // Optionally, join or detach the thread depending on your needs
+//     pthread_detach(thread); // or pthread_join(thread, NULL);
+
+//     // Clean up
+//     // exec_data is freed in thread_function.
+
+//     return 0;
+// }
+

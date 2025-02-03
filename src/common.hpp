@@ -41,6 +41,7 @@ typedef std::unordered_map<std::string, time_range_payload_t> name_to_time_range
 typedef simgrid::s4u::Exec simgrid_exec_t;
 typedef simgrid::s4u::Comm simgrid_comm_t;
 typedef simgrid::s4u::Host simgrid_host_t;
+typedef simgrid::s4u::NetZone simgrid_netzone_t;
 typedef simgrid::s4u::Activity simgrid_activity_t;
 typedef simgrid::s4u::ActivityPtr simgrid_activity_ptr_t;
 typedef std::vector<simgrid_exec_t *> simgrid_execs_t;
@@ -114,3 +115,10 @@ std::string common_get_timestamped_filename(const std::string &base_name);
 std::string common_join(const std::vector<int>& vec, const std::string& delimiter);
 std::pair<std::string, std::string> common_split(const std::string &input, std::string delimiter);
 
+struct thread_data_s
+{
+    common_t *common;
+    simgrid_exec_t *exec;
+    int assigned_core_id;
+};
+typedef struct thread_data_s thread_data_t;
