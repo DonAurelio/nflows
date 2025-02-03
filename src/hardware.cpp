@@ -1,9 +1,9 @@
 #include "hardware.hpp"
 
 
-int get_hwloc_core_id_by_pu_id(common_t *common, int os_pu_id)
+int get_hwloc_core_id_by_pu_id(const common_t *common, int os_pu_id)
 {
-    hwloc_topology_t topology = *(common->topology);
+    hwloc_topology_t topology = common->topology;
 
     // Get the PU object by its OS index (sched_getcpu() index)
     hwloc_obj_t pu_obj = hwloc_get_pu_obj_by_os_index(topology, os_pu_id);
@@ -27,9 +27,9 @@ int get_hwloc_core_id_by_pu_id(common_t *common, int os_pu_id)
     return hwloc_core_id;
 }
 
-int get_hwloc_numa_id_by_core_id(common_t *common, int hwloc_core_id)
+int get_hwloc_numa_id_by_core_id(const common_t *common, int hwloc_core_id)
 {
-    hwloc_topology_t topology = *(common->topology);
+    hwloc_topology_t topology = common->topology;
     hwloc_obj_t core_obj;
     hwloc_cpuset_t cpuset;
 
@@ -60,9 +60,9 @@ int get_hwloc_numa_id_by_core_id(common_t *common, int hwloc_core_id)
     return hwloc_numa_id;
 }
 
-unsigned long get_hwloc_core_speed_by_id(common_t *common, int hwloc_core_id)
+unsigned long get_hwloc_core_speed_by_id(const common_t *common, int hwloc_core_id)
 {
-    hwloc_topology_t topology = *(common->topology);
+    hwloc_topology_t topology = common->topology;
 
     // Retrieve the core object.
     hwloc_obj_t core_obj = hwloc_get_obj_by_type(topology, HWLOC_OBJ_CORE, hwloc_core_id);
@@ -105,9 +105,9 @@ unsigned long get_hwloc_core_speed_by_id(common_t *common, int hwloc_core_id)
     return common->flops_per_cycle * common->clock_frequency_hz;
 }
 
-std::vector<int> get_hwloc_numa_ids_by_address(common_t *common, char *address, size_t size)
+std::vector<int> get_hwloc_numa_ids_by_address(const common_t *common, char *address, size_t size)
 {
-    hwloc_topology_t topology = *(common->topology);
+    hwloc_topology_t topology = common->topology;
 
     /* Get data locality (NUMA nodes were data pages are allocated) */
     hwloc_nodeset_t nodeset = hwloc_bitmap_alloc();
@@ -141,9 +141,9 @@ std::vector<int> get_hwloc_numa_ids_by_address(common_t *common, char *address, 
     return numa_nodes;
 }
 
-std::string get_hwloc_thread_mem_policy(common_t *common)
+std::string get_hwloc_thread_mem_policy(const common_t *common)
 {
-    hwloc_topology_t topology = *(common->topology);
+    hwloc_topology_t topology = common->topology;
     hwloc_bitmap_t nodeset;
     hwloc_membind_policy_t policy;
     std::ostringstream output; // String stream to build the output
@@ -212,9 +212,9 @@ std::string get_hwloc_thread_mem_policy(common_t *common)
     return result; // Return the constructed string
 }
 
-thread_locality_t get_hwloc_thread_locality(common_t *common)
+thread_locality_t get_hwloc_thread_locality(const common_t *common)
 {
-    hwloc_topology_t topology = *(common->topology);
+    hwloc_topology_t topology = common->topology;
     hwloc_bitmap_t cpuset;
     hwloc_obj_t obj;
     int numa_node, core_id;

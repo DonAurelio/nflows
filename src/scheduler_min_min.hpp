@@ -1,5 +1,5 @@
 #include "common.hpp"
-
+#include "hardware.hpp"
 
 class MIN_MIN_Scheduler {
     private:

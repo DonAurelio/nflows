@@ -1,5 +1,4 @@
 #include "scheduler_min_min.hpp"
-#include "hardware.hpp"
 
 
 MIN_MIN_Scheduler::MIN_MIN_Scheduler(const simgrid_execs_t &dag, const common_t *common) : dag(dag), common(common)
@@ -98,11 +97,11 @@ std::tuple<unsigned int, unsigned long> MIN_MIN_Scheduler::get_best_core_id(cons
         // executed in parallel. Specifically, the read time of a task is determined as the 
         // maximum finish time among the reading operations.
 
-        double estimated_read_time = 0;
+        double estimated_read_time_us = 0;
 
         for (const auto &[comm_name, time_range_payload] : name_to_ts_range_payload)
         {
-            char *read_buffer = this->common->comm_name_to_address[comm_name];
+            char *read_buffer = this->common->comm_name_to_address.at(comm_name);
 
             // ASSUMPTION:
             // The pages of the data to be read can be distributed across multiple NUMA nodes,
@@ -112,24 +111,27 @@ std::tuple<unsigned int, unsigned long> MIN_MIN_Scheduler::get_best_core_id(cons
             // upper-bound estimate of the reading operation.
 
             // Retrieve the NUMA nodes where the data pages to be read are allocated.
-            std::vector<int> hwloc_read_src_numa_ids = get_hwloc_numa_ids_by_address(
+            std::vector<int> read_src_numa_ids = get_hwloc_numa_ids_by_address(
                 this->common, read_buffer, (size_t)(std::get<2>(time_range_payload)));
 
-            // // Determine the NUMA node corresponding to the core that will perform the reading operation.
-            // int hwloc_read_dst_numa_id = get_hwloc_numa_id_from_hwloc_core_id(common_data->topology, hwloc_core_id);
+            // Determine the NUMA node corresponding to the core that will perform the reading operation.
+            int read_dst_numa_id = get_hwloc_numa_id_by_core_id(this->common, core_id);
 
-            // // Identify the source NUMA node representing the worst-case scenario, i.e.,
-            // // the node from which reading will incur the highest time cost, assuming all pages
-            // // are allocated on this NUMA node.
+            // Identify the source NUMA node representing the worst-case scenario, i.e.,
+            // the node from which reading will incur the highest time cost, assuming all pages
+            // are allocated on this NUMA node.
 
-            // for (int i : hwloc_read_src_numa_ids)
-            // {
-            //     double read_latency = (*(common_data->latency_matrix))[i][hwloc_read_dst_numa_id];
-            //     double read_bandwidth = (*(common_data->bandwidth_matrix))[i][hwloc_read_dst_numa_id];
+            for (int i : read_src_numa_ids)
+            {
+                double read_latency_ns = this->common->distance_lat_ns[i][read_dst_numa_id];
+                double read_bandwidth_gbps = this->common->distance_bw_gbps[i][read_dst_numa_id];
 
-            //     // TODO: Validate the consistency of bandwidth and latency units.
-            //     estimated_read_time = std::max(estimated_read_time, read_latency + (bytes_to_read / read_bandwidth));
-            // }
+                double read_latency_us = read_latency_ns / 1000; // To microseconds
+                double read_bandwidth_bpus = read_bandwidth_gbps * 1000; // To B/us
+                size_t payload_bytes = (size_t) std::get<2>(time_range_payload);
+
+                estimated_read_time_us = std::max(estimated_read_time_us, read_latency_us + (payload_bytes / read_bandwidth_bpus));
+            }
         }
 
 

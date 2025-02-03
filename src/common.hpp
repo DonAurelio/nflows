@@ -1,3 +1,5 @@
+#pragma once
+
 #include <hwloc.h>
 
 #include <simgrid/s4u.hpp>
