@@ -1,6 +1,8 @@
 #include "scheduler_min_min.hpp"
 
 
+XBT_LOG_NEW_DEFAULT_CATEGORY(min_min_scheduler, "Messages specific to this module.");
+
 MIN_MIN_Scheduler::MIN_MIN_Scheduler(const simgrid_execs_t &dag, const common_t *common) : dag(dag), common(common)
 {
 
@@ -26,6 +28,9 @@ std::tuple<std::string, unsigned int, unsigned long> MIN_MIN_Scheduler::next()
             estimated_finish_time = finish_time;
         }
     }
+
+    XBT_DEBUG("selected_task: %s, selected_core_id: %d, estimated_finish_time: %ld", 
+        selected_exec->get_cname(), selected_core_id, estimated_finish_time);
 
     return std::make_tuple(selected_exec->get_cname(), selected_core_id, estimated_finish_time);
 }

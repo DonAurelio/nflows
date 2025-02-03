@@ -1,5 +1,10 @@
+#pragma once
+
 #include "common.hpp"
 #include "hardware.hpp"
+
+#include <xbt/log.h>
+
 
 class MIN_MIN_Scheduler {
     private:

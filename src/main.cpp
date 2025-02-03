@@ -1,10 +1,13 @@
 #include "scheduler_min_min.hpp"
 
 #include <iostream>
-
+#include <xbt/log.h>
 
 int main (int argc, char* argv[])
 {
+    // Initialize XBT logging system
+     xbt_log_init(&argc, argv);
+
     /* INITIALIZE COMMON DATA. */
     common_t *common = new common_t;
 
