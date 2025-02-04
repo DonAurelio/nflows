@@ -29,6 +29,11 @@ void Mapper_Bare_Metal::start()
     this->set_as_completed(task_name);
 }
 
+void Mapper_Bare_Metal::assign_exec(simgrid_exec_t *exec)
+{
+    
+}
+
 void Mapper_Bare_Metal::set_as_assigned(simgrid_exec_t *exec)
 {
     exec->set_host(this->dummy_host);

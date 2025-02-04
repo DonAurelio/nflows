@@ -10,3 +10,5 @@ std::vector<int> get_hwloc_numa_ids_by_address(const common_t *common, char *add
 
 std::string get_hwloc_thread_mem_policy(const common_t *common);
 thread_locality_t get_hwloc_thread_locality(const common_t *common);
+
+void bind_exec_to_thread(thread_data_t *data);

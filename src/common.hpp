@@ -115,10 +115,20 @@ std::string common_get_timestamped_filename(const std::string &base_name);
 std::string common_join(const std::vector<int>& vec, const std::string& delimiter);
 std::pair<std::string, std::string> common_split(const std::string &input, std::string delimiter);
 
+typedef void* (*thread_function_t)(void*);
+
 struct thread_data_s
 {
     common_t *common;
     simgrid_exec_t *exec;
+    thread_function_t thread_function;
     int assigned_core_id;
 };
 typedef struct thread_data_s thread_data_t;
+
+void common_set_core_id_as_avail(common_t *common, unsigned int core_id);
+void common_set_core_id_as_unavail(common_t *common, unsigned int core_id);
+void common_increment_active_threads_counter(common_t *common);
+void common_decrement_active_threads_counter(common_t *common);
+
+

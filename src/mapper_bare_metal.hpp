@@ -14,6 +14,7 @@ class Mapper_Bare_Metal {
         simgrid_netzone_t *dummy_net_zone;
         MIN_MIN_Scheduler& scheduler;
 
+        void assign_exec(simgrid_exec_t *exec);
         void set_as_assigned(simgrid_exec_t *exec);
         void set_as_completed(simgrid_exec_t *exec);
     public:
