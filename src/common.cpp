@@ -61,18 +61,18 @@ void common_set_core_id_as_unavail(common_t *common, unsigned int core_id)
 
 void common_increment_active_threads_counter(common_t *common)
 {
-    pthread_mutex_lock(common->mutex);
-    (*(common->active_threads)) += 1;
-    pthread_mutex_unlock(common_data->mutex);
+    pthread_mutex_lock( &(common->mutex) );
+    common->active_threads += 1;
+    pthread_mutex_unlock( &(common->mutex) );
 }
 
 void common_decrement_active_threads_counter(common_t *common)
 {
-    pthread_mutex_lock(common->mutex);
-    (*(common->active_threads)) -= 1;
-    if (((*common->active_threads)) == 0)
-        pthread_cond_signal(common->cond); // Signal the main thread
-    pthread_mutex_unlock(common->mutex);
+    pthread_mutex_lock( &(common->mutex) );
+    common->active_threads -= 1;
+    if (common->active_threads == 0)
+        pthread_cond_signal( &(common->cond) ); // Signal the main thread
+    pthread_mutex_unlock( &(common->mutex) );
 }
 
 name_to_time_range_payload_t common_filter_name_ts_range_payload(

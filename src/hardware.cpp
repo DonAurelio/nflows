@@ -293,7 +293,7 @@ void bind_exec_to_thread(thread_data_t *data)
     pthread_attr_init(&attr);
 
     // Retrieve the core object based on the core index.
-    core = hwloc_get_obj_by_type(*(data->common->topology), HWLOC_OBJ_CORE, data->assigned_core_id);
+    core = hwloc_get_obj_by_type(data->common->topology, HWLOC_OBJ_CORE, data->assigned_core_id);
     if (!core)
     {
         std::cerr << "Core " << data->assigned_core_id << " not found!" << std::endl;
@@ -323,7 +323,7 @@ void bind_exec_to_thread(thread_data_t *data)
     int ret = pthread_attr_setaffinity_np(&attr, sizeof(cpu_set_t), &cpuset);
     if (ret != 0)
     {
-        std::cerr << "Error in pthread_attr_setaffinity_np: " << std::strerror(ret) << std::endl;
+        std::cerr << "Error in pthread_attr_setaffinity_np: " << ret << std::endl;
         std::exit(EXIT_FAILURE); // Exit with failure status
     }
 
