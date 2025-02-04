@@ -12,3 +12,4 @@ std::string get_hwloc_thread_mem_policy(const common_t *common);
 thread_locality_t get_hwloc_thread_locality(const common_t *common);
 
 void bind_exec_to_thread(thread_data_t *data);
+

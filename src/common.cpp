@@ -68,12 +68,22 @@ void common_increment_active_threads_counter(common_t *common)
 
 void common_decrement_active_threads_counter(common_t *common)
 {
-    pthread_mutex_lock( &(common->mutex) );
+    pthread_mutex_lock(&(common->mutex));
     common->active_threads -= 1;
     if (common->active_threads == 0)
-        pthread_cond_signal( &(common->cond) ); // Signal the main thread
-    pthread_mutex_unlock( &(common->mutex) );
+        pthread_cond_signal(&(common->cond)); // Signal the main thread
+    pthread_mutex_unlock(&(common->mutex));
 }
+
+void common_wait_active_threads(common_t *common)
+{
+    // Wait for all threads to finish
+    pthread_mutex_lock(&(common->mutex));
+    while (common->active_threads > 0)
+        pthread_cond_wait(&(common->cond), &(common->mutex)); // Wait until active_threads == 0
+    pthread_mutex_unlock(&(common->mutex));
+}
+
 
 name_to_time_range_payload_t common_filter_name_ts_range_payload(
     const common_t *common,

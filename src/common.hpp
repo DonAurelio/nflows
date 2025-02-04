@@ -130,5 +130,4 @@ void common_set_core_id_as_avail(common_t *common, unsigned int core_id);
 void common_set_core_id_as_unavail(common_t *common, unsigned int core_id);
 void common_increment_active_threads_counter(common_t *common);
 void common_decrement_active_threads_counter(common_t *common);
-
-
+void common_wait_active_threads(common_t *common);

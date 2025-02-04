@@ -156,30 +156,30 @@ std::string get_hwloc_thread_mem_policy(const common_t *common)
     int ret = hwloc_get_membind(topology, nodeset, &policy, HWLOC_MEMBIND_THREAD);
     if (ret == 0) {
         // Add memory policy to the output string
-        output << "memory policy ";
         switch (policy) {
             case HWLOC_MEMBIND_DEFAULT:
-                output << "DEFAULT (system default allocation policy) - ";
+                output << "DEFAULT ";
                 break;
             case HWLOC_MEMBIND_FIRSTTOUCH:
-                output << "FIRSTTOUCH (memory allocated on first-touch NUMA node) - ";
+                output << "FIRSTTOUCH ";
                 break;
             case HWLOC_MEMBIND_BIND:
-                output << "BIND (memory allocated on specific NUMA nodes only) - ";
+                output << "BIND  ";
                 break;
             case HWLOC_MEMBIND_INTERLEAVE:
-                output << "INTERLEAVE (memory interleaved across specific NUMA nodes) - ";
+                output << "INTERLEAVE ";
                 break;
             case HWLOC_MEMBIND_NEXTTOUCH:
-                output << "NEXTTOUCH (memory moved to the NUMA node of the next access) - ";
+                output << "NEXTTOUCH ";
                 break;
             case HWLOC_MEMBIND_MIXED:
-                output << "MIXED (multiple memory policies apply) - ";
+                output << "MIXED ";
                 break;
             default:
-                output << "UNKNOWN - ";
+                output << "UNKNOWN ";
                 break;
         }
+        output << "memory policy - ";
 
         // Add NUMA nodes the thread is bound to
         output << "thread is bound to NUMA nodes ";

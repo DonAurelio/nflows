@@ -23,10 +23,10 @@ bool MIN_MIN_Scheduler::has_next()
     return has_unassigned;
 }
 
-std::tuple<simgrid_exec_t*, unsigned int, unsigned long> MIN_MIN_Scheduler::next()
+std::tuple<simgrid_exec_t*, int, unsigned long> MIN_MIN_Scheduler::next()
 {
     simgrid_exec_t *selected_exec = nullptr;
-    unsigned int selected_core_id = std::numeric_limits<unsigned int>::max();
+    int selected_core_id = -1;
     unsigned long estimated_finish_time = std::numeric_limits<unsigned long>::max();
 
     for (simgrid_exec_t *exec : common_get_ready_tasks(this->dag))
@@ -76,9 +76,9 @@ std::tuple<simgrid_exec_t*, unsigned int, unsigned long> MIN_MIN_Scheduler::next
  * ### Notes:
  * Control dependencies with size -1 or 0, as defined in SimGrid, are not supported and may introduce unexpected behavior.
  */
-std::tuple<unsigned int, unsigned long> MIN_MIN_Scheduler::get_best_core_id(const simgrid_exec_t *exec)
+std::tuple<int, unsigned long> MIN_MIN_Scheduler::get_best_core_id(const simgrid_exec_t *exec)
 {
-    unsigned int best_core_id = std::numeric_limits<unsigned int>::max();
+    int best_core_id = -1;
     double earliest_finish_time_us = std::numeric_limits<double>::max();
 
     // Match all communication (Task1->Task2) where this task_name is the destination.
