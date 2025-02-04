@@ -10,13 +10,15 @@
 class Mapper_Bare_Metal {
     private:
         const common_t *common;
-        const MIN_MIN_Scheduler& scheduler;
-
         simgrid_host_t *dummy_host;
         simgrid_netzone_t *dummy_net_zone;
+        MIN_MIN_Scheduler& scheduler;
+
+        void set_as_assigned(simgrid_exec_t *exec);
+        void set_as_completed(simgrid_exec_t *exec);
     public:
-        Mapper_Bare_Metal(const MIN_MIN_Scheduler& scheduler, const common_t *common);
+        Mapper_Bare_Metal(const common_t *common, MIN_MIN_Scheduler& scheduler);
         ~Mapper_Bare_Metal();
-        
+
         void start();
 };

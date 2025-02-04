@@ -3,12 +3,17 @@
 
 XBT_LOG_NEW_DEFAULT_CATEGORY(min_min_scheduler, "Messages specific to this module.");
 
-MIN_MIN_Scheduler::MIN_MIN_Scheduler(const simgrid_execs_t &dag, const common_t *common) : dag(dag), common(common)
+MIN_MIN_Scheduler::MIN_MIN_Scheduler(const common_t *common, simgrid_execs_t &dag) : common(common), dag(dag)
 {
 
 }
 
-bool MIN_MIN_Scheduler::has_next() const
+MIN_MIN_Scheduler::~MIN_MIN_Scheduler()
+{
+
+}
+
+bool MIN_MIN_Scheduler::has_next()
 {
     bool has_unassigned = std::any_of(this->dag.begin(), this->dag.end(),
         [](const simgrid::s4u::Exec* exec) {
@@ -18,7 +23,7 @@ bool MIN_MIN_Scheduler::has_next() const
     return has_unassigned;
 }
 
-std::tuple<std::string, unsigned int, unsigned long> MIN_MIN_Scheduler::next() const
+std::tuple<simgrid_exec_t*, unsigned int, unsigned long> MIN_MIN_Scheduler::next()
 {
     simgrid_exec_t *selected_exec = nullptr;
     unsigned int selected_core_id = std::numeric_limits<unsigned int>::max();
@@ -42,7 +47,7 @@ std::tuple<std::string, unsigned int, unsigned long> MIN_MIN_Scheduler::next() c
     XBT_DEBUG("selected_task: %s, selected_core_id: %d, estimated_finish_time: %ld", 
         selected_exec->get_cname(), selected_core_id, estimated_finish_time);
 
-    return std::make_tuple(selected_exec->get_cname(), selected_core_id, estimated_finish_time);
+    return std::make_tuple(selected_exec, selected_core_id, estimated_finish_time);
 }
 
 /**
@@ -71,7 +76,7 @@ std::tuple<std::string, unsigned int, unsigned long> MIN_MIN_Scheduler::next() c
  * ### Notes:
  * Control dependencies with size -1 or 0, as defined in SimGrid, are not supported and may introduce unexpected behavior.
  */
-std::tuple<unsigned int, unsigned long> MIN_MIN_Scheduler::get_best_core_id(const simgrid_exec_t *exec) const
+std::tuple<unsigned int, unsigned long> MIN_MIN_Scheduler::get_best_core_id(const simgrid_exec_t *exec)
 {
     unsigned int best_core_id = std::numeric_limits<unsigned int>::max();
     double earliest_finish_time_us = std::numeric_limits<double>::max();

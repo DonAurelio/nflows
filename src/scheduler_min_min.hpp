@@ -9,11 +9,13 @@
 class MIN_MIN_Scheduler {
     private:
         const common_t *common;
-        const simgrid_execs_t& dag;
+        simgrid_execs_t& dag;
+
+        std::tuple<unsigned int, unsigned long> get_best_core_id(const simgrid_exec_t *exec);
     public:
-        MIN_MIN_Scheduler(const simgrid_execs_t &dag, const common_t *common);
-        
-        bool has_next() const;
-        std::tuple<std::string, unsigned int, unsigned long> next() const;
-        std::tuple<unsigned int, unsigned long> get_best_core_id(const simgrid_exec_t *exec) const;
+        MIN_MIN_Scheduler(const common_t *common, simgrid_execs_t &dag);
+        ~MIN_MIN_Scheduler();
+
+        bool has_next();
+        std::tuple<simgrid_exec_t*, unsigned int, unsigned long> next();
 };
