@@ -96,11 +96,13 @@ void *thread_function(void *arg)
 
     /* EMULATE MEMORY READING */
 
+    uint64_t actual_read_time_us = 0;
+
     for (const auto &[comm_name, time_range_payload] : name_to_ts_range_payload)
     {
         char *read_buffer = data->common->comm_name_to_address.at(comm_name);
         size_t read_payload_bytes = (size_t) std::get<2>(time_range_payload);
-        
+
         // Used to check data (pages) migration.
         std::vector<int> numa_locality_before_read = get_hwloc_numa_ids_by_address(
             data->common, read_buffer, read_payload_bytes);
@@ -122,10 +124,10 @@ void *thread_function(void *arg)
         // Save read timestamps.
         data->common->comm_name_to_r_ts_range_payload[comm_name] = time_range_payload_t(
             read_start_timestemp_us, read_end_timestemp_us, read_payload_bytes);
+        
+        actual_read_time_us = std::max(actual_read_time_us, read_end_timestemp_us - read_start_timestemp_us);
 
-        XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => \
-            dependency: %s, read (bytes): %zu, checksum: %ld, numa_locality_before_read: %s, \
-            numa_locality_after_read: %s, data (pages) migration: %s\n", 
+        XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => dependency: %s, read (bytes): %zu, checksum: %ld, numa_locality_before_read: %s, numa_locality_after_read: %s, data (pages) migration: %s", 
             getpid(),
             gettid(),
             data->exec->get_cname(),
@@ -234,12 +236,29 @@ void *thread_function(void *arg)
 
         std::vector<int> numa_locality_after_write = get_hwloc_numa_ids_by_address(data->common, write_buffer, write_payload_bytes);
 
-        XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => successor: %s, write (bytes): %zu, numa_locality_after_write: %s.\n", 
+        XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => successor: %s, write (bytes): %zu, numa_locality_after_write: %s.", 
             getpid(), gettid(), data->exec->get_cname(),
             get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()),
             std::get<1>(common_split(succ->get_cname(), "->")).c_str(),
             write_payload_bytes, common_join(numa_locality_after_write, " ").c_str());
     }
+
+    /* TIME OFFSETS */
+
+    uint64_t actual_start_time_us = 0;
+
+    for (const auto &[comm_name, time_range_payload] : name_to_ts_range_payload)
+    {
+        auto [parent_exec_name, self_exec_name] = common_split(comm_name, "->");
+        uint64_t parent_exec_actual_finish_time_us = std::get<1>(data->common->exec_name_to_time_offset_payload.at(parent_exec_name));
+        actual_start_time_us = std::max(actual_start_time_us, parent_exec_actual_finish_time_us);
+    }
+
+    uint64_t actual_finish_time_us = actual_start_time_us + actual_read_time_us + compute_time_us + actual_write_time_us;
+    data->common->exec_name_to_time_offset_payload[data->exec->get_cname()] = time_range_payload_t(
+        actual_start_time_us, actual_finish_time_us, flops
+    );
+
 
     /* CLEAN UP */
 
