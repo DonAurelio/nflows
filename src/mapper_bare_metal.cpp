@@ -23,11 +23,13 @@ void Mapper_Bare_Metal::start()
     unsigned long estimated_completion_time;
 
     while(this->scheduler.has_next()){
+
         std::tie(selected_exec, selected_core_id, estimated_completion_time) = this->scheduler.next();
 
         if (!selected_exec)
         {
             XBT_INFO("There are not ready tasks, waiting 5 seconds.");
+            // printf("There are not ready tasks, waiting 5 seconds.\n");
             sleep(5);
             continue;
         }
@@ -35,6 +37,7 @@ void Mapper_Bare_Metal::start()
         if (selected_core_id == -1)
         {
             XBT_INFO("There are not available cores, waiting 5 seconds.");
+            // printf("There are not available cores, waiting 5 seconds.\n");
             sleep(5);
             continue;
         }
@@ -94,7 +97,7 @@ void *thread_function(void *arg)
     name_to_time_range_payload_t name_to_ts_range_payload = common_filter_name_ts_range_payload(
         data->common, data->exec->get_name(), COMM_WRITE, DST);
 
-    /* FOR THE COMPUTATON OF TIME OFFSETS */
+    /* FOR THE COMPUTATON OF TIME OFFSETS (DURATIONS) */
 
     uint64_t actual_start_time_us = 0;
 
@@ -104,7 +107,6 @@ void *thread_function(void *arg)
         uint64_t parent_exec_actual_finish_time_us = std::get<1>(data->common->exec_name_to_rcw_time_offset_payload.at(parent_exec_name));
         actual_start_time_us = std::max(actual_start_time_us, parent_exec_actual_finish_time_us);
     }
-
 
     /* EMULATE MEMORY READING */
 
@@ -161,6 +163,7 @@ void *thread_function(void *arg)
     }
 
     /* EMULATE COMPUTATION */
+
     uint64_t flops = (uint64_t)data->exec->get_remaining();
 
     // The volatile keyword is used to prevent the compiler from optimizing away the floating-point operations.
@@ -188,9 +191,6 @@ void *thread_function(void *arg)
     data->common->exec_name_to_c_ts_range_payload[data->exec->get_cname()] = time_range_payload_t{
         exec_start_timestamp_us, exec_end_timestamp_us, flops};
 
-    XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => message: finished.", 
-        getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()));
-
     /* EMULATE MEMORY WRITTING */
 
     uint64_t actual_write_time_us = 0;
@@ -205,6 +205,7 @@ void *thread_function(void *arg)
                 getpid(), gettid(), data->exec->get_cname(),
                 get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()),
                 std::get<1>(common_split(succ->get_cname(),"->")).c_str());
+
             continue;
         }
 
@@ -219,7 +220,7 @@ void *thread_function(void *arg)
                 getpid(), gettid(), data->exec->get_cname(),
                 get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()),
                 std::get<1>(common_split(succ->get_cname(), "->")).c_str());
-            
+
             return NULL;
         }
 
@@ -271,14 +272,15 @@ void *thread_function(void *arg)
             write_payload_bytes, common_join(numa_locality_after_write, " ").c_str());
     }
 
-    /* TIME OFFSETS */
+    XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => message: finished.", 
+        getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()));
 
+    /* TIME OFFSETS */
 
     uint64_t actual_finish_time_us = actual_start_time_us + actual_read_time_us + compute_time_us + actual_write_time_us;
     data->common->exec_name_to_rcw_time_offset_payload[data->exec->get_cname()] = time_range_payload_t(
         actual_start_time_us, actual_finish_time_us, flops
     );
-
 
     /* CLEAN UP */
 

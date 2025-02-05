@@ -49,6 +49,11 @@ int main (int argc, char* argv[])
     Mapper_Bare_Metal mapper_bare_metal(common, scheduler);
     mapper_bare_metal.start();
 
+    std::string filename = common_get_timestamped_filename("output");
+    std::ofstream file(filename);
+    common_print_common_structure(common, file);
+    file.close();
+
     delete common;
 
     return 0;

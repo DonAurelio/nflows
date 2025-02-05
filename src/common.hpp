@@ -133,3 +133,11 @@ void common_set_core_id_as_unavail(common_t *common, unsigned int core_id);
 void common_increment_active_threads_counter(common_t *common);
 void common_decrement_active_threads_counter(common_t *common);
 void common_wait_active_threads(common_t *common);
+
+void common_print_distance_matrix(const distance_matrix_t &matrix, const std::string &key, std::ostream &out);
+void common_print_name_to_numa_ids(const name_to_numa_ids_t &mapping, std::string header, std::ostream &out);
+void common_print_name_to_thread_locality(const name_to_thread_locality_t &mapping, std::ostream &out);
+void common_print_name_to_time_range_payload(const name_to_time_range_payload_t &mapping, const std::string &header, std::ostream &out);
+void common_print_name_to_address(const name_to_address_t &mapping, std::ostream &out);
+void common_print_metadata(const common_t *common, std::ostream &out);
+void common_print_common_structure(const common_t *common, std::ostream &out);

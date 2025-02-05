@@ -189,3 +189,79 @@ std::pair<std::string, std::string> common_split(const std::string &input, std::
     std::string second = input.substr(pos + delimiter.length());
     return {first, second};
 }
+
+void common_print_distance_matrix(const distance_matrix_t &matrix, const std::string &key, std::ostream &out) {
+    out << key << ":\n  dimension: " << matrix.size() << "\n  matrix:\n";
+    for (const auto &row : matrix) {
+        out << "    - [";
+        for (size_t i = 0; i < row.size(); ++i) {
+            out << row[i] << (i != row.size() - 1 ? ", " : "");
+        }
+        out << "]\n";
+    }
+    out << std::endl;
+}
+
+void common_print_name_to_numa_ids(const name_to_numa_ids_t &mapping, std::string header, std::ostream &out) {
+    out << header << ":\n";
+    for (const auto &[key, values] : mapping) {
+        out << "  " << key << ": NUMA IDs = ";
+        for (const int numa_id : values) {
+            out << numa_id << " ";
+        }
+        out << "\n";
+    }
+    out << std::endl;
+}
+
+void common_print_name_to_thread_locality(const name_to_thread_locality_t &mapping, std::ostream &out) {
+    out << "name_to_thread_locality:\n";
+    for (const auto &[key, loc] : mapping) {
+        out << "  " << key << ": NUMA ID = " << loc.numa_id << ", Core ID = " << loc.core_id
+            << ", Voluntary CS = " << loc.voluntary_context_switches << ", Involuntary CS = " << loc.involuntary_context_switches
+            << ", Core Migrations = " << loc.core_migrations << "\n";
+    }
+    out << std::endl;
+}
+
+void common_print_name_to_time_range_payload(const name_to_time_range_payload_t &mapping, const std::string &header, std::ostream &out) {
+    out << header << ":\n";
+    for (const auto &[key, value] : mapping) {
+        auto [start, end, bytes] = value;
+        out << "  " << key << ": Start = " << start << ", End = " << end << ", Bytes/FLOPS = " << bytes << "\n";
+    }
+    out << std::endl;
+}
+
+void common_print_name_to_address(const name_to_address_t &mapping, std::ostream &out) {
+    out << "name_to_address:\n";
+    for (const auto &[key, address] : mapping) {
+        out << "  " << key << ": Address = " << static_cast<void*>(address) << "\n";
+    }
+    out << std::endl;
+}
+
+void common_print_metadata(const common_t *common, std::ostream &out) {
+    out << "common_metadata:\n";
+    out << "  active_threads: " << common->active_threads << "\n";
+    out << "  flops_per_cycle: " << common->flops_per_cycle << "\n";
+    out << "  clock_frequency_hz: " << common->clock_frequency_hz << "\n\n";
+}
+
+void common_print_common_structure(const common_t *common, std::ostream &out) {
+    out << "Common Structure:\n";
+    common_print_metadata(common, out);
+    common_print_distance_matrix(common->distance_lat_ns, "Distance Latency (ns)", out);
+    common_print_distance_matrix(common->distance_bw_gbps, "Distance Bandwidth (GB/s)", out);
+    common_print_name_to_numa_ids(common->comm_name_to_numa_ids_r, "Read NUMA Mappings", out);
+    common_print_name_to_numa_ids(common->comm_name_to_numa_ids_w, "Write NUMA Mappings", out);
+    common_print_name_to_thread_locality(common->exec_name_to_thread_locality, out);
+    common_print_name_to_address(common->comm_name_to_address, out);
+    common_print_name_to_time_range_payload(common->comm_name_to_r_ts_range_payload, "Read Time Timestamps", out);
+    common_print_name_to_time_range_payload(common->comm_name_to_w_ts_range_payload, "Write Time Timestamps", out);
+    common_print_name_to_time_range_payload(common->exec_name_to_c_ts_range_payload, "Compute Time Timestamps", out);
+    common_print_name_to_time_range_payload(common->comm_name_to_r_time_offset_payload, "Read Time Offsets", out);
+    common_print_name_to_time_range_payload(common->comm_name_to_w_time_offset_payload, "Write Time Offsets", out);
+    common_print_name_to_time_range_payload(common->exec_name_to_c_time_offset_payload, "Compute Time Offsets", out);
+    common_print_name_to_time_range_payload(common->exec_name_to_rcw_time_offset_payload, "Execution R-C-W Time Offsets", out);
+}
