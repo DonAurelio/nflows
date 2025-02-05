@@ -84,7 +84,6 @@ void common_wait_active_threads(common_t *common)
     pthread_mutex_unlock(&(common->mutex));
 }
 
-
 name_to_time_range_payload_t common_filter_name_ts_range_payload(
     const common_t *common,
     const std::string &name,
@@ -190,10 +189,11 @@ std::pair<std::string, std::string> common_split(const std::string &input, std::
     return {first, second};
 }
 
-void common_print_distance_matrix(const distance_matrix_t &matrix, const std::string &key, std::ostream &out) {
-    out << key << ":\n  dimension: " << matrix.size() << "\n  matrix:\n";
+void common_print_distance_matrix(const distance_matrix_t &matrix, const std::string &key, std::ostream &out)
+{
+    out << key << ":\n";
     for (const auto &row : matrix) {
-        out << "    - [";
+        out << "  - [";
         for (size_t i = 0; i < row.size(); ++i) {
             out << row[i] << (i != row.size() - 1 ? ", " : "");
         }
@@ -202,7 +202,8 @@ void common_print_distance_matrix(const distance_matrix_t &matrix, const std::st
     out << std::endl;
 }
 
-void common_print_name_to_numa_ids(const name_to_numa_ids_t &mapping, std::string header, std::ostream &out) {
+void common_print_name_to_numa_ids(const name_to_numa_ids_t &mapping, std::string header, std::ostream &out)
+{
     out << header << ":\n";
     for (const auto &[key, values] : mapping) {
         out << "  " << key << ": NUMA IDs = ";
@@ -214,7 +215,8 @@ void common_print_name_to_numa_ids(const name_to_numa_ids_t &mapping, std::strin
     out << std::endl;
 }
 
-void common_print_name_to_thread_locality(const name_to_thread_locality_t &mapping, std::ostream &out) {
+void common_print_name_to_thread_locality(const name_to_thread_locality_t &mapping, std::ostream &out)
+{
     out << "name_to_thread_locality:\n";
     for (const auto &[key, loc] : mapping) {
         out << "  " << key << ": NUMA ID = " << loc.numa_id << ", Core ID = " << loc.core_id
@@ -224,16 +226,18 @@ void common_print_name_to_thread_locality(const name_to_thread_locality_t &mappi
     out << std::endl;
 }
 
-void common_print_name_to_time_range_payload(const name_to_time_range_payload_t &mapping, const std::string &header, std::ostream &out) {
+void common_print_name_to_time_range_payload(const name_to_time_range_payload_t &mapping, const std::string &header, std::ostream &out)
+{
     out << header << ":\n";
     for (const auto &[key, value] : mapping) {
         auto [start, end, bytes] = value;
-        out << "  " << key << ": Start = " << start << ", End = " << end << ", Bytes/FLOPS = " << bytes << "\n";
+        out << "  " << key << ": Start = " << start << ", End = " << end << ", Payload = " << bytes << "\n";
     }
     out << std::endl;
 }
 
-void common_print_name_to_address(const name_to_address_t &mapping, std::ostream &out) {
+void common_print_name_to_address(const name_to_address_t &mapping, std::ostream &out)
+{
     out << "name_to_address:\n";
     for (const auto &[key, address] : mapping) {
         out << "  " << key << ": Address = " << static_cast<void*>(address) << "\n";
@@ -241,27 +245,28 @@ void common_print_name_to_address(const name_to_address_t &mapping, std::ostream
     out << std::endl;
 }
 
-void common_print_metadata(const common_t *common, std::ostream &out) {
+void common_print_metadata(const common_t *common, std::ostream &out)
+{
     out << "common_metadata:\n";
     out << "  active_threads: " << common->active_threads << "\n";
     out << "  flops_per_cycle: " << common->flops_per_cycle << "\n";
     out << "  clock_frequency_hz: " << common->clock_frequency_hz << "\n\n";
 }
 
-void common_print_common_structure(const common_t *common, std::ostream &out) {
-    out << "Common Structure:\n";
+void common_print_common_structure(const common_t *common, std::ostream &out)
+{
     common_print_metadata(common, out);
-    common_print_distance_matrix(common->distance_lat_ns, "Distance Latency (ns)", out);
-    common_print_distance_matrix(common->distance_bw_gbps, "Distance Bandwidth (GB/s)", out);
-    common_print_name_to_numa_ids(common->comm_name_to_numa_ids_r, "Read NUMA Mappings", out);
-    common_print_name_to_numa_ids(common->comm_name_to_numa_ids_w, "Write NUMA Mappings", out);
+    common_print_distance_matrix(common->distance_lat_ns, "distance_latency_ns", out);
+    common_print_distance_matrix(common->distance_bw_gbps, "distance_bandwidth_gbs", out);
+    common_print_name_to_numa_ids(common->comm_name_to_numa_ids_r, "numa_mappings_read", out);
+    common_print_name_to_numa_ids(common->comm_name_to_numa_ids_w, "numa_mappings_write", out);
     common_print_name_to_thread_locality(common->exec_name_to_thread_locality, out);
     common_print_name_to_address(common->comm_name_to_address, out);
-    common_print_name_to_time_range_payload(common->comm_name_to_r_ts_range_payload, "Read Time Timestamps", out);
-    common_print_name_to_time_range_payload(common->comm_name_to_w_ts_range_payload, "Write Time Timestamps", out);
-    common_print_name_to_time_range_payload(common->exec_name_to_c_ts_range_payload, "Compute Time Timestamps", out);
-    common_print_name_to_time_range_payload(common->comm_name_to_r_time_offset_payload, "Read Time Offsets", out);
-    common_print_name_to_time_range_payload(common->comm_name_to_w_time_offset_payload, "Write Time Offsets", out);
-    common_print_name_to_time_range_payload(common->exec_name_to_c_time_offset_payload, "Compute Time Offsets", out);
-    common_print_name_to_time_range_payload(common->exec_name_to_rcw_time_offset_payload, "Execution R-C-W Time Offsets", out);
+    common_print_name_to_time_range_payload(common->comm_name_to_r_ts_range_payload, "comm_name_read_timestamps", out);
+    common_print_name_to_time_range_payload(common->comm_name_to_w_ts_range_payload, "comm_name_write_timestamps", out);
+    common_print_name_to_time_range_payload(common->exec_name_to_c_ts_range_payload, "exec_name_compute_timestamps", out);
+    common_print_name_to_time_range_payload(common->comm_name_to_r_time_offset_payload, "comm_name_read_offsets", out);
+    common_print_name_to_time_range_payload(common->comm_name_to_w_time_offset_payload, "comm_name_write_offsets", out);
+    common_print_name_to_time_range_payload(common->exec_name_to_c_time_offset_payload, "exec_name_compute_offsets", out);
+    common_print_name_to_time_range_payload(common->exec_name_to_rcw_time_offset_payload, "exec_name_total_offsets", out);
 }

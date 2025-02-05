@@ -140,6 +140,9 @@ void *thread_function(void *arg)
         std::vector<int> numa_locality_after_read = get_hwloc_numa_ids_by_address(
             data->common, read_buffer, read_payload_bytes);
 
+        // Save data locality.
+        data->common->comm_name_to_numa_ids_r[comm_name] = numa_locality_after_read;
+
         // Save read timestamps.
         data->common->comm_name_to_r_ts_range_payload[comm_name] = time_range_payload_t(
             read_start_timestemp_us, read_end_timestemp_us, read_payload_bytes);
@@ -160,6 +163,8 @@ void *thread_function(void *arg)
 
         // Clean up.
         free(read_buffer);
+
+        read_buffer = NULL;
     }
 
     /* EMULATE COMPUTATION */
@@ -265,6 +270,9 @@ void *thread_function(void *arg)
 
         std::vector<int> numa_locality_after_write = get_hwloc_numa_ids_by_address(data->common, write_buffer, write_payload_bytes);
 
+        // Save data locality.
+        data->common->comm_name_to_numa_ids_w[succ->get_cname()] = numa_locality_after_write;
+
         XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => successor: %s, write (bytes): %zu, numa_locality_after_write: %s.", 
             getpid(), gettid(), data->exec->get_cname(),
             get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()),
@@ -274,6 +282,9 @@ void *thread_function(void *arg)
 
     XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => message: finished.", 
         getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()));
+
+    // Save thread locality.
+    data->common->exec_name_to_thread_locality[data->exec->get_cname()] = get_hwloc_thread_locality(data->common);
 
     /* TIME OFFSETS */
 
