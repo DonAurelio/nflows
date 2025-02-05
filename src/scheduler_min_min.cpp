@@ -106,7 +106,7 @@ std::tuple<int, unsigned long> MIN_MIN_Scheduler::get_best_core_id(const simgrid
         for (const auto &[comm_name, time_range_payload] : name_to_ts_range_payload)
         {
             auto [parent_exec_name, self_exec_name] = common_split(comm_name,"->");
-            uint64_t parent_exec_actual_finish_time = std::get<1>(this->common->exec_name_to_time_offset_payload.at(parent_exec_name));
+            uint64_t parent_exec_actual_finish_time = std::get<1>(this->common->exec_name_to_rcw_time_offset_payload.at(parent_exec_name));
             earliest_start_time_us = std::max(earliest_start_time_us, parent_exec_actual_finish_time);
         }
 

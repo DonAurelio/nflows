@@ -81,8 +81,10 @@ struct common_s
     name_to_time_range_payload_t exec_name_to_c_ts_range_payload;
 
     // Timing (relative durations/offset) information collections.
-    name_to_time_range_payload_t exec_name_to_time_offset_payload;
-    name_to_time_range_payload_t comm_name_to_time_offset_payload;
+    name_to_time_range_payload_t comm_name_to_r_time_offset_payload;
+    name_to_time_range_payload_t comm_name_to_w_time_offset_payload;
+    name_to_time_range_payload_t exec_name_to_c_time_offset_payload;
+    name_to_time_range_payload_t exec_name_to_rcw_time_offset_payload;
 };
 typedef struct common_s common_t;
 

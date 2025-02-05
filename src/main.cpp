@@ -44,7 +44,7 @@ int main (int argc, char* argv[])
         false, false, false, false, false, true,
     };
 
-    simgrid_execs_t dag = common_read_dag_from_dot("/home/cc/runtime_workflow_scheduler/data/dev/1.process.dot");
+    simgrid_execs_t dag = common_read_dag_from_dot("/home/cc/runtime_workflow_scheduler/data/test/0.distribution.dot");
     MIN_MIN_Scheduler scheduler(common, dag);
     Mapper_Bare_Metal mapper_bare_metal(common, scheduler);
     mapper_bare_metal.start();

@@ -94,6 +94,18 @@ void *thread_function(void *arg)
     name_to_time_range_payload_t name_to_ts_range_payload = common_filter_name_ts_range_payload(
         data->common, data->exec->get_name(), COMM_WRITE, DST);
 
+    /* FOR THE COMPUTATON OF TIME OFFSETS */
+
+    uint64_t actual_start_time_us = 0;
+
+    for (const auto &[comm_name, time_range_payload] : name_to_ts_range_payload)
+    {
+        auto [parent_exec_name, self_exec_name] = common_split(comm_name, "->");
+        uint64_t parent_exec_actual_finish_time_us = std::get<1>(data->common->exec_name_to_rcw_time_offset_payload.at(parent_exec_name));
+        actual_start_time_us = std::max(actual_start_time_us, parent_exec_actual_finish_time_us);
+    }
+
+
     /* EMULATE MEMORY READING */
 
     uint64_t actual_read_time_us = 0;
@@ -116,6 +128,11 @@ void *thread_function(void *arg)
         }
 
         uint64_t read_end_timestemp_us = common_get_time_us();
+
+        // Read time offset per dependecy.
+        data->common->comm_name_to_r_time_offset_payload[comm_name] = time_range_payload_t(
+            actual_start_time_us, read_end_timestemp_us - read_start_timestemp_us, read_payload_bytes
+        );
 
         // Used to check data (pages) migration. Migration is trigered once the data is being read.
         std::vector<int> numa_locality_after_read = get_hwloc_numa_ids_by_address(
@@ -160,6 +177,12 @@ void *thread_function(void *arg)
 
     // Calculate the compute time in microseconds.
     uint64_t compute_time_us = exec_end_timestamp_us - exec_start_timestamp_us;
+    uint64_t actual_compute_time_us = actual_read_time_us + (exec_end_timestamp_us - exec_start_timestamp_us);
+
+    // Compute time offset
+    data->common->exec_name_to_c_time_offset_payload[data->exec->get_cname()] = time_range_payload_t(
+        actual_read_time_us, exec_end_timestamp_us - exec_start_timestamp_us, flops
+    );
 
     // Save compute timestamps.
     data->common->exec_name_to_c_ts_range_payload[data->exec->get_cname()] = time_range_payload_t{
@@ -227,6 +250,11 @@ void *thread_function(void *arg)
         // The total read time is determined by the longest individual read time.
         actual_write_time_us = std::max(actual_write_time_us, write_end_timestamp_us - write_start_timestamp_us);
 
+        // Compute time offset
+        data->common->comm_name_to_w_time_offset_payload[succ->get_cname()] = time_range_payload_t(
+            actual_compute_time_us, write_end_timestamp_us - write_start_timestamp_us, flops
+        );
+
         // Save write timestamps.
         data->common->comm_name_to_w_ts_range_payload[succ->get_cname()] = time_range_payload_t{
             write_start_timestamp_us, write_end_timestamp_us, write_payload_bytes};
@@ -245,17 +273,9 @@ void *thread_function(void *arg)
 
     /* TIME OFFSETS */
 
-    uint64_t actual_start_time_us = 0;
-
-    for (const auto &[comm_name, time_range_payload] : name_to_ts_range_payload)
-    {
-        auto [parent_exec_name, self_exec_name] = common_split(comm_name, "->");
-        uint64_t parent_exec_actual_finish_time_us = std::get<1>(data->common->exec_name_to_time_offset_payload.at(parent_exec_name));
-        actual_start_time_us = std::max(actual_start_time_us, parent_exec_actual_finish_time_us);
-    }
 
     uint64_t actual_finish_time_us = actual_start_time_us + actual_read_time_us + compute_time_us + actual_write_time_us;
-    data->common->exec_name_to_time_offset_payload[data->exec->get_cname()] = time_range_payload_t(
+    data->common->exec_name_to_rcw_time_offset_payload[data->exec->get_cname()] = time_range_payload_t(
         actual_start_time_us, actual_finish_time_us, flops
     );
 
