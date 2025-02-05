@@ -25,7 +25,7 @@ int main (int argc, char* argv[])
     // Applications can pack 32 double precision and 64 single precision floating point operations per clock
     // cycle within the 512-bit vectors.
     common->flops_per_cycle = 32;
-    common->clock_frequency_hz = 0; // Dynamic (0) clock frequency.
+    common->clock_frequency_hz = 10; // Dynamic (0) clock frequency.
 
     // Latency (ns), Bandwidth (GB/s).
     common->distance_lat_ns = common_read_distance_matrix_from_file(
@@ -44,7 +44,7 @@ int main (int argc, char* argv[])
         false, false, false, false, false, true,
     };
 
-    simgrid_execs_t dag = common_read_dag_from_dot("/home/cc/runtime_workflow_scheduler/data/dev/2.pipeline.dot");
+    simgrid_execs_t dag = common_read_dag_from_dot("/home/cc/runtime_workflow_scheduler/data/test/0.distribution.dot");
     MIN_MIN_Scheduler scheduler(common, dag);
     Mapper_Bare_Metal mapper_bare_metal(common, scheduler);
     mapper_bare_metal.start();

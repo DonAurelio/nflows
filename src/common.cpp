@@ -202,15 +202,16 @@ void common_print_distance_matrix(const distance_matrix_t &matrix, const std::st
     out << std::endl;
 }
 
-void common_print_name_to_numa_ids(const name_to_numa_ids_t &mapping, std::string header, std::ostream &out)
+void common_print_name_to_numa_ids(const name_to_numa_ids_t &mapping, const std::string header, std::ostream &out)
 {
     out << header << ":\n";
     for (const auto &[key, values] : mapping) {
-        out << "  " << key << ": NUMA IDs = ";
-        for (const int numa_id : values) {
-            out << numa_id << " ";
+        out << "  " << key << ": {numa_ids: [";
+        for (auto it = values.begin(); it != values.end(); ++it) {
+            if (it != values.begin()) out << ", ";
+            out << *it;
         }
-        out << "\n";
+        out << "]}\n";
     }
     out << std::endl;
 }
@@ -219,9 +220,11 @@ void common_print_name_to_thread_locality(const name_to_thread_locality_t &mappi
 {
     out << "name_to_thread_locality:\n";
     for (const auto &[key, loc] : mapping) {
-        out << "  " << key << ": NUMA ID = " << loc.numa_id << ", Core ID = " << loc.core_id
-            << ", Voluntary CS = " << loc.voluntary_context_switches << ", Involuntary CS = " << loc.involuntary_context_switches
-            << ", Core Migrations = " << loc.core_migrations << "\n";
+        out << "  " << key << ": {numa_id: " << loc.numa_id
+            << ", core_id: " << loc.core_id
+            << ", voluntary_cs: " << loc.voluntary_context_switches
+            << ", involuntary_cs: " << loc.involuntary_context_switches
+            << ", core_migrations: " << loc.core_migrations << "}\n";
     }
     out << std::endl;
 }
@@ -231,7 +234,9 @@ void common_print_name_to_time_range_payload(const name_to_time_range_payload_t 
     out << header << ":\n";
     for (const auto &[key, value] : mapping) {
         auto [start, end, bytes] = value;
-        out << "  " << key << ": Start = " << start << ", End = " << end << ", Payload = " << bytes << "\n";
+        out << "  " << key << ": {start: " << start
+            << ", end: " << end
+            << ", payload: " << bytes << "}\n";
     }
     out << std::endl;
 }
@@ -240,7 +245,7 @@ void common_print_name_to_address(const name_to_address_t &mapping, std::ostream
 {
     out << "name_to_address:\n";
     for (const auto &[key, address] : mapping) {
-        out << "  " << key << ": Address = " << static_cast<void*>(address) << "\n";
+        out << "  " << key << ": {address: " << static_cast<void*>(address) << "}\n";
     }
     out << std::endl;
 }
