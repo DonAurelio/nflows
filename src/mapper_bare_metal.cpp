@@ -133,7 +133,7 @@ void *thread_function(void *arg)
 
         // Read time offset per dependecy.
         data->common->comm_name_to_r_time_offset_payload[comm_name] = time_range_payload_t(
-            actual_start_time_us, read_end_timestemp_us - read_start_timestemp_us, read_payload_bytes
+            actual_start_time_us, actual_start_time_us + (read_end_timestemp_us - read_start_timestemp_us), read_payload_bytes
         );
 
         // Used to check data (pages) migration. Migration is trigered once the data is being read.
@@ -146,7 +146,7 @@ void *thread_function(void *arg)
         // Save read timestamps.
         data->common->comm_name_to_r_ts_range_payload[comm_name] = time_range_payload_t(
             read_start_timestemp_us, read_end_timestemp_us, read_payload_bytes);
-        
+
         actual_read_time_us = std::max(actual_read_time_us, read_end_timestemp_us - read_start_timestemp_us);
 
         XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => dependency: %s, read (bytes): %zu, checksum: %ld, numa_locality_before_read: %s, numa_locality_after_read: %s, data (pages) migration: %s", 
@@ -189,7 +189,7 @@ void *thread_function(void *arg)
 
     // Compute time offset
     data->common->exec_name_to_c_time_offset_payload[data->exec->get_cname()] = time_range_payload_t(
-        actual_read_time_us, exec_end_timestamp_us - exec_start_timestamp_us, flops
+        actual_start_time_us + actual_read_time_us, actual_start_time_us + actual_read_time_us + (exec_end_timestamp_us - exec_start_timestamp_us), flops
     );
 
     // Save compute timestamps.
@@ -258,7 +258,9 @@ void *thread_function(void *arg)
 
         // Compute time offset
         data->common->comm_name_to_w_time_offset_payload[succ->get_cname()] = time_range_payload_t(
-            actual_compute_time_us, write_end_timestamp_us - write_start_timestamp_us, flops
+            actual_start_time_us + actual_read_time_us + (exec_end_timestamp_us - exec_start_timestamp_us),
+            actual_start_time_us + actual_read_time_us + (exec_end_timestamp_us - exec_start_timestamp_us) + (write_end_timestamp_us - write_start_timestamp_us),
+            write_payload_bytes
         );
 
         // Save write timestamps.

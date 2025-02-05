@@ -258,8 +258,8 @@ void common_print_common_structure(const common_t *common, std::ostream &out)
     common_print_metadata(common, out);
     common_print_distance_matrix(common->distance_lat_ns, "distance_latency_ns", out);
     common_print_distance_matrix(common->distance_bw_gbps, "distance_bandwidth_gbs", out);
-    common_print_name_to_numa_ids(common->comm_name_to_numa_ids_r, "numa_mappings_read", out);
     common_print_name_to_numa_ids(common->comm_name_to_numa_ids_w, "numa_mappings_write", out);
+    common_print_name_to_numa_ids(common->comm_name_to_numa_ids_r, "numa_mappings_read", out);
     common_print_name_to_thread_locality(common->exec_name_to_thread_locality, out);
     common_print_name_to_address(common->comm_name_to_address, out);
     common_print_name_to_time_range_payload(common->comm_name_to_r_ts_range_payload, "comm_name_read_timestamps", out);
