@@ -12,6 +12,7 @@ class HEFT_Scheduler {
         simgrid_execs_t& dag;
 
         void initialize_compute_and_communication_cost();
+        void check_compute_and_communication_cost();
         std::tuple<int, unsigned long> get_best_core_id(const simgrid_exec_t *exec);
     public:
         HEFT_Scheduler(const common_t *common, simgrid_execs_t &dag);
