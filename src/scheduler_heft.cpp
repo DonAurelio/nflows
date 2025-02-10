@@ -5,7 +5,7 @@ XBT_LOG_NEW_DEFAULT_CATEGORY(heft_scheduler, "Messages specific to this module."
 
 HEFT_Scheduler::HEFT_Scheduler(const common_t *common, simgrid_execs_t &dag) : common(common), dag(dag)
 {
-    this->initialize_compute_and_communication_cost();
+    this->initialize_compute_and_communication_costs();
 }
 
 HEFT_Scheduler::~HEFT_Scheduler()
@@ -13,72 +13,64 @@ HEFT_Scheduler::~HEFT_Scheduler()
 
 }
 
-void HEFT_Scheduler::initialize_compute_and_communication_cost()
+void HEFT_Scheduler::initialize_compute_and_communication_costs()
 {
-    size_t sum_comp_cost = 0;
-    size_t sum_comm_cost = 0;
-    size_t comp_count = 0;
-    size_t comm_count = 0;
-
-    for (simgrid_exec_t *exec : this->dag) 
-    {
-        if (exec->get_cname() == "end") 
-            continue; // Skip this exec
-
-        sum_comp_cost += exec->get_remaining();
-        comp_count += 0;
-
-        for (auto &succ : exec->get_successors()) 
-        {
-            simgrid_comm_t *succ_comm = dynamic_cast<simgrid_comm_t *>(succ.get());
-            if (succ_comm && succ_comm->get_cname() != "end") 
-            {
-                sum_comm_cost += (size_t) succ_comm->get_remaining();
-                comm_count += 1;
-            }
-        }
-    }
-
-    double average_comp_cost = sum_comp_cost / this->dag.size();
-    double average_comm_cost = sum_comm_cost / comm_count;
-
-    for (simgrid_exec_t *exec: this->dag)
-    {
-        exec->set_flops_amount(average_comp_cost);
-
-        for (auto &succ : exec->get_successors())
-        {
-            simgrid_comm_t *succ_comm = dynamic_cast<simgrid_comm_t *>(succ.get());
-            succ_comm->set_payload_size(average_comm_cost);
-        }
-    }
-}
-
-void HEFT_Scheduler::check_compute_and_communication_cost()
-{
-    double ref_exec_avg = this->dag.front()->get_remaining();
-    double ref_comm_avg = -1.0; // Placeholder until first comm is found
-
+    std::vector<int> core_avail = common_get_avail_core_ids(this->common);
+ 
+    // Initialize average computation costs.
     for (simgrid_exec_t *exec : this->dag)
     {
-        if (exec->get_remaining() != ref_exec_avg)
+        if (exec->get_name() == "end") continue; // Skip this exec
+
+        size_t flops = (size_t) exec->get_remaining(); // # of Float operations to be performed.
+        double avg_estimated_compute_time_seconds = 0;
+        size_t exec_count = 0;
+        for (int core_id : core_avail)
         {
-            std::cerr << "Error: Exec remaining mismatch.\n";
-            std::exit(EXIT_FAILURE);
+            // # of flops the system can perform in one second.
+            unsigned long flops_per_second = get_hwloc_core_performance_by_id(this->common, core_id);
+            avg_estimated_compute_time_seconds += (flops / flops_per_second);
+            exec_count += 1;
         }
 
-        for (auto &succ : exec->get_successors())
+        this->name_to_cost_seconds[exec->get_cname()] = avg_estimated_compute_time_seconds / exec_count;
+    }
+
+    // Average lat and bw.
+    double avg_latency_ns = 0.0;
+    double avg_bandwidth_gbps = 0.0;
+
+    for (int src_core_id : core_avail)
+    {
+        for (int dst_core_id : core_avail)
         {
-            simgrid_comm_t *succ_comm = dynamic_cast<simgrid_comm_t *>(succ.get());
-            if (succ_comm)
+            int src_numa_id = get_hwloc_numa_id_by_core_id(this->common, src_core_id);
+            int dst_numa_id = get_hwloc_numa_id_by_core_id(this->common, dst_core_id);
+
+            avg_latency_ns += this->common->distance_lat_ns[src_numa_id][dst_numa_id];
+            avg_bandwidth_gbps += this->common->distance_bw_gbps[src_numa_id][dst_numa_id];
+        }
+    }
+
+    avg_latency_ns = avg_latency_ns / core_avail.size();
+    avg_bandwidth_gbps = avg_bandwidth_gbps / core_avail.size();
+
+    // Initialize average communication costs.
+    for (simgrid_exec_t *exec : this->dag)
+    {
+        for (const auto &succ : exec->get_successors())
+        {
+            const simgrid_comm_t *succ_comm = dynamic_cast<simgrid_comm_t *>(succ.get());
+            const simgrid_exec_t *succ_exec = dynamic_cast<simgrid_exec_t *>(succ_comm->get_successors().front().get());
+            if (succ_exec && succ_exec->get_name() != "end")
             {
-                if (ref_comm_avg < 0) ref_comm_avg = succ_comm->get_remaining();
-                if (succ_comm->get_remaining() != ref_comm_avg)
-                {
-                    std::cerr << "Error: Comm remaining mismatch.\n";
-                    std::exit(EXIT_FAILURE);
-                }
+                size_t payload_bytes = (size_t) succ_comm->get_remaining();
+                this->name_to_cost_seconds[succ_comm->get_cname()] = (avg_latency_ns / 1000000000) + (payload_bytes / avg_bandwidth_gbps);
             }
         }
+    }
+
+    for (const auto& [key, value] : this->name_to_cost_seconds) {
+        std::cout << key << " : " << value << " seconds\n";
     }
 }

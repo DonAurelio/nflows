@@ -55,10 +55,9 @@ int main (int argc, char* argv[])
     // common_print_common_structure(common, file);
     // file.close();
 
-    // delete common;
-
     HEFT_Scheduler scheduler(common, dag);
 
+    delete common;
 
 
     return 0;
