@@ -1,14 +1,14 @@
-#include "scheduler_min_min.hpp"
-#include "scheduler_heft.hpp"
 #include "mapper_bare_metal.hpp"
+#include "scheduler_heft.hpp"
+#include "scheduler_min_min.hpp"
 
 #include <iostream>
 #include <xbt/log.h>
 
-int main (int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     // Initialize XBT logging system
-     xbt_log_init(&argc, argv);
+    xbt_log_init(&argc, argv);
 
     /* INITIALIZE COMMON DATA. */
     common_t *common = new common_t;
@@ -35,18 +35,14 @@ int main (int argc, char* argv[])
         "/home/cc/runtime_workflow_scheduler/sample/distances/bandwidth_matrix.txt");
 
     common->core_avail = {
-        true, false, false, false, false, false,
-        false, false, false, false, false, false,
-        false, false, false, false, false, false,
-        false, false, false, false, false, false,
-        false, false, false, false, false, false,
-        false, false, false, false, false, false,
-        false, false, false, false, false, false,
-        false, false, false, false, false, true,
+        true,  false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+        false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+        false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true,
     };
 
-    simgrid_execs_t dag = common_read_dag_from_dot("/home/cc/runtime_workflow_scheduler/sample/workflows/0.distribution.dot");
-    
+    simgrid_execs_t dag =
+        common_read_dag_from_dot("/home/cc/runtime_workflow_scheduler/sample/workflows/0.distribution.dot");
+
     MIN_MIN_Scheduler scheduler(common, dag);
     Mapper_Bare_Metal min_min_mapper_bare_metal(common, scheduler);
     min_min_mapper_bare_metal.start();
@@ -66,7 +62,6 @@ int main (int argc, char* argv[])
     // heft_file.close();
 
     delete common;
-
 
     return 0;
 }

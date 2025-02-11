@@ -8,19 +8,19 @@
 
 #include <xbt/log.h>
 
+class Mapper_Bare_Metal
+{
+  private:
+    common_t *common;
+    simgrid_host_t *dummy_host;
+    simgrid_netzone_t *dummy_net_zone;
+    EFT_Scheduler &scheduler;
 
-class Mapper_Bare_Metal {
-    private:
-        common_t *common;
-        simgrid_host_t *dummy_host;
-        simgrid_netzone_t *dummy_net_zone;
-        EFT_Scheduler& scheduler;
+  public:
+    Mapper_Bare_Metal(common_t *common, EFT_Scheduler &scheduler);
+    ~Mapper_Bare_Metal();
 
-    public:
-        Mapper_Bare_Metal(common_t *common, EFT_Scheduler& scheduler);
-        ~Mapper_Bare_Metal();
-
-        void start();
+    void start();
 };
 
 void *thread_function(void *arg);

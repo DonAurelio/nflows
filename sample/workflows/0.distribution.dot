@@ -13,6 +13,6 @@ digraph DataDistribution {
     Task1 -> Task3  [size=13107200000];
 
     // Not considered for execution but required.
-    Task3 -> end    [size=10];
-    Task2 -> end    [size=10];
+    Task3 -> end    [size=13107200000];
+    Task2 -> end    [size=13107200000];
 }

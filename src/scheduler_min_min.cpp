@@ -1,19 +1,16 @@
 #include "scheduler_min_min.hpp"
 
-
 XBT_LOG_NEW_DEFAULT_CATEGORY(min_min_scheduler, "Messages specific to this module.");
 
-MIN_MIN_Scheduler::MIN_MIN_Scheduler(const common_t *common, simgrid_execs_t &dag) : EFT_Scheduler(common,dag)
+MIN_MIN_Scheduler::MIN_MIN_Scheduler(const common_t *common, simgrid_execs_t &dag) : EFT_Scheduler(common, dag)
 {
-
 }
 
 MIN_MIN_Scheduler::~MIN_MIN_Scheduler()
 {
-
 }
 
-std::tuple<simgrid_exec_t*, int, unsigned long> MIN_MIN_Scheduler::next()
+std::tuple<simgrid_exec_t *, int, unsigned long> MIN_MIN_Scheduler::next()
 {
     simgrid_exec_t *selected_exec = nullptr;
     int selected_core_id = -1;
@@ -34,8 +31,8 @@ std::tuple<simgrid_exec_t*, int, unsigned long> MIN_MIN_Scheduler::next()
         }
     }
 
-    XBT_DEBUG("selected_task: %s, selected_core_id: %d, estimated_finish_time: %ld", 
-        selected_exec->get_cname(), selected_core_id, estimated_finish_time);
+    XBT_DEBUG("selected_task: %s, selected_core_id: %d, estimated_finish_time: %ld", selected_exec->get_cname(),
+              selected_core_id, estimated_finish_time);
 
     return std::make_tuple(selected_exec, selected_core_id, estimated_finish_time);
 }

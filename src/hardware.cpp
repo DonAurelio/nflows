@@ -1,6 +1,5 @@
 #include "hardware.hpp"
 
-
 int get_hwloc_core_id_by_pu_id(const common_t *common, int os_pu_id)
 {
     hwloc_topology_t topology = common->topology;
@@ -48,7 +47,8 @@ int get_hwloc_numa_id_by_core_id(const common_t *common, int hwloc_core_id)
 
     // Use hwloc_get_next_obj_covering_cpuset_by_type to find the NUMA node
     hwloc_obj_t numa_node = NULL;
-    while ((numa_node = hwloc_get_next_obj_covering_cpuset_by_type(topology, cpuset, HWLOC_OBJ_NUMANODE, numa_node)) != NULL)
+    while ((numa_node = hwloc_get_next_obj_covering_cpuset_by_type(topology, cpuset, HWLOC_OBJ_NUMANODE, numa_node)) !=
+           NULL)
     {
         if (hwloc_bitmap_isincluded(cpuset, numa_node->cpuset))
             hwloc_numa_id = numa_node->logical_index;
@@ -126,7 +126,8 @@ std::vector<int> get_hwloc_numa_ids_by_address(const common_t *common, char *add
     if (ret == 0)
     {
         int node;
-        hwloc_bitmap_foreach_begin(node, nodeset) {
+        hwloc_bitmap_foreach_begin(node, nodeset)
+        {
             numa_nodes.push_back(node); // Add NUMA node ID to the vector
         }
         hwloc_bitmap_foreach_end();
@@ -154,30 +155,32 @@ std::string get_hwloc_thread_mem_policy(const common_t *common)
 
     // Get the NUMA memory binding for the current thread
     int ret = hwloc_get_membind(topology, nodeset, &policy, HWLOC_MEMBIND_THREAD);
-    if (ret == 0) {
+    if (ret == 0)
+    {
         // Add memory policy to the output string
-        switch (policy) {
-            case HWLOC_MEMBIND_DEFAULT:
-                output << "DEFAULT ";
-                break;
-            case HWLOC_MEMBIND_FIRSTTOUCH:
-                output << "FIRSTTOUCH ";
-                break;
-            case HWLOC_MEMBIND_BIND:
-                output << "BIND  ";
-                break;
-            case HWLOC_MEMBIND_INTERLEAVE:
-                output << "INTERLEAVE ";
-                break;
-            case HWLOC_MEMBIND_NEXTTOUCH:
-                output << "NEXTTOUCH ";
-                break;
-            case HWLOC_MEMBIND_MIXED:
-                output << "MIXED ";
-                break;
-            default:
-                output << "UNKNOWN ";
-                break;
+        switch (policy)
+        {
+        case HWLOC_MEMBIND_DEFAULT:
+            output << "DEFAULT ";
+            break;
+        case HWLOC_MEMBIND_FIRSTTOUCH:
+            output << "FIRSTTOUCH ";
+            break;
+        case HWLOC_MEMBIND_BIND:
+            output << "BIND  ";
+            break;
+        case HWLOC_MEMBIND_INTERLEAVE:
+            output << "INTERLEAVE ";
+            break;
+        case HWLOC_MEMBIND_NEXTTOUCH:
+            output << "NEXTTOUCH ";
+            break;
+        case HWLOC_MEMBIND_MIXED:
+            output << "MIXED ";
+            break;
+        default:
+            output << "UNKNOWN ";
+            break;
         }
         output << "memory policy - ";
 
@@ -185,22 +188,24 @@ std::string get_hwloc_thread_mem_policy(const common_t *common)
         output << "thread is bound to NUMA nodes ";
         int found = 0; // Track if any NUMA node is found
         int node;
-        hwloc_bitmap_foreach_begin(node, nodeset) {
-            hwloc_obj_t obj = hwloc_get_obj_inside_cpuset_by_type(
-                topology, nodeset, HWLOC_OBJ_NUMANODE, node
-            );
-            if (obj) {
+        hwloc_bitmap_foreach_begin(node, nodeset)
+        {
+            hwloc_obj_t obj = hwloc_get_obj_inside_cpuset_by_type(topology, nodeset, HWLOC_OBJ_NUMANODE, node);
+            if (obj)
+            {
                 output << obj->logical_index << " "; // Add NUMA node ID
                 found = 1;
             }
         }
         hwloc_bitmap_foreach_end();
 
-        if (!found) {
+        if (!found)
+        {
             output << "None (not bound to any specific NUMA node)";
         }
-
-    } else {
+    }
+    else
+    {
         output << "Error: retrieving memory policy.\n";
     }
 
@@ -208,7 +213,8 @@ std::string get_hwloc_thread_mem_policy(const common_t *common)
     hwloc_bitmap_free(nodeset);
 
     std::string result = output.str();
-    if (!result.empty()) result.pop_back(); // Remove the last space
+    if (!result.empty())
+        result.pop_back(); // Remove the last space
 
     return result; // Return the constructed string
 }
@@ -357,4 +363,3 @@ void bind_exec_to_thread(thread_data_t *data)
     // Clean up
     // thread_data is freed in thread_function.
 }
-

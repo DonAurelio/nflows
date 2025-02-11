@@ -1,8 +1,7 @@
 #include "common.hpp"
 
-#include <ranges>
 #include <iostream>
-
+#include <ranges>
 
 simgrid_execs_t common_read_dag_from_dot(const std::string &file_name)
 {
@@ -42,7 +41,8 @@ std::vector<int> common_get_avail_core_ids(const common_t *common)
     std::vector<int> avail_core_ids;
     for (auto value : common->core_avail)
     {
-        if (value) avail_core_ids.push_back(i);
+        if (value)
+            avail_core_ids.push_back(i);
         ++i;
     }
 
@@ -61,9 +61,9 @@ void common_set_core_id_as_unavail(common_t *common, unsigned int core_id)
 
 void common_increment_active_threads_counter(common_t *common)
 {
-    pthread_mutex_lock( &(common->mutex) );
+    pthread_mutex_lock(&(common->mutex));
     common->active_threads += 1;
-    pthread_mutex_unlock( &(common->mutex) );
+    pthread_mutex_unlock(&(common->mutex));
 }
 
 void common_decrement_active_threads_counter(common_t *common)
@@ -84,30 +84,29 @@ void common_wait_active_threads(common_t *common)
     pthread_mutex_unlock(&(common->mutex));
 }
 
-name_to_time_range_payload_t common_filter_name_ts_range_payload(
-    const common_t *common,
-    const std::string &name,
-    CommonVectorType type,
-    CommonCommNameMatch comm_part_to_match)
+name_to_time_range_payload_t common_filter_name_ts_range_payload(const common_t *common, const std::string &name,
+                                                                 CommonVectorType type,
+                                                                 CommonCommNameMatch comm_part_to_match)
 {
     name_to_time_range_payload_t matches;
     name_to_time_range_payload_t map;
 
-    switch (type) {
-        case COMM_READ:
-            map = common->comm_name_to_r_ts_range_payload;
-            break;
-        case COMM_WRITE:
-            map = common->comm_name_to_w_ts_range_payload;
-            break;
-        default:
-            map = common->exec_name_to_c_ts_range_payload;
-            break;
+    switch (type)
+    {
+    case COMM_READ:
+        map = common->comm_name_to_r_ts_range_payload;
+        break;
+    case COMM_WRITE:
+        map = common->comm_name_to_w_ts_range_payload;
+        break;
+    default:
+        map = common->exec_name_to_c_ts_range_payload;
+        break;
     }
 
     for (const auto &[key, value] : map)
     {
-        auto [left, right] = common_split(key,"->");
+        auto [left, right] = common_split(key, "->");
 
         std::string name_to_match = left.empty() ? name : (comm_part_to_match == SRC) ? left : right;
         if (name_to_match == name)
@@ -122,7 +121,8 @@ name_to_time_range_payload_t common_filter_name_ts_range_payload(
 std::vector<std::vector<double>> common_read_distance_matrix_from_file(const std::string &filename)
 {
     std::ifstream file(filename);
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         std::cerr << "Error: Could not open file " << filename << std::endl;
         exit(EXIT_FAILURE);
     }
@@ -133,13 +133,15 @@ std::vector<std::vector<double>> common_read_distance_matrix_from_file(const std
     std::vector<std::vector<double>> matrix(n, std::vector<double>(n));
 
     // Read matrix values
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
+    for (int i = 0; i < n; ++i)
+    {
+        for (int j = 0; j < n; ++j)
+        {
             file >> matrix[i][j];
         }
     }
     file.close();
-    
+
     return matrix;
 }
 
@@ -161,13 +163,15 @@ std::string common_get_timestamped_filename(const std::string &base_name)
     return base_name + ".yml";
 }
 
-std::string common_join(const std::vector<int>& vec, const std::string& delimiter)
+std::string common_join(const std::vector<int> &vec, const std::string &delimiter)
 {
     std::ostringstream oss;
 
-    for (size_t i = 0; i < vec.size(); ++i) {
+    for (size_t i = 0; i < vec.size(); ++i)
+    {
         oss << vec[i];
-        if (i != vec.size() - 1) { // Avoid adding a delimiter after the last element
+        if (i != vec.size() - 1)
+        { // Avoid adding a delimiter after the last element
             oss << delimiter;
         }
     }
@@ -192,9 +196,11 @@ std::pair<std::string, std::string> common_split(const std::string &input, std::
 void common_print_distance_matrix(const distance_matrix_t &matrix, const std::string &key, std::ostream &out)
 {
     out << key << ":\n";
-    for (const auto &row : matrix) {
+    for (const auto &row : matrix)
+    {
         out << "  - [";
-        for (size_t i = 0; i < row.size(); ++i) {
+        for (size_t i = 0; i < row.size(); ++i)
+        {
             out << row[i] << (i != row.size() - 1 ? ", " : "");
         }
         out << "]\n";
@@ -205,10 +211,13 @@ void common_print_distance_matrix(const distance_matrix_t &matrix, const std::st
 void common_print_name_to_numa_ids(const name_to_numa_ids_t &mapping, const std::string header, std::ostream &out)
 {
     out << header << ":\n";
-    for (const auto &[key, values] : mapping) {
+    for (const auto &[key, values] : mapping)
+    {
         out << "  " << key << ": {numa_ids: [";
-        for (auto it = values.begin(); it != values.end(); ++it) {
-            if (it != values.begin()) out << ", ";
+        for (auto it = values.begin(); it != values.end(); ++it)
+        {
+            if (it != values.begin())
+                out << ", ";
             out << *it;
         }
         out << "]}\n";
@@ -219,24 +228,24 @@ void common_print_name_to_numa_ids(const name_to_numa_ids_t &mapping, const std:
 void common_print_name_to_thread_locality(const name_to_thread_locality_t &mapping, std::ostream &out)
 {
     out << "name_to_thread_locality:\n";
-    for (const auto &[key, loc] : mapping) {
-        out << "  " << key << ": {numa_id: " << loc.numa_id
-            << ", core_id: " << loc.core_id
+    for (const auto &[key, loc] : mapping)
+    {
+        out << "  " << key << ": {numa_id: " << loc.numa_id << ", core_id: " << loc.core_id
             << ", voluntary_cs: " << loc.voluntary_context_switches
-            << ", involuntary_cs: " << loc.involuntary_context_switches
-            << ", core_migrations: " << loc.core_migrations << "}\n";
+            << ", involuntary_cs: " << loc.involuntary_context_switches << ", core_migrations: " << loc.core_migrations
+            << "}\n";
     }
     out << std::endl;
 }
 
-void common_print_name_to_time_range_payload(const name_to_time_range_payload_t &mapping, const std::string &header, std::ostream &out)
+void common_print_name_to_time_range_payload(const name_to_time_range_payload_t &mapping, const std::string &header,
+                                             std::ostream &out)
 {
     out << header << ":\n";
-    for (const auto &[key, value] : mapping) {
+    for (const auto &[key, value] : mapping)
+    {
         auto [start, end, bytes] = value;
-        out << "  " << key << ": {start: " << start
-            << ", end: " << end
-            << ", payload: " << bytes << "}\n";
+        out << "  " << key << ": {start: " << start << ", end: " << end << ", payload: " << bytes << "}\n";
     }
     out << std::endl;
 }
@@ -244,8 +253,9 @@ void common_print_name_to_time_range_payload(const name_to_time_range_payload_t 
 void common_print_name_to_address(const name_to_address_t &mapping, std::ostream &out)
 {
     out << "name_to_address:\n";
-    for (const auto &[key, address] : mapping) {
-        out << "  " << key << ": {address: " << static_cast<void*>(address) << "}\n";
+    for (const auto &[key, address] : mapping)
+    {
+        out << "  " << key << ": {address: " << static_cast<void *>(address) << "}\n";
     }
     out << std::endl;
 }
@@ -269,9 +279,12 @@ void common_print_common_structure(const common_t *common, std::ostream &out)
     common_print_name_to_address(common->comm_name_to_address, out);
     common_print_name_to_time_range_payload(common->comm_name_to_r_ts_range_payload, "comm_name_read_timestamps", out);
     common_print_name_to_time_range_payload(common->comm_name_to_w_ts_range_payload, "comm_name_write_timestamps", out);
-    common_print_name_to_time_range_payload(common->exec_name_to_c_ts_range_payload, "exec_name_compute_timestamps", out);
+    common_print_name_to_time_range_payload(common->exec_name_to_c_ts_range_payload, "exec_name_compute_timestamps",
+                                            out);
     common_print_name_to_time_range_payload(common->comm_name_to_r_time_offset_payload, "comm_name_read_offsets", out);
     common_print_name_to_time_range_payload(common->comm_name_to_w_time_offset_payload, "comm_name_write_offsets", out);
-    common_print_name_to_time_range_payload(common->exec_name_to_c_time_offset_payload, "exec_name_compute_offsets", out);
-    common_print_name_to_time_range_payload(common->exec_name_to_rcw_time_offset_payload, "exec_name_total_offsets", out);
+    common_print_name_to_time_range_payload(common->exec_name_to_c_time_offset_payload, "exec_name_compute_offsets",
+                                            out);
+    common_print_name_to_time_range_payload(common->exec_name_to_rcw_time_offset_payload, "exec_name_total_offsets",
+                                            out);
 }

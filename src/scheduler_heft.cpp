@@ -1,6 +1,5 @@
 #include "scheduler_heft.hpp"
 
-
 XBT_LOG_NEW_DEFAULT_CATEGORY(heft_scheduler, "Messages specific to this module.");
 
 HEFT_Scheduler::HEFT_Scheduler(const common_t *common, simgrid_execs_t &dag) : EFT_Scheduler(common, dag)
@@ -11,19 +10,19 @@ HEFT_Scheduler::HEFT_Scheduler(const common_t *common, simgrid_execs_t &dag) : E
 
 HEFT_Scheduler::~HEFT_Scheduler()
 {
-
 }
 
 void HEFT_Scheduler::initialize_compute_and_communication_costs()
 {
     std::vector<int> core_avail = common_get_avail_core_ids(this->common);
- 
+
     // Initialize average computation costs.
     for (simgrid_exec_t *exec : this->dag)
     {
-        if (exec->get_name() == "end") continue; // Skip this exec
+        if (exec->get_name() == "end")
+            continue; // Skip this exec
 
-        size_t flops = (size_t) exec->get_remaining(); // # of Float operations to be performed.
+        size_t flops = (size_t)exec->get_remaining(); // # of Float operations to be performed.
         double avg_estimated_compute_time_seconds = 0;
         size_t exec_count = 0;
         for (int core_id : core_avail)
@@ -65,14 +64,15 @@ void HEFT_Scheduler::initialize_compute_and_communication_costs()
             const simgrid_exec_t *succ_exec = dynamic_cast<simgrid_exec_t *>(succ_comm->get_successors().front().get());
             if (succ_exec && succ_exec->get_name() != "end")
             {
-                size_t payload_bytes = (size_t) succ_comm->get_remaining();
-                this->name_to_cost_seconds[succ_comm->get_cname()] = (avg_latency_ns / 1000000000) + (payload_bytes / avg_bandwidth_gbps);
+                size_t payload_bytes = (size_t)succ_comm->get_remaining();
+                this->name_to_cost_seconds[succ_comm->get_cname()] =
+                    (avg_latency_ns / 1000000000) + (payload_bytes / avg_bandwidth_gbps);
             }
         }
     }
 }
 
-double HEFT_Scheduler::compute_upward_rank(simgrid_exec_t* exec)
+double HEFT_Scheduler::compute_upward_rank(simgrid_exec_t *exec)
 {
     // If already computed, return cached value
     if (upward_ranks.find(exec->get_name()) != upward_ranks.end())
@@ -82,7 +82,8 @@ double HEFT_Scheduler::compute_upward_rank(simgrid_exec_t* exec)
 
     // Compute max successor rank
     double max_successor_rank = 0.0;
-    for (auto &succ : exec->get_successors()) {
+    for (auto &succ : exec->get_successors())
+    {
         simgrid_comm_t *succ_comm = dynamic_cast<simgrid_comm_t *>(succ.get());
 
         simgrid_exec_t *succ_exec = dynamic_cast<simgrid_exec_t *>(succ_comm->get_successors().front().get());
@@ -97,27 +98,31 @@ double HEFT_Scheduler::compute_upward_rank(simgrid_exec_t* exec)
     return rank;
 }
 
-void HEFT_Scheduler::initialize_all_upward_ranks() {
-    for (simgrid_exec_t* task : dag) {
+void HEFT_Scheduler::initialize_all_upward_ranks()
+{
+    for (simgrid_exec_t *task : dag)
+    {
         compute_upward_rank(task);
     }
 }
 
 void HEFT_Scheduler::print()
 {
-    std::cout << "name_to_cost_seconds:" << std::endl; 
-    for (const auto& [key, value] : this->name_to_cost_seconds) {
+    std::cout << "name_to_cost_seconds:" << std::endl;
+    for (const auto &[key, value] : this->name_to_cost_seconds)
+    {
         std::cout << "  " << key << " : " << value << " seconds\n";
     }
     std::cout << std::endl;
 
-    std::cout << "upward_ranks:" << std::endl; 
-    for (const auto& [key, value] : this->upward_ranks) {
+    std::cout << "upward_ranks:" << std::endl;
+    for (const auto &[key, value] : this->upward_ranks)
+    {
         std::cout << "  " << key << " : " << value << " seconds\n";
     }
 }
 
-std::tuple<simgrid_exec_t*, int, unsigned long> HEFT_Scheduler::next()
+std::tuple<simgrid_exec_t *, int, unsigned long> HEFT_Scheduler::next()
 {
     simgrid_exec_t *selected_exec = nullptr;
     int selected_core_id = -1;
@@ -125,20 +130,19 @@ std::tuple<simgrid_exec_t*, int, unsigned long> HEFT_Scheduler::next()
 
     // Sort by upward rank (descending order)
     simgrid_execs_t ready_execs = common_get_ready_tasks(this->dag);
-    std::sort(ready_execs.begin(), ready_execs.end(),
-        [this](simgrid_exec_t* a, simgrid_exec_t* b) {
-            return this->upward_ranks[a->get_name()] > this->upward_ranks[b->get_name()]; // Higher rank first
-        });
+    std::sort(ready_execs.begin(), ready_execs.end(), [this](simgrid_exec_t *a, simgrid_exec_t *b) {
+        return this->upward_ranks[a->get_name()] > this->upward_ranks[b->get_name()]; // Higher rank first
+    });
 
     selected_exec = ready_execs.empty() ? nullptr : ready_execs.front();
 
-    if (!selected_exec) 
+    if (!selected_exec)
         return std::make_tuple(selected_exec, estimated_finish_time, 0.0);
 
     std::tie(selected_core_id, estimated_finish_time) = this->get_best_core_id(selected_exec);
 
-    XBT_DEBUG("selected_task: %s, selected_core_id: %d, estimated_finish_time: %ld", 
-        selected_exec->get_cname(), selected_core_id, estimated_finish_time);
+    XBT_DEBUG("selected_task: %s, selected_core_id: %d, estimated_finish_time: %ld", selected_exec->get_cname(),
+              selected_core_id, estimated_finish_time);
 
     return std::make_tuple(selected_exec, selected_core_id, estimated_finish_time);
 }
