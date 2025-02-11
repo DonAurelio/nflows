@@ -130,7 +130,7 @@ std::tuple<simgrid_exec_t*, int, unsigned long> HEFT_Scheduler::next()
             return this->upward_ranks[a->get_name()] > this->upward_ranks[b->get_name()]; // Higher rank first
         });
 
-    selected_exec = ready_execs.front();
+    selected_exec = ready_execs.empty() ? nullptr : ready_execs.front();
 
     if (!selected_exec) 
         return std::make_tuple(selected_exec, estimated_finish_time, 0.0);
