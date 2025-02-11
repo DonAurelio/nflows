@@ -56,6 +56,7 @@ int main (int argc, char* argv[])
     // file.close();
 
     HEFT_Scheduler scheduler(common, dag);
+    scheduler.print();
 
     delete common;
 
