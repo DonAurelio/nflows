@@ -79,17 +79,17 @@ double HEFT_Scheduler::compute_upward_rank(simgrid_exec_t* exec)
 {
     // If already computed, return cached value
     if (upward_ranks.find(exec->get_name()) != upward_ranks.end())
-        return upward_ranks[exec->get_name];
+        return upward_ranks[exec->get_name()];
 
-    double exec_cost = name_to_cost_seconds[task->get_name()];
+    double exec_cost = name_to_cost_seconds[exec->get_name()];
 
     // Compute max successor rank
     double max_successor_rank = 0.0;
-    for (const auto &succ : exec->get_successors()) {
-        const simgrid_comm_t *succ_comm = dynamic_cast<simgrid_comm_t *>(succ.get());
+    for (auto &succ : exec->get_successors()) {
+        simgrid_comm_t *succ_comm = dynamic_cast<simgrid_comm_t *>(succ.get());
         double comm_cost = name_to_cost_seconds[succ_comm->get_name()];
 
-        const simgrid_exec_t *succ_exec = dynamic_cast<simgrid_exec_t *>(succ_comm->get_successors().front().get());
+        simgrid_exec_t *succ_exec = dynamic_cast<simgrid_exec_t *>(succ_comm->get_successors().front().get());
         double succ_rank = compute_upward_rank(succ_exec);
 
         max_successor_rank = std::max(max_successor_rank, comm_cost + succ_rank);
