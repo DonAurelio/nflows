@@ -265,7 +265,8 @@ void common_print_metadata(const common_t *common, std::ostream &out)
     out << "common_metadata:\n";
     out << "  active_threads: " << common->active_threads << "\n";
     out << "  flops_per_cycle: " << common->flops_per_cycle << "\n";
-    out << "  clock_frequency_hz: " << common->clock_frequency_hz << "\n\n";
+    out << "  clock_frequency_hz: " << common->flops_per_cycle << "\n";
+    out << "  checksum: " << common->checksum << "\n\n";
 }
 
 void common_print_common_structure(const common_t *common, std::ostream &out)

@@ -10,11 +10,11 @@ MIN_MIN_Scheduler::~MIN_MIN_Scheduler()
 {
 }
 
-std::tuple<simgrid_exec_t *, int, unsigned long> MIN_MIN_Scheduler::next()
+std::tuple<simgrid_exec_t *, int, double> MIN_MIN_Scheduler::next()
 {
-    simgrid_exec_t *selected_exec = nullptr;
     int selected_core_id = -1;
-    unsigned long estimated_finish_time = std::numeric_limits<unsigned long>::max();
+    double estimated_finish_time = std::numeric_limits<double>::max();
+    simgrid_exec_t *selected_exec = nullptr;
 
     for (simgrid_exec_t *exec : common_get_ready_tasks(this->dag))
     {
@@ -31,7 +31,7 @@ std::tuple<simgrid_exec_t *, int, unsigned long> MIN_MIN_Scheduler::next()
         }
     }
 
-    XBT_DEBUG("selected_task: %s, selected_core_id: %d, estimated_finish_time: %ld", selected_exec->get_cname(),
+    XBT_DEBUG("selected_task: %s, selected_core_id: %d, estimated_finish_time: %f", selected_exec->get_cname(),
               selected_core_id, estimated_finish_time);
 
     return std::make_tuple(selected_exec, selected_core_id, estimated_finish_time);

@@ -57,6 +57,9 @@ struct common_s
     pthread_mutex_t mutex;
     pthread_cond_t cond;
 
+    // Checksum
+    size_t checksum;
+
     // To be initialized by the user.
     unsigned long flops_per_cycle;
     unsigned long clock_frequency_hz;

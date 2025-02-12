@@ -1,4 +1,5 @@
 #include "mapper_bare_metal.hpp"
+#include "scheduler_base.hpp"
 #include "scheduler_heft.hpp"
 #include "scheduler_min_min.hpp"
 
@@ -21,6 +22,9 @@ int main(int argc, char *argv[])
     common->active_threads = 0;
     common->cond = PTHREAD_COND_INITIALIZER;
     common->mutex = PTHREAD_MUTEX_INITIALIZER;
+
+    /* CHECK READING OPERATION CONSISTENCY */
+    common->checksum = 0;
 
     // Reference: https://www.intel.la/content/www/xl/es/architecture-and-technology/avx-512-overview.html
     // Applications can pack 32 double precision and 64 single precision floating point operations per clock

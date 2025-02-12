@@ -122,26 +122,29 @@ void HEFT_Scheduler::print()
     }
 }
 
-std::tuple<simgrid_exec_t *, int, unsigned long> HEFT_Scheduler::next()
+std::tuple<simgrid_exec_t *, int, double> HEFT_Scheduler::next()
 {
-    simgrid_exec_t *selected_exec = nullptr;
     int selected_core_id = -1;
-    unsigned long estimated_finish_time = std::numeric_limits<unsigned long>::max();
+    double estimated_finish_time = 0.0;
+    simgrid_exec_t *selected_exec = nullptr;
 
     // Sort by upward rank (descending order)
     simgrid_execs_t ready_execs = common_get_ready_tasks(this->dag);
+
+    if (ready_execs.empty())
+    {
+        return std::make_tuple(selected_exec, selected_core_id, estimated_finish_time);
+    }
+
     std::sort(ready_execs.begin(), ready_execs.end(), [this](simgrid_exec_t *a, simgrid_exec_t *b) {
         return this->upward_ranks[a->get_name()] > this->upward_ranks[b->get_name()]; // Higher rank first
     });
 
-    selected_exec = ready_execs.empty() ? nullptr : ready_execs.front();
-
-    if (!selected_exec)
-        return std::make_tuple(selected_exec, estimated_finish_time, 0.0);
+    selected_exec = ready_execs.front();
 
     std::tie(selected_core_id, estimated_finish_time) = this->get_best_core_id(selected_exec);
 
-    XBT_DEBUG("selected_task: %s, selected_core_id: %d, estimated_finish_time: %ld", selected_exec->get_cname(),
+    XBT_DEBUG("selected_task: %s, selected_core_id: %d, estimated_finish_time: %f", selected_exec->get_cname(),
               selected_core_id, estimated_finish_time);
 
     return std::make_tuple(selected_exec, selected_core_id, estimated_finish_time);

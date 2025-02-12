@@ -1,6 +1,6 @@
 #include "scheduler_eft.hpp"
 
-EFT_Scheduler::EFT_Scheduler(const common_t *common, simgrid_execs_t &dag) : common(common), dag(dag)
+EFT_Scheduler::EFT_Scheduler(const common_t *common, simgrid_execs_t &dag) : Base_Scheduler(common, dag)
 {
 }
 
@@ -8,15 +8,7 @@ EFT_Scheduler::~EFT_Scheduler()
 {
 }
 
-bool EFT_Scheduler::has_next()
-{
-    bool has_unassigned = std::any_of(this->dag.begin(), this->dag.end(),
-                                      [](const simgrid::s4u::Exec *exec) { return !exec->is_assigned(); });
-
-    return has_unassigned;
-}
-
-std::tuple<int, unsigned long> EFT_Scheduler::get_best_core_id(const simgrid_exec_t *exec)
+std::tuple<int, double> EFT_Scheduler::get_best_core_id(const simgrid_exec_t *exec)
 {
     int best_core_id = -1;
     double earliest_finish_time_us = std::numeric_limits<double>::max();
