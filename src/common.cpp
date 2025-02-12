@@ -6,6 +6,7 @@
 simgrid_execs_t common_read_dag_from_dot(const std::string &file_name)
 {
     simgrid_execs_t execs;
+    // for (auto &activity : simgrid::s4u::create_DAG_from_DAX(file_name.c_str()))
     for (auto &activity : simgrid::s4u::create_DAG_from_dot(file_name.c_str()))
         if (auto *exec = dynamic_cast<simgrid::s4u::Exec *>(activity.get()))
             execs.push_back((simgrid_exec_t *)exec);
