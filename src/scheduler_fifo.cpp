@@ -2,6 +2,14 @@
 
 XBT_LOG_NEW_DEFAULT_CATEGORY(fifo_scheduler, "Messages specific to this module.");
 
+FIFO_Scheduler::FIFO_Scheduler(const common_t *common, simgrid_execs_t &dag) : Base_Scheduler(common, dag)
+{
+}
+
+FIFO_Scheduler::~FIFO_Scheduler()
+{
+}
+
 std::tuple<int, double> FIFO_Scheduler::get_best_core_id(const simgrid_exec_t *exec)
 {
     int best_core_id = -1;

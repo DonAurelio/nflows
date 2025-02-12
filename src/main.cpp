@@ -2,6 +2,7 @@
 #include "scheduler_base.hpp"
 #include "scheduler_heft.hpp"
 #include "scheduler_min_min.hpp"
+#include "scheduler_fifo.hpp"
 
 #include <iostream>
 #include <xbt/log.h>
@@ -47,14 +48,14 @@ int main(int argc, char *argv[])
     simgrid_execs_t dag =
         common_read_dag_from_dot("/home/cc/runtime_workflow_scheduler/sample/workflows/0.distribution.dot");
 
-    MIN_MIN_Scheduler scheduler(common, dag);
-    Mapper_Bare_Metal min_min_mapper_bare_metal(common, scheduler);
-    min_min_mapper_bare_metal.start();
+    // MIN_MIN_Scheduler scheduler(common, dag);
+    // Mapper_Bare_Metal min_min_mapper_bare_metal(common, scheduler);
+    // min_min_mapper_bare_metal.start();
 
-    std::string min_min_filename = common_get_timestamped_filename("min_min_output");
-    std::ofstream min_min_file(min_min_filename);
-    common_print_common_structure(common, min_min_file);
-    min_min_file.close();
+    // std::string min_min_filename = common_get_timestamped_filename("min_min_output");
+    // std::ofstream min_min_file(min_min_filename);
+    // common_print_common_structure(common, min_min_file);
+    // min_min_file.close();
 
     // HEFT_Scheduler scheduler(common, dag);
     // Mapper_Bare_Metal heft_mapper_bare_metal(common, scheduler);
@@ -64,6 +65,15 @@ int main(int argc, char *argv[])
     // std::ofstream heft_file(heft_filename);
     // common_print_common_structure(common, heft_file);
     // heft_file.close();
+
+    FIFO_Scheduler scheduler(common, dag);
+    Mapper_Bare_Metal fifo_mapper_bare_metal(common, scheduler);
+    fifo_mapper_bare_metal.start();
+
+    std::string fifo_filename = common_get_timestamped_filename("fifo_output");
+    std::ofstream fifo_file(fifo_filename);
+    common_print_common_structure(common, fifo_file);
+    fifo_file.close();
 
     delete common;
 
