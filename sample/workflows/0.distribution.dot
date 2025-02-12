@@ -9,10 +9,10 @@ digraph DataDistribution {
     root -> Task1   [size=10];
     
     // Considered for execution but required.
-    Task1 -> Task2  [size=13107200000];
-    Task1 -> Task3  [size=13107200000];
+    Task1 -> Task2  [size=13107200];
+    Task1 -> Task3  [size=13107200];
 
     // Not considered for execution but required.
-    Task3 -> end    [size=13107200000];
-    Task2 -> end    [size=13107200000];
+    Task3 -> end    [size=10];
+    Task2 -> end    [size=10];
 }
