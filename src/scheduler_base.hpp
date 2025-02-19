@@ -13,7 +13,7 @@ class Base_Scheduler
 
   public:
     Base_Scheduler(const common_t *common, simgrid_execs_t &dag);
-    ~Base_Scheduler();
+    virtual ~Base_Scheduler() = default; // Ensures proper destructor chaining
 
     virtual bool has_next();
     virtual std::tuple<simgrid_exec_t *, int, double> next() = 0;

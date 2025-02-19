@@ -4,10 +4,6 @@ Base_Scheduler::Base_Scheduler(const common_t *common, simgrid_execs_t &dag) : c
 {
 }
 
-Base_Scheduler::~Base_Scheduler()
-{
-}
-
 bool Base_Scheduler::has_next()
 {
     bool has_unassigned = std::any_of(this->dag.begin(), this->dag.end(),
