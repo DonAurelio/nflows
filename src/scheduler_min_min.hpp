@@ -8,7 +8,6 @@
 
 class MIN_MIN_Scheduler : public EFT_Scheduler
 {
-
   public:
     MIN_MIN_Scheduler(const common_t *common, simgrid_execs_t &dag);
     ~MIN_MIN_Scheduler();
