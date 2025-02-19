@@ -79,7 +79,7 @@ void runtime_initialize(common_t **common, simgrid_execs_t **dag, scheduler_t **
     }
 
     /* MAPPER */
-    *mapper = new mapper_t(cmn, **scheduler);
+    *mapper = new mapper_bare_metal_t(cmn, **scheduler);
 }
 
 void runtime_finalize(common_t *common, simgrid_execs_t *dag, scheduler_t *scheduler, mapper_t *mapper)
