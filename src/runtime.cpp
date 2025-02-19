@@ -1,7 +1,7 @@
 #include "runtime.hpp"
 
-
-void runtime_initialize(common_t *common, simgrid_execs_t *dag, scheduler_t *scheduler, mapper_t *mapper, const std::string &config_path)
+void runtime_initialize(common_t *common, simgrid_execs_t *dag, scheduler_t *scheduler, mapper_t *mapper,
+                        const std::string &config_path)
 {
     std::ifstream config_file(config_path);
 
