@@ -12,10 +12,10 @@ int main(int argc, char *argv[])
     scheduler_t *scheduler;
     mapper_t *mapper;
 
-    runtime_initialize(common, dag, scheduler, argv[1]);
-    runtime_start(scheduler);
+    runtime_initialize(&common, &dag, &scheduler, &mapper, argv[1]);
+    runtime_start(mapper);
     runtime_write(common);
-    runtime_finalize(common, dag, scheduler);
+    runtime_finalize(common, dag, scheduler, mapper);
 
     return 0;
 }
