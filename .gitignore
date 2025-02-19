@@ -1,12 +1,5 @@
 .vscode
 *.yml
-*.txt
-
-!data_evaluation/*.yaml
-!data_evaluation/*.txt
-
-!data_sample/*.yaml
-!data_sample/*.txt
 
 # Prerequisites
 *.d
