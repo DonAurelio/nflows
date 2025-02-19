@@ -2,20 +2,22 @@
 
 #include <hwloc.h>
 
-#include <simgrid/s4u.hpp>
 #include <iomanip>
 #include <map>
+#include <simgrid/s4u.hpp>
 #include <string>
 #include <tuple>
 #include <vector>
 
-#include <sys/time.h>
+#include <ctime> // For timestamp
 #include <fstream>
 #include <iostream>
 #include <ostream>
 #include <sstream>
-#include <ctime> // For timestamp
+#include <sys/time.h>
 
+#include <bitset>
+#include <nlohmann/json.hpp>
 
 struct thread_locality_s
 {
@@ -58,9 +60,14 @@ struct common_s
     pthread_mutex_t mutex;
     pthread_cond_t cond;
 
+    // Checksum
+    size_t checksum;
+
     // To be initialized by the user.
     unsigned long flops_per_cycle;
     unsigned long clock_frequency_hz;
+
+    std::string log_suffix;
 
     // Units are aligned with the reporting units used by Intel Memory Checker.
     // Latency (ns), Bandwidth (GB/s).
@@ -106,18 +113,15 @@ enum CommonCommNameMatch
 };
 
 std::vector<int> common_get_avail_core_ids(const common_t *common);
-name_to_time_range_payload_t common_filter_name_ts_range_payload(
-    const common_t *common,
-    const std::string &name,
-    CommonVectorType type, 
-    CommonCommNameMatch comm_name);
+name_to_time_range_payload_t common_filter_name_ts_range_payload(const common_t *common, const std::string &name,
+                                                                 CommonVectorType type, CommonCommNameMatch comm_name);
 
 uint64_t common_get_time_us();
 std::string common_get_timestamped_filename(const std::string &base_name);
-std::string common_join(const std::vector<int>& vec, const std::string& delimiter);
+std::string common_join(const std::vector<int> &vec, const std::string &delimiter);
 std::pair<std::string, std::string> common_split(const std::string &input, std::string delimiter);
 
-typedef void* (*thread_function_t)(void*);
+typedef void *(*thread_function_t)(void *);
 
 struct thread_data_s
 {
@@ -137,7 +141,8 @@ void common_wait_active_threads(common_t *common);
 void common_print_distance_matrix(const distance_matrix_t &matrix, const std::string &key, std::ostream &out);
 void common_print_name_to_numa_ids(const name_to_numa_ids_t &mapping, std::string header, std::ostream &out);
 void common_print_name_to_thread_locality(const name_to_thread_locality_t &mapping, std::ostream &out);
-void common_print_name_to_time_range_payload(const name_to_time_range_payload_t &mapping, const std::string &header, std::ostream &out);
+void common_print_name_to_time_range_payload(const name_to_time_range_payload_t &mapping, const std::string &header,
+                                             std::ostream &out);
 void common_print_name_to_address(const name_to_address_t &mapping, std::ostream &out);
 void common_print_metadata(const common_t *common, std::ostream &out);
-void common_print_common_structure(const common_t *common, std::ostream &out);
+void common_print_common_structure(const common_t *common);

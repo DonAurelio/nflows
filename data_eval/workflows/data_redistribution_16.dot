@@ -1,0 +1,113 @@
+digraph DataRedistribution {
+    root    [size=1000000000];
+    end     [size=1000000000];
+    Intermediate [size=1000000000];
+
+    // Level 1: 32 Tasks
+    Task1_1 [size=1000000000];
+    Task1_2 [size=1000000000];
+    Task1_3 [size=1000000000];
+    Task1_4 [size=1000000000];
+    Task1_5 [size=1000000000];
+    Task1_6 [size=1000000000];
+    Task1_7 [size=1000000000];
+    Task1_8 [size=1000000000];
+    Task1_9 [size=1000000000];
+    Task1_10 [size=1000000000];
+    Task1_11 [size=1000000000];
+    Task1_12 [size=1000000000];
+    Task1_13 [size=1000000000];
+    Task1_14 [size=1000000000];
+    Task1_15 [size=1000000000];
+    Task1_16 [size=1000000000];
+
+    // Level 3: 32 Tasks
+    Task3_1 [size=1000000000];
+    Task3_2 [size=1000000000];
+    Task3_3 [size=1000000000];
+    Task3_4 [size=1000000000];
+    Task3_5 [size=1000000000];
+    Task3_6 [size=1000000000];
+    Task3_7 [size=1000000000];
+    Task3_8 [size=1000000000];
+    Task3_9 [size=1000000000];
+    Task3_10 [size=1000000000];
+    Task3_11 [size=1000000000];
+    Task3_12 [size=1000000000];
+    Task3_13 [size=1000000000];
+    Task3_14 [size=1000000000];
+    Task3_15 [size=1000000000];
+    Task3_16 [size=1000000000];
+
+    // Connections from root to level 1 tasks
+    root -> Task1_1  [size=3000000000];
+    root -> Task1_2  [size=3000000000];
+    root -> Task1_3  [size=3000000000];
+    root -> Task1_4  [size=3000000000];
+    root -> Task1_5  [size=3000000000];
+    root -> Task1_6  [size=3000000000];
+    root -> Task1_7  [size=3000000000];
+    root -> Task1_8  [size=3000000000];
+    root -> Task1_9  [size=3000000000];
+    root -> Task1_10 [size=3000000000];
+    root -> Task1_11 [size=3000000000];
+    root -> Task1_12 [size=3000000000];
+    root -> Task1_13 [size=3000000000];
+    root -> Task1_14 [size=3000000000];
+    root -> Task1_15 [size=3000000000];
+    root -> Task1_16 [size=3000000000];
+
+    // Connections from level 1 tasks to Intermediate
+    Task1_1  -> Intermediate [size=3000000000];
+    Task1_2  -> Intermediate [size=3000000000];
+    Task1_3  -> Intermediate [size=3000000000];
+    Task1_4  -> Intermediate [size=3000000000];
+    Task1_5  -> Intermediate [size=3000000000];
+    Task1_6  -> Intermediate [size=3000000000];
+    Task1_7  -> Intermediate [size=3000000000];
+    Task1_8  -> Intermediate [size=3000000000];
+    Task1_9  -> Intermediate [size=3000000000];
+    Task1_10 -> Intermediate [size=3000000000];
+    Task1_11 -> Intermediate [size=3000000000];
+    Task1_12 -> Intermediate [size=3000000000];
+    Task1_13 -> Intermediate [size=3000000000];
+    Task1_14 -> Intermediate [size=3000000000];
+    Task1_15 -> Intermediate [size=3000000000];
+    Task1_16 -> Intermediate [size=3000000000];
+
+    // Connections from Intermediate to level 3 tasks.
+    Intermediate -> Task3_1  [size=3000000000];
+    Intermediate -> Task3_2  [size=3000000000];
+    Intermediate -> Task3_3  [size=3000000000];
+    Intermediate -> Task3_4  [size=3000000000];
+    Intermediate -> Task3_5  [size=3000000000];
+    Intermediate -> Task3_6  [size=3000000000];
+    Intermediate -> Task3_7  [size=3000000000];
+    Intermediate -> Task3_8  [size=3000000000];
+    Intermediate -> Task3_9  [size=3000000000];
+    Intermediate -> Task3_10 [size=3000000000];
+    Intermediate -> Task3_11 [size=3000000000];
+    Intermediate -> Task3_12 [size=3000000000];
+    Intermediate -> Task3_13 [size=3000000000];
+    Intermediate -> Task3_14 [size=3000000000];
+    Intermediate -> Task3_15 [size=3000000000];
+    Intermediate -> Task3_16 [size=3000000000];
+ 
+    // Connections from level 3 tasks to end
+    Task3_1  -> end [size=3000000000];
+    Task3_2  -> end [size=3000000000];
+    Task3_3  -> end [size=3000000000];
+    Task3_4  -> end [size=3000000000];
+    Task3_5  -> end [size=3000000000];
+    Task3_6  -> end [size=3000000000];
+    Task3_7  -> end [size=3000000000];
+    Task3_8  -> end [size=3000000000];
+    Task3_9  -> end [size=3000000000];
+    Task3_10 -> end [size=3000000000];
+    Task3_11 -> end [size=3000000000];
+    Task3_12 -> end [size=3000000000];
+    Task3_13 -> end [size=3000000000];
+    Task3_14 -> end [size=3000000000];
+    Task3_15 -> end [size=3000000000];
+    Task3_16 -> end [size=3000000000];
+}

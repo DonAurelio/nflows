@@ -2,23 +2,28 @@
 
 #include "common.hpp"
 #include "hardware.hpp"
+#include "scheduler_base.hpp"
+#include "scheduler_eft.hpp"
+#include "scheduler_heft.hpp"
 #include "scheduler_min_min.hpp"
 
 #include <xbt/log.h>
 
+class Mapper_Bare_Metal
+{
+  private:
+    common_t *common;
+    simgrid_host_t *dummy_host;
+    simgrid_netzone_t *dummy_net_zone;
+    scheduler_t &scheduler;
 
-class Mapper_Bare_Metal {
-    private:
-        common_t *common;
-        simgrid_host_t *dummy_host;
-        simgrid_netzone_t *dummy_net_zone;
-        MIN_MIN_Scheduler& scheduler;
+  public:
+    Mapper_Bare_Metal(common_t *common, scheduler_t &scheduler);
+    ~Mapper_Bare_Metal();
 
-    public:
-        Mapper_Bare_Metal(common_t *common, MIN_MIN_Scheduler& scheduler);
-        ~Mapper_Bare_Metal();
-
-        void start();
+    void start();
 };
+
+typedef Mapper_Bare_Metal mapper_t;
 
 void *thread_function(void *arg);

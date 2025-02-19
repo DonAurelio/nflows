@@ -1,0 +1,13 @@
+{
+    "flops_per_cycle": 32,
+    "clock_frequency_hz": 0,
+    "distance_matrices": {
+        "latency": "/home/cc/runtime_workflow_scheduler/data_eval/system/latency.txt",
+        "bandwidth": "/home/cc/runtime_workflow_scheduler/data_eval/system/bandwidth.txt"
+    },
+    "core_avail_mask": "0x01", 
+    "core_count": 48,
+    "dag_file": "/home/cc/runtime_workflow_scheduler/data_eval/workflows/data_redistribution_4.dot",
+    "scheduler_type": "MIN_MIN",  
+    "log_suffix": ""
+}

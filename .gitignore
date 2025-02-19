@@ -1,9 +1,5 @@
 .vscode
 *.yml
-*.txt
-
-!example/*.yaml
-!example/*.txt
 
 # Prerequisites
 *.d
