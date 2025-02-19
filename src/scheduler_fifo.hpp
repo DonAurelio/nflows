@@ -21,3 +21,5 @@ class FIFO_Scheduler : public Base_Scheduler
 
     std::tuple<simgrid_exec_t *, int, double> next() override;
 };
+
+typedef FIFO_Scheduler fifo_scheduler_t;

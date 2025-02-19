@@ -16,6 +16,9 @@
 #include <sstream>
 #include <sys/time.h>
 
+#include <bitset>
+#include <nlohmann/json.hpp>
+
 struct thread_locality_s
 {
     int numa_id;
@@ -63,6 +66,8 @@ struct common_s
     // To be initialized by the user.
     unsigned long flops_per_cycle;
     unsigned long clock_frequency_hz;
+
+    std::string log_suffix;
 
     // Units are aligned with the reporting units used by Intel Memory Checker.
     // Latency (ns), Bandwidth (GB/s).
@@ -141,3 +146,6 @@ void common_print_name_to_time_range_payload(const name_to_time_range_payload_t 
 void common_print_name_to_address(const name_to_address_t &mapping, std::ostream &out);
 void common_print_metadata(const common_t *common, std::ostream &out);
 void common_print_common_structure(const common_t *common, std::ostream &out);
+
+void common_initialize(common_t *common, simgrid_execs_t *dag, scheduler_t *scheduler, const std::string& config_path);
+void common_finalize(common_t *common, simgrid_execs_t *dag, scheduler_t *scheduler);

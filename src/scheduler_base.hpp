@@ -19,3 +19,5 @@ class Base_Scheduler
     virtual bool has_next();
     virtual std::tuple<simgrid_exec_t *, int, double> next() = 0;
 };
+
+typedef Base_Scheduler scheduler_t;

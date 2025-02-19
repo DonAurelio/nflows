@@ -24,3 +24,5 @@ class HEFT_Scheduler : public EFT_Scheduler
 
     std::tuple<simgrid_exec_t *, int, double> next() override;
 };
+
+typedef HEFT_Scheduler heft_scheduler_t;
