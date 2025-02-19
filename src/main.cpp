@@ -1,8 +1,8 @@
 #include "mapper_bare_metal.hpp"
 #include "scheduler_base.hpp"
+#include "scheduler_fifo.hpp"
 #include "scheduler_heft.hpp"
 #include "scheduler_min_min.hpp"
-#include "scheduler_fifo.hpp"
 
 #include <iostream>
 #include <xbt/log.h>

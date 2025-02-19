@@ -3,7 +3,6 @@
 #include "common.hpp"
 #include "hardware.hpp"
 
-
 class Base_Scheduler
 {
   protected:

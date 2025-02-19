@@ -147,5 +147,5 @@ void common_print_name_to_address(const name_to_address_t &mapping, std::ostream
 void common_print_metadata(const common_t *common, std::ostream &out);
 void common_print_common_structure(const common_t *common, std::ostream &out);
 
-void common_initialize(common_t *common, simgrid_execs_t *dag, scheduler_t *scheduler, const std::string& config_path);
+void common_initialize(common_t *common, simgrid_execs_t *dag, scheduler_t *scheduler, const std::string &config_path);
 void common_finalize(common_t *common, simgrid_execs_t *dag, scheduler_t *scheduler);

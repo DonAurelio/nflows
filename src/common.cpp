@@ -296,11 +296,12 @@ void common_print_common_structure(const common_t *common)
     out.close();
 }
 
-void common_initialize(common_t *common, simgrid_execs_t *dag, scheduler_t *scheduler, const std::string& config_path)
+void common_initialize(common_t *common, simgrid_execs_t *dag, scheduler_t *scheduler, const std::string &config_path)
 {
     std::ifstream config_file(config_path);
 
-    if (!config_file) {
+    if (!config_file)
+    {
         std::cerr << "Unable to open config file '" << config_path << "'." << std::endl;
         std::exit(EXIT_FAILURE);
     }
@@ -339,8 +340,10 @@ void common_initialize(common_t *common, simgrid_execs_t *dag, scheduler_t *sche
     int core_count = data["core_count"];
     common->core_avail.resize(core_count, false);
 
-    for (int i = 0; i < core_count; ++i) {
-        if (mask & (1ULL << i)) {
+    for (int i = 0; i < core_count; ++i)
+    {
+        if (mask & (1ULL << i))
+        {
             common->core_avail[i] = true;
         }
     }
@@ -349,13 +352,20 @@ void common_initialize(common_t *common, simgrid_execs_t *dag, scheduler_t *sche
     dag = new simgrid_execs_t(data["dag_file"]);
 
     /* SCHEDULER INITIALIZE */
-    if (config_file["scheduler_type"] == "MIN_MIN") {
+    if (config_file["scheduler_type"] == "MIN_MIN")
+    {
         scheduler = new min_min_scheduler_t(common, *dag);
-    } else if (config_file["scheduler_type"] == "HEFT") {
+    }
+    else if (config_file["scheduler_type"] == "HEFT")
+    {
         scheduler = new heft_scheduler_t(common, *dag);
-    } else if (config_file["scheduler_type"] == "FIFO") {
+    }
+    else if (config_file["scheduler_type"] == "FIFO")
+    {
         scheduler = new fifo_scheduler_t(common, *dag);
-    } else {
+    }
+    else
+    {
         std::cerr << "Unsupported scheduler '" << config_file["scheduler_type"] << "'." << std::endl;
         std::exit(EXIT_FAILURE);
     }
