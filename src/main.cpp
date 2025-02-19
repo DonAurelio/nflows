@@ -1,10 +1,5 @@
-#include "mapper_bare_metal.hpp"
-#include "scheduler_base.hpp"
-#include "scheduler_fifo.hpp"
-#include "scheduler_heft.hpp"
-#include "scheduler_min_min.hpp"
+#include "runtime.hpp"
 
-#include <iostream>
 #include <xbt/log.h>
 
 int main(int argc, char *argv[])
@@ -15,13 +10,12 @@ int main(int argc, char *argv[])
     common_t *common;
     simgrid_execs_t *dag;
     scheduler_t *scheduler;
+    mapper_t *mapper;
 
-    common_initialize(common, dag, scheduler, argv[1]);
-
-    scheduler.start();
-
-    common_print_common_structure(common);
-    common_finalize(common, dag, scheduler);
+    runtime_initialize(common, dag, scheduler, argv[1]);
+    runtime_start(scheduler);
+    runtime_write(common);
+    runtime_finalize(common, dag, scheduler);
 
     return 0;
 }

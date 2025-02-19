@@ -15,13 +15,15 @@ class Mapper_Bare_Metal
     common_t *common;
     simgrid_host_t *dummy_host;
     simgrid_netzone_t *dummy_net_zone;
-    Base_Scheduler &scheduler;
+    scheduler_t &scheduler;
 
   public:
-    Mapper_Bare_Metal(common_t *common, Base_Scheduler &scheduler);
+    Mapper_Bare_Metal(common_t *common, scheduler_t &scheduler);
     ~Mapper_Bare_Metal();
 
     void start();
 };
+
+typedef Mapper_Bare_Metal mapper_t;
 
 void *thread_function(void *arg);

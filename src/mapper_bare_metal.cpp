@@ -2,7 +2,7 @@
 
 XBT_LOG_NEW_DEFAULT_CATEGORY(mapper_bare_metal, "Messages specific to this module.");
 
-Mapper_Bare_Metal::Mapper_Bare_Metal(common_t *common, Base_Scheduler &scheduler) : common(common), scheduler(scheduler)
+Mapper_Bare_Metal::Mapper_Bare_Metal(common_t *common, scheduler_t &scheduler) : common(common), scheduler(scheduler)
 {
     /* CREATE DUMMY HOST (CORE) */
     this->dummy_net_zone = simgrid::s4u::create_full_zone("zone0");
