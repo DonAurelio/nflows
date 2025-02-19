@@ -132,7 +132,7 @@ void *thread_function(void *arg)
         uint64_t read_end_timestemp_us = common_get_time_us();
 
         // Track reading consistency.
-        data->common += checksum;
+        data->common->checksum += checksum;
 
         // Read time offset per dependecy.
         data->common->comm_name_to_r_time_offset_payload[comm_name] = time_range_payload_t(
