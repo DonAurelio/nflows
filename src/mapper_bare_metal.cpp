@@ -17,7 +17,7 @@ Mapper_Bare_Metal::~Mapper_Bare_Metal()
 void Mapper_Bare_Metal::start()
 {
     simgrid_exec_t *selected_exec;
-    unsigned int selected_core_id;
+    int selected_core_id;
     unsigned long estimated_completion_time;
 
     while (this->scheduler.has_next())
