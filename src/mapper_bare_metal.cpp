@@ -184,7 +184,6 @@ void *thread_function(void *arg)
 
     // Calculate the compute time in microseconds.
     uint64_t compute_time_us = exec_end_timestamp_us - exec_start_timestamp_us;
-    uint64_t actual_compute_time_us = actual_read_time_us + (exec_end_timestamp_us - exec_start_timestamp_us);
 
     // Compute time offset
     data->common->exec_name_to_c_time_offset_payload[data->exec->get_cname()] = time_range_payload_t(
