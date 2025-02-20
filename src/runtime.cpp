@@ -80,7 +80,21 @@ void runtime_initialize(common_t **common, simgrid_execs_t **dag, scheduler_t **
     }
 
     /* MAPPER */
-    *mapper = new mapper_bare_metal_t(cmn, **scheduler);
+    std::string mapper_type = data["mapper_type"];
+
+    if (mapper_type == "BARE_METAL")
+    {
+        *mapper = new mapper_bare_metal_t(cmn, **scheduler);
+    }
+    else if (mapper_type == "SIMULATION")
+    {
+        *mapper = new mapper_simulation_t(cmn, **scheduler);
+    }
+    else
+    {
+        std::cerr << "Unsupported scheduler '" << scheduler_type << "'." << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
 }
 
 void runtime_finalize(common_t *common, simgrid_execs_t *dag, scheduler_t *scheduler, mapper_t *mapper)

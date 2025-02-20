@@ -2,6 +2,7 @@
 
 #include "common.hpp"
 #include "mapper_bare_metal.hpp"
+#include "mapper_simulation.hpp"
 #include "scheduler_base.hpp"
 #include "scheduler_fifo.hpp"
 #include "scheduler_heft.hpp"
