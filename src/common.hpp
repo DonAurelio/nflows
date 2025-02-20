@@ -134,7 +134,7 @@ struct thread_data_s
 typedef struct thread_data_s thread_data_t;
 
 void common_set_core_id_avail_unitl(common_t *common, unsigned int core_id, uint64_t duration);
-uint64_t common_get_core_id_avail_unitl(common_t *common, unsigned int core_id);
+uint64_t common_get_core_id_avail_unitl(const common_t *common, unsigned int core_id);
 
 void common_set_core_id_as_avail(common_t *common, unsigned int core_id);
 void common_set_core_id_as_unavail(common_t *common, unsigned int core_id);

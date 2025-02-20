@@ -12,8 +12,7 @@ class MIN_MIN_Scheduler : public EFT_Scheduler
     MIN_MIN_Scheduler(const common_t *common, simgrid_execs_t &dag);
     ~MIN_MIN_Scheduler();
 
-    std::tuple<simgrid_exec_t *, int, double> next_b() override;
-    std::tuple<simgrid_exec_t *, int, double> next_s() override;
+    std::tuple<simgrid_exec_t *, int, double> next() override;
 };
 
 typedef MIN_MIN_Scheduler min_min_scheduler_t;

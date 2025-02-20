@@ -19,7 +19,7 @@ void Mapper_Simulation::start()
 
     while (this->scheduler.has_next())
     {
-        std::tie(selected_exec, selected_core_id, estimated_completion_time) = this->scheduler.next_s();
+        std::tie(selected_exec, selected_core_id, estimated_completion_time) = this->scheduler.next();
 
         if (!selected_exec)
         {
@@ -45,6 +45,7 @@ void Mapper_Simulation::start()
 
         // Set as assigned.
         selected_exec->set_host(this->dummy_host);
+        common_set_core_id_avail_unitl(common, selected_core_id, estimated_completion_time);
         this->thread_func_ptr(data);
     }
 

@@ -55,7 +55,7 @@ void common_set_core_id_avail_unitl(common_t *common, unsigned int core_id, uint
     common->core_avail_until[core_id] += duration;
 }
 
-uint64_t common_get_core_id_avail_unitl(common_t *common, unsigned int core_id)
+uint64_t common_get_core_id_avail_unitl(const common_t *common, unsigned int core_id)
 {
     return common->core_avail_until.at(core_id);
 }

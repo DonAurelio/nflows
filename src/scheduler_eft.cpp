@@ -34,13 +34,18 @@ std::tuple<int, double> EFT_Scheduler::get_best_core_id(const simgrid_exec_t *ex
         // EST(n_i) = max_{n_{m} e pred(n_i)} { AFT(c_{m,i}) ) };
 
         uint64_t earliest_start_time_us = 0;
+        uint64_t core_id_avail_until = common_get_core_id_avail_unitl(this->common, core_id);
 
         for (const auto &[comm_name, time_range_payload] : name_to_ts_range_payload)
         {
             auto [parent_exec_name, self_exec_name] = common_split(comm_name, "->");
             uint64_t parent_exec_actual_finish_time =
                 std::get<1>(this->common->exec_name_to_rcw_time_offset_payload.at(parent_exec_name));
-            earliest_start_time_us = std::max(earliest_start_time_us, parent_exec_actual_finish_time);
+
+            // In bare-metal mode, core_id_avail_until is always 0, so it has no effect  
+            // in the following expression.  
+            // In simulation mode, core_id_avail_until represents the time at which the core becomes available.
+            earliest_start_time_us = std::max(core_id_avail_until, std::max(earliest_start_time_us, parent_exec_actual_finish_time));
         }
 
         /* 2. ESTIMATE READ_TIME(EXEC) */

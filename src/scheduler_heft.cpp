@@ -122,7 +122,7 @@ void HEFT_Scheduler::print()
     }
 }
 
-std::tuple<simgrid_exec_t *, int, double> HEFT_Scheduler::next_b()
+std::tuple<simgrid_exec_t *, int, double> HEFT_Scheduler::next()
 {
     int selected_core_id = -1;
     double estimated_finish_time = 0.0;
@@ -148,9 +148,4 @@ std::tuple<simgrid_exec_t *, int, double> HEFT_Scheduler::next_b()
               selected_core_id, estimated_finish_time);
 
     return std::make_tuple(selected_exec, selected_core_id, estimated_finish_time);
-}
-
-std::tuple<simgrid_exec_t *, int, double> HEFT_Scheduler::next_s()
-{
-    return {nullptr, -1, 0.0};
 }

@@ -10,7 +10,7 @@ MIN_MIN_Scheduler::~MIN_MIN_Scheduler()
 {
 }
 
-std::tuple<simgrid_exec_t *, int, double> MIN_MIN_Scheduler::next_b()
+std::tuple<simgrid_exec_t *, int, double> MIN_MIN_Scheduler::next()
 {
     int selected_core_id = -1;
     double estimated_finish_time = std::numeric_limits<double>::max();
@@ -35,9 +35,4 @@ std::tuple<simgrid_exec_t *, int, double> MIN_MIN_Scheduler::next_b()
               selected_core_id, estimated_finish_time);
 
     return std::make_tuple(selected_exec, selected_core_id, estimated_finish_time);
-}
-
-std::tuple<simgrid_exec_t *, int, double> MIN_MIN_Scheduler::next_s()
-{
-    return {nullptr, -1, 0.0};
 }

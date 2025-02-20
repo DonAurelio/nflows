@@ -45,6 +45,7 @@ void runtime_initialize(common_t **common, simgrid_execs_t **dag, scheduler_t **
 
     int core_count = data["core_count"];
     cmn->core_avail.resize(core_count, false);
+    cmn->core_avail_until.resize(core_count, 0.0);
 
     for (int i = 0; i < core_count; ++i)
     {

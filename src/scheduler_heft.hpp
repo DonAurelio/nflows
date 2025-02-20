@@ -22,8 +22,7 @@ class HEFT_Scheduler : public EFT_Scheduler
 
     void print();
 
-    std::tuple<simgrid_exec_t *, int, double> next_b() override;
-    std::tuple<simgrid_exec_t *, int, double> next_s() override;
+    std::tuple<simgrid_exec_t *, int, double> next() override;
 };
 
 typedef HEFT_Scheduler heft_scheduler_t;
