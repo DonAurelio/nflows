@@ -50,6 +50,16 @@ std::vector<int> common_get_avail_core_ids(const common_t *common)
     return avail_core_ids;
 }
 
+void common_set_core_id_avail_unitl(common_t *common, unsigned int core_id, uint64_t duration)
+{
+    common->core_avail_until[core_id] += duration;
+}
+
+uint64_t common_get_core_id_avail_unitl(common_t *common, unsigned int core_id)
+{
+    return common->core_avail_until.at(core_id);
+}
+
 void common_set_core_id_as_avail(common_t *common, unsigned int core_id)
 {
     common->core_avail[core_id] = true;

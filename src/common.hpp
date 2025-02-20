@@ -75,6 +75,7 @@ struct common_s
     distance_matrix_t distance_bw_gbps;
 
     std::vector<bool> core_avail;
+    std::vector<uint64_t> core_avail_until;
 
     // Locality information collections.
     name_to_address_t comm_name_to_address;
@@ -131,6 +132,9 @@ struct thread_data_s
     int assigned_core_id;
 };
 typedef struct thread_data_s thread_data_t;
+
+void common_set_core_id_avail_unitl(common_t *common, unsigned int core_id, uint64_t duration);
+uint64_t common_get_core_id_avail_unitl(common_t *common, unsigned int core_id);
 
 void common_set_core_id_as_avail(common_t *common, unsigned int core_id);
 void common_set_core_id_as_unavail(common_t *common, unsigned int core_id);
