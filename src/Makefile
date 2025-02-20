@@ -4,7 +4,8 @@ LIBS = -lsimgrid -lhwloc
 
 SRC = common.cpp hardware.cpp scheduler_base.cpp scheduler_fifo.cpp \
       scheduler_eft.cpp scheduler_heft.cpp scheduler_min_min.cpp \
-      mapper_base.cpp mapper_bare_metal.cpp runtime.cpp main.cpp
+      mapper_base.cpp mapper_bare_metal.cpp mapper_simulation.cpp \
+	  runtime.cpp main.cpp
 
 OBJ = $(SRC:.cpp=.o)
 

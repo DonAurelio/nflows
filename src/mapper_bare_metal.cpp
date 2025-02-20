@@ -4,10 +4,57 @@ XBT_LOG_NEW_DEFAULT_CATEGORY(mapper_bare_metal, "Messages specific to this modul
 
 Mapper_Bare_Metal::Mapper_Bare_Metal(common_t *common, scheduler_t &scheduler) : Mapper_Base(common, scheduler)
 {
+    this->set_thread_func_ptr(mapper_bare_metal_thread_function);
 }
 
 Mapper_Bare_Metal::~Mapper_Bare_Metal()
 {
+}
+
+void Mapper_Bare_Metal::start()
+{
+    simgrid_exec_t *selected_exec;
+    int selected_core_id;
+    unsigned long estimated_completion_time;
+
+    while (this->scheduler.has_next())
+    {
+        std::tie(selected_exec, selected_core_id, estimated_completion_time) = this->scheduler.next();
+
+        if (!selected_exec)
+        {
+            XBT_INFO("There are not ready tasks, waiting 5 seconds.");
+            // printf("There are not ready tasks, waiting 5 seconds.\n");
+            sleep(5);
+            continue;
+        }
+
+        if (selected_core_id == -1)
+        {
+            XBT_INFO("There are not available cores, waiting 5 seconds.");
+            // printf("There are not available cores, waiting 5 seconds.\n");
+            sleep(5);
+            continue;
+        }
+
+        // Initialize thread data.
+        // data is free'd by the thread at the end of the execution.
+        thread_data_t *data = (thread_data_t *)malloc(sizeof(thread_data_t));
+        data->exec = selected_exec;
+        data->assigned_core_id = selected_core_id;
+        data->common = this->common;
+        data->thread_function = this->thread_func_ptr;
+
+        // Set as assigned.
+        selected_exec->set_host(this->dummy_host);
+        bind_exec_to_thread(data);
+    }
+
+    common_wait_active_threads(this->common);
+
+    // Workaround to properly finalize SimGrid resources.
+    simgrid::s4u::Engine *e = simgrid::s4u::Engine::get_instance();
+    e->run();
 }
 
 /**
@@ -30,7 +77,7 @@ Mapper_Bare_Metal::~Mapper_Bare_Metal()
  *
  * @note This method does not support SimGrid control dependencies (0, -1).
  */
-void *thread_function(void *arg)
+void *mapper_bare_metal_thread_function(void *arg)
 {
     thread_data_t *data = (thread_data_t *)arg;
 

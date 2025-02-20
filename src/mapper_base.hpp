@@ -21,7 +21,12 @@ class Mapper_Base
     Mapper_Base(common_t *common, scheduler_t &scheduler);
     virtual ~Mapper_Base() = default;
 
-    virtual void start();
+    // thread function to be executed.
+    void *(*thread_func_ptr)(void *);
+
+    void set_thread_func_ptr(void *(*func)(void *));
+
+    virtual void start() = 0;
 };
 
 typedef Mapper_Base mapper_t;
