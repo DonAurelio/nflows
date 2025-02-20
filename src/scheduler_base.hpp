@@ -16,7 +16,8 @@ class Base_Scheduler
     virtual ~Base_Scheduler() = default; // Ensures proper destructor chaining
 
     virtual bool has_next();
-    virtual std::tuple<simgrid_exec_t *, int, double> next() = 0;
+    virtual std::tuple<simgrid_exec_t *, int, double> next_b() = 0;
+    virtual std::tuple<simgrid_exec_t *, int, double> next_s() = 0;
 };
 
 typedef Base_Scheduler scheduler_t;

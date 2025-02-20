@@ -19,7 +19,7 @@ void Mapper_Simulation::start()
 
     while (this->scheduler.has_next())
     {
-        std::tie(selected_exec, selected_core_id, estimated_completion_time) = this->scheduler.next();
+        std::tie(selected_exec, selected_core_id, estimated_completion_time) = this->scheduler.next_s();
 
         if (!selected_exec)
         {

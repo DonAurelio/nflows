@@ -71,7 +71,7 @@ std::tuple<int, double> FIFO_Scheduler::get_best_core_id(const simgrid_exec_t *e
     return {best_core_id, earliest_finish_time_us};
 }
 
-std::tuple<simgrid_exec_t *, int, double> FIFO_Scheduler::next()
+std::tuple<simgrid_exec_t *, int, double> FIFO_Scheduler::next_b()
 {
     int selected_core_id = -1;
     double estimated_finish_time = 0.0;
@@ -98,6 +98,10 @@ std::tuple<simgrid_exec_t *, int, double> FIFO_Scheduler::next()
               selected_core_id, estimated_finish_time);
 
     return std::make_tuple(selected_exec, selected_core_id, estimated_finish_time);
+}
+
+std::tuple<simgrid_exec_t *, int, double> FIFO_Scheduler::next_s()
+{
 }
 
 uint64_t FIFO_Scheduler::compute_data_locality_score(simgrid_exec_t *exec)
