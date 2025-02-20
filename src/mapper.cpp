@@ -1,20 +1,27 @@
-#include "mapper_bare_metal.hpp"
+#include "mapper.hpp"
 
 XBT_LOG_NEW_DEFAULT_CATEGORY(mapper_bare_metal, "Messages specific to this module.");
 
-Mapper_Bare_Metal::Mapper_Bare_Metal(common_t *common, scheduler_t &scheduler) : common(common), scheduler(scheduler)
+Mapper::Mapper(common_t *common, scheduler_t &scheduler) : common(common), scheduler(scheduler)
 {
     /* CREATE DUMMY HOST (CORE) */
     this->dummy_net_zone = simgrid::s4u::create_full_zone("zone0");
     this->dummy_host = dummy_net_zone->create_host("host0", "1Gf")->seal();
     this->dummy_net_zone->seal();
+
+    this->thread_func_ptr = nullptr;
 }
 
-Mapper_Bare_Metal::~Mapper_Bare_Metal()
+Mapper::~Mapper()
 {
 }
 
-void Mapper_Bare_Metal::start()
+void Mapper::set_thread_func_ptr(void *(*func)(void *))
+{
+    this->thread_func_ptr = func;
+}
+
+void Mapper::start()
 {
     simgrid_exec_t *selected_exec;
     int selected_core_id;
@@ -47,7 +54,7 @@ void Mapper_Bare_Metal::start()
         data->exec = selected_exec;
         data->assigned_core_id = selected_core_id;
         data->common = this->common;
-        data->thread_function = thread_function;
+        data->thread_function = this->thread_func_ptr;
 
         // Set as assigned.
         selected_exec->set_host(this->dummy_host);
@@ -81,7 +88,7 @@ void Mapper_Bare_Metal::start()
  *
  * @note This method does not support SimGrid control dependencies (0, -1).
  */
-void *thread_function(void *arg)
+void *mapper_thread_function_bare_metal(void *arg)
 {
     thread_data_t *data = (thread_data_t *)arg;
 

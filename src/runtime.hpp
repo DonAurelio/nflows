@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common.hpp"
-#include "mapper_bare_metal.hpp"
+#include "mapper.hpp"
 #include "scheduler_base.hpp"
 #include "scheduler_fifo.hpp"
 #include "scheduler_heft.hpp"

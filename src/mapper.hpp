@@ -9,7 +9,7 @@
 
 #include <xbt/log.h>
 
-class Mapper_Bare_Metal
+class Mapper
 {
   private:
     common_t *common;
@@ -18,12 +18,18 @@ class Mapper_Bare_Metal
     scheduler_t &scheduler;
 
   public:
-    Mapper_Bare_Metal(common_t *common, scheduler_t &scheduler);
-    ~Mapper_Bare_Metal();
+    Mapper(common_t *common, scheduler_t &scheduler);
+    ~Mapper();
+
+    // thread function to be executed.
+    void *(*thread_func_ptr)(void *);
+
+    void set_thread_func_ptr(void *(*func)(void *));
 
     void start();
 };
 
-typedef Mapper_Bare_Metal mapper_t;
+typedef Mapper mapper_t;
 
-void *thread_function(void *arg);
+void *mapper_thread_function_bare_metal(void *arg);
+// void *mapper_thread_function_simulation(void *arg);

@@ -80,6 +80,7 @@ void runtime_initialize(common_t **common, simgrid_execs_t **dag, scheduler_t **
 
     /* MAPPER */
     *mapper = new mapper_t(cmn, **scheduler);
+    (*mapper)->set_thread_func_ptr(mapper_thread_function_bare_metal);
 }
 
 void runtime_finalize(common_t *common, simgrid_execs_t *dag, scheduler_t *scheduler, mapper_t *mapper)
