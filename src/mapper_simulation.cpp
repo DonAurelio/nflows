@@ -82,7 +82,7 @@ void *mapper_simulation_thread_function(void *arg)
 
     // Match all communication (Task1->Task2) where this task_name is the destination.
     name_to_time_range_payload_t name_to_ts_range_payload =
-        common_filter_name_ts_range_payload(data->common, data->exec->get_name(), COMM_WRITE, DST);
+        common_filter_name_to_time_range_payload(data->common, data->exec->get_name(), COMM_WRITE_OFFSETS, DST);
 
     /* FOR THE COMPUTATON OF TIME OFFSETS (DURATIONS) */
 
@@ -214,8 +214,7 @@ void *mapper_simulation_thread_function(void *arg)
 
     /* TIME OFFSETS */
 
-    uint64_t actual_finish_time_us =
-        actual_start_time_us + actual_read_time_us + compute_time_us + actual_write_time_us;
+    uint64_t actual_finish_time_us = actual_read_time_us + compute_time_us + actual_write_time_us;
     data->common->exec_name_to_rcw_time_offset_payload[data->exec->get_cname()] =
         time_range_payload_t(actual_start_time_us, actual_finish_time_us, flops);
 

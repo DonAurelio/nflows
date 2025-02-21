@@ -90,7 +90,7 @@ void *mapper_bare_metal_thread_function(void *arg)
 
     // Match all communication (Task1->Task2) where this task_name is the destination.
     name_to_time_range_payload_t name_to_ts_range_payload =
-        common_filter_name_ts_range_payload(data->common, data->exec->get_name(), COMM_WRITE, DST);
+        common_filter_name_to_time_range_payload(data->common, data->exec->get_name(), COMM_WRITE_TIMESTAMPS, DST);
 
     /* FOR THE COMPUTATON OF TIME OFFSETS (DURATIONS) */
 

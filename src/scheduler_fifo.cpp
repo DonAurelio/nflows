@@ -26,7 +26,7 @@ std::tuple<int, double> FIFO_Scheduler::get_best_core_id(const simgrid_exec_t *e
 
     // Get all writtings (data items) where this exec is the destionation.
     name_to_time_range_payload_t comm_name_to_time_range_payload =
-        common_filter_name_ts_range_payload(this->common, exec->get_name(), COMM_WRITE, DST);
+        common_filter_name_to_time_range_payload(this->common, exec->get_name(), COMM_WRITE_TIMESTAMPS, DST);
 
     for (const auto &[comm_name, time_range_payload] : comm_name_to_time_range_payload)
     {
@@ -106,7 +106,7 @@ uint64_t FIFO_Scheduler::compute_data_locality_score(simgrid_exec_t *exec)
 
     // Get all writtings (data items) where this exec is the destionation.
     name_to_time_range_payload_t comm_name_to_time_range_payload =
-        common_filter_name_ts_range_payload(this->common, exec->get_name(), COMM_WRITE, DST);
+        common_filter_name_to_time_range_payload(this->common, exec->get_name(), COMM_WRITE_TIMESTAMPS, DST);
 
     for (const auto &[comm_name, time_range_payload] : comm_name_to_time_range_payload)
     {

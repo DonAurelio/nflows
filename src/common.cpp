@@ -95,7 +95,7 @@ void common_wait_active_threads(common_t *common)
     pthread_mutex_unlock(&(common->mutex));
 }
 
-name_to_time_range_payload_t common_filter_name_ts_range_payload(const common_t *common, const std::string &name,
+name_to_time_range_payload_t common_filter_name_to_time_range_payload(const common_t *common, const std::string &name,
                                                                  CommonVectorType type,
                                                                  CommonCommNameMatch comm_part_to_match)
 {
@@ -104,11 +104,23 @@ name_to_time_range_payload_t common_filter_name_ts_range_payload(const common_t 
 
     switch (type)
     {
-    case COMM_READ:
+    case COMM_READ_TIMESTAMPS:
         map = common->comm_name_to_r_ts_range_payload;
         break;
-    case COMM_WRITE:
+    case COMM_WRITE_TIMESTAMPS:
         map = common->comm_name_to_w_ts_range_payload;
+        break;
+    case COMPUTE_TIMESTAMPS:
+        map = common->exec_name_to_c_ts_range_payload;
+        break;
+    case COMM_READ_OFFSETS:
+        map = common->comm_name_to_r_time_offset_payload;
+        break;
+    case COMM_WRITE_OFFSETS:
+        map = common->comm_name_to_w_time_offset_payload;
+        break;
+    case COMPUTE_OFFSETS:
+        map = common->exec_name_to_c_time_offset_payload;
         break;
     default:
         map = common->exec_name_to_c_ts_range_payload;
@@ -169,7 +181,7 @@ std::string common_get_timestamped_filename(const std::string &base_name)
     char buf[100];
     if (std::strftime(buf, sizeof(buf), "%Y%m%d_%H%M%S", std::localtime(&now)))
     {
-        return std::string(buf) + "_" + base_name + ".yml";
+        return base_name + buf + ".yml";
     }
     return base_name + ".yml";
 }

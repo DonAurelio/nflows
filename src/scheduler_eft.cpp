@@ -15,7 +15,7 @@ std::tuple<int, double> EFT_Scheduler::get_best_core_id(const simgrid_exec_t *ex
 
     // Match all communication (Task1->Task2) where this task_name is the destination.
     name_to_time_range_payload_t name_to_ts_range_payload =
-        common_filter_name_ts_range_payload(this->common, exec->get_name(), COMM_WRITE, DST);
+        common_filter_name_to_time_range_payload(this->common, exec->get_name(), COMM_WRITE_TIMESTAMPS, DST);
 
     // Estimate exec earliest_finish_time for every core_id.
     for (int core_id : common_get_avail_core_ids(this->common))

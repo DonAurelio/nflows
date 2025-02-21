@@ -102,9 +102,12 @@ std::vector<std::vector<double>> common_read_distance_matrix_from_file(const std
 
 enum CommonVectorType
 {
-    COMM_READ,
-    COMM_WRITE,
-    COMPUTE
+    COMM_READ_TIMESTAMPS,
+    COMM_WRITE_TIMESTAMPS,
+    COMPUTE_TIMESTAMPS,
+    COMM_READ_OFFSETS,
+    COMM_WRITE_OFFSETS,
+    COMPUTE_OFFSETS,
 };
 
 enum CommonCommNameMatch
@@ -114,7 +117,7 @@ enum CommonCommNameMatch
 };
 
 std::vector<int> common_get_avail_core_ids(const common_t *common);
-name_to_time_range_payload_t common_filter_name_ts_range_payload(const common_t *common, const std::string &name,
+name_to_time_range_payload_t common_filter_name_to_time_range_payload(const common_t *common, const std::string &name,
                                                                  CommonVectorType type, CommonCommNameMatch comm_name);
 
 uint64_t common_get_time_us();
