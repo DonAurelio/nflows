@@ -86,25 +86,25 @@ void *mapper_simulation_thread_function(void *arg)
 
     /* FOR THE COMPUTATON OF TIME OFFSETS (DURATIONS) */
 
-    uint64_t actual_start_time_us = 0;
+    double actual_start_time_us = 0.0;
 
     for (const auto &[comm_name, time_range_payload] : name_to_ts_range_payload)
     {
         auto [parent_exec_name, self_exec_name] = common_split(comm_name, "->");
-        actual_start_time_us = std::max(actual_start_time_us, std::get<1>(time_range_payload));
+        actual_start_time_us = std::max(actual_start_time_us, (double) std::get<1>(time_range_payload));
     }
 
     /* SIMULATE MEMORY READING */
 
-    uint64_t actual_read_time_us = 0;
+    double actual_read_time_us = 0.0;
 
     int assigned_core_numa_id = get_hwloc_numa_id_by_core_id(data->common, data->assigned_core_id);
 
     for (const auto &[comm_name, time_range_payload] : name_to_ts_range_payload)
     {
-        size_t read_payload_bytes = (size_t)std::get<2>(time_range_payload);
+        double read_payload_bytes = (double)std::get<2>(time_range_payload);
 
-        uint64_t read_start_timestamp_us = actual_start_time_us;
+        double read_start_timestamp_us = actual_start_time_us;
 
         // ASSUMPTION:
         // The simulation assumes that the entire data item is stored in a single memory domain.
@@ -124,9 +124,9 @@ void *mapper_simulation_thread_function(void *arg)
         double read_latency_us = read_latency_ns / 1000;         // To microseconds
         double read_bandwidth_bpus = read_bandwidth_gbps * 1000; // To B/us
 
-        uint64_t read_time_us = (uint64_t) (read_latency_us + (read_payload_bytes / read_bandwidth_bpus));
+        double read_time_us = read_latency_us + (read_payload_bytes / read_bandwidth_bpus);
 
-        uint64_t read_end_timestamp_us = read_start_timestamp_us + read_time_us;
+        double read_end_timestamp_us = read_start_timestamp_us + read_time_us;
 
         // Read time offset per dependecy.
         data->common->comm_name_to_r_time_offset_payload[comm_name] = time_range_payload_t(
@@ -136,23 +136,25 @@ void *mapper_simulation_thread_function(void *arg)
 
         std::string comm_name_left = std::get<0>(common_split(comm_name, "->")).c_str();
 
-        XBT_INFO("Task ID: %s, Core ID: %d => dependency: %s, read (bytes): %zu",
+        XBT_INFO("Task ID: %s, Core ID: %d => dependency: %s, read (bytes): %f",
             data->exec->get_cname(), data->assigned_core_id, comm_name_left.c_str(), read_payload_bytes);
     }
 
     /* SIMULATE COMPUTATION */
 
-    uint64_t flops = (uint64_t)data->exec->get_remaining();
+    double flops = data->exec->get_remaining();
 
-    uint64_t exec_start_timestamp_us = actual_read_time_us;
+    double exec_start_timestamp_us = actual_read_time_us;
 
     // Core clock frequency must be static (set to ther value but 0).
-    unsigned long processor_speed_flops_per_second = get_hwloc_core_performance_by_id(data->common, data->assigned_core_id);
+    double processor_speed_flops_per_second = (double) get_hwloc_core_performance_by_id(data->common, data->assigned_core_id);
 
     // Calculate the compute time in microseconds.
-    uint64_t compute_time_us = (uint64_t) ((flops / processor_speed_flops_per_second) * 1000000);
+    double compute_time_us = (flops / processor_speed_flops_per_second) * 1000000;
+    
+    XBT_INFO("flops: %f, processor_speed_flops: %f, op: %f, compute_time_us: %f", flops, processor_speed_flops_per_second, flops / processor_speed_flops_per_second, compute_time_us);
 
-    uint64_t exec_end_timestamp_us = exec_start_timestamp_us + compute_time_us;
+    double exec_end_timestamp_us = exec_start_timestamp_us + compute_time_us;
 
     // Compute time offset
     data->common->exec_name_to_c_time_offset_payload[data->exec->get_cname()] = time_range_payload_t(
@@ -160,7 +162,7 @@ void *mapper_simulation_thread_function(void *arg)
 
     /* SIMULATE MEMORY WRITTING */
 
-    uint64_t actual_write_time_us = 0;
+    double actual_write_time_us = 0;
 
     for (const auto &succ_ptr : data->exec->get_successors())
     {
@@ -175,9 +177,9 @@ void *mapper_simulation_thread_function(void *arg)
             continue;
         }
 
-        size_t write_payload_bytes = (size_t)succ->get_remaining();
+        double write_payload_bytes = succ->get_remaining();
 
-        uint64_t write_start_timestamp_us = exec_end_timestamp_us;
+        double write_start_timestamp_us = exec_end_timestamp_us;
 
         // ASSUMPTION:
         // Writes will follow the first-touch policy.
@@ -189,9 +191,9 @@ void *mapper_simulation_thread_function(void *arg)
         double write_latency_us = write_latency_ns / 1000;         // To microseconds
         double write_bandwidth_bpus = write_bandwidth_gbps * 1000; // To B/us
         
-        uint64_t write_time_us = (uint64_t) (write_latency_us + (write_payload_bytes / write_bandwidth_bpus));
+        double write_time_us = write_latency_us + (write_payload_bytes / write_bandwidth_bpus);
 
-        uint64_t write_end_timestamp_us = write_start_timestamp_us + write_time_us;
+        double write_end_timestamp_us = write_start_timestamp_us + write_time_us;
 
         // Compute write time, assuming reads are carried out in parallel.
         // The total read time is determined by the longest individual read time.
@@ -204,7 +206,7 @@ void *mapper_simulation_thread_function(void *arg)
         // Preserve data locality.
         data->common->comm_name_to_numa_ids_w[succ->get_cname()] = {assigned_core_numa_id};
 
-        XBT_INFO("Task ID: %s, Core ID: %d => successor: %s, write (bytes): %zu, ", 
+        XBT_INFO("Task ID: %s, Core ID: %d => successor: %s, write (bytes): %f, ", 
             data->exec->get_cname(), data->assigned_core_id, succ_exec_name.c_str(), write_payload_bytes);
     }
 
@@ -212,7 +214,7 @@ void *mapper_simulation_thread_function(void *arg)
 
     /* TIME OFFSETS */
 
-    uint64_t actual_finish_time_us = actual_read_time_us + compute_time_us + actual_write_time_us;
+    double actual_finish_time_us = actual_read_time_us + compute_time_us + actual_write_time_us;
     data->common->exec_name_to_rcw_time_offset_payload[data->exec->get_cname()] =
         time_range_payload_t(actual_start_time_us, actual_finish_time_us, flops);
 
