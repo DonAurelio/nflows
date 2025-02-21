@@ -7,8 +7,8 @@
     },
     "core_avail_mask": "0x01", 
     "core_count": 48,
-    "dag_file": "/home/cc/runtime_workflow_scheduler/data_eval/workflows/data_redistribution_4.dot",
+    "dag_file": "/home/cc/runtime_workflow_scheduler/data_eval/workflows/data_redistribution_2.dot",
     "scheduler_type": "MIN_MIN",
     "mapper_type": "SIMULATION",
-    "log_suffix": ""
+    "log_suffix": "simulation_min_min"
 }
