@@ -91,9 +91,7 @@ void *mapper_simulation_thread_function(void *arg)
     for (const auto &[comm_name, time_range_payload] : name_to_ts_range_payload)
     {
         auto [parent_exec_name, self_exec_name] = common_split(comm_name, "->");
-        uint64_t parent_exec_actual_finish_time_us =
-            std::get<1>(data->common->exec_name_to_rcw_time_offset_payload.at(parent_exec_name));
-        actual_start_time_us = std::max(actual_start_time_us, parent_exec_actual_finish_time_us);
+        actual_start_time_us = std::max(actual_start_time_us, std::get<1>(time_range_payload));
     }
 
     /* SIMULATE MEMORY READING */

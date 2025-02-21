@@ -218,6 +218,8 @@ std::pair<std::string, std::string> common_split(const std::string &input, std::
 
 void common_print_distance_matrix(const distance_matrix_t &matrix, const std::string &key, std::ostream &out)
 {
+    if (matrix.empty()) return;
+
     out << key << ":\n";
     for (const auto &row : matrix)
     {
@@ -233,6 +235,8 @@ void common_print_distance_matrix(const distance_matrix_t &matrix, const std::st
 
 void common_print_name_to_numa_ids(const name_to_numa_ids_t &mapping, const std::string header, std::ostream &out)
 {
+    if (mapping.empty()) return;
+
     out << header << ":\n";
     for (const auto &[key, values] : mapping)
     {
@@ -250,6 +254,8 @@ void common_print_name_to_numa_ids(const name_to_numa_ids_t &mapping, const std:
 
 void common_print_name_to_thread_locality(const name_to_thread_locality_t &mapping, std::ostream &out)
 {
+    if (mapping.empty()) return;
+
     out << "name_to_thread_locality:\n";
     for (const auto &[key, loc] : mapping)
     {
@@ -264,6 +270,8 @@ void common_print_name_to_thread_locality(const name_to_thread_locality_t &mappi
 void common_print_name_to_time_range_payload(const name_to_time_range_payload_t &mapping, const std::string &header,
                                              std::ostream &out)
 {
+    if (mapping.empty()) return;
+
     out << header << ":\n";
     for (const auto &[key, value] : mapping)
     {
@@ -275,6 +283,8 @@ void common_print_name_to_time_range_payload(const name_to_time_range_payload_t 
 
 void common_print_name_to_address(const name_to_address_t &mapping, std::ostream &out)
 {
+    if (mapping.empty()) return;
+
     out << "name_to_address:\n";
     for (const auto &[key, address] : mapping)
     {
@@ -283,13 +293,36 @@ void common_print_name_to_address(const name_to_address_t &mapping, std::ostream
     out << std::endl;
 }
 
+// void common_print_metadata(const common_t *common, std::ostream &out)
+// {
+//     out << "common_metadata:\n";
+//     out << "  active_threads: " << common->active_threads << "\n";
+//     out << "  flops_per_cycle: " << common->flops_per_cycle << "\n";
+//     out << "  clock_frequency_hz: " << common->clock_frequency_hz << "\n";
+//     out << "  checksum: " << common->checksum << "\n\n";
+// }
+
 void common_print_metadata(const common_t *common, std::ostream &out)
 {
     out << "common_metadata:\n";
     out << "  active_threads: " << common->active_threads << "\n";
     out << "  flops_per_cycle: " << common->flops_per_cycle << "\n";
     out << "  clock_frequency_hz: " << common->clock_frequency_hz << "\n";
-    out << "  checksum: " << common->checksum << "\n\n";
+    out << "  checksum: " << common->checksum << "\n";
+
+    if (!common->core_avail.empty())
+    {
+        out << "  core_availability:\n";
+        for (size_t i = 0; i < common->core_avail.size(); ++i)
+        {
+            if (common->core_avail[i]) // Only print available cores
+            {
+                out << "    " << i << ": " << common->core_avail_until[i] << "\n";
+            }
+        }
+    }
+
+    out << std::endl;
 }
 
 void common_print_common_structure(const common_t *common)
