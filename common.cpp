@@ -175,15 +175,16 @@ uint64_t common_get_time_us()
     return (uint64_t)tv.tv_sec * 1000000 + tv.tv_usec;
 }
 
-std::string common_get_timestamped_filename(const std::string &base_name)
+std::string common_get_timestamped_filename(const std::string &base_name, const std::string &format = "%Y%m%d_%H%M%S")
 {
     std::time_t now = std::time(nullptr);
     char buf[100];
-    if (std::strftime(buf, sizeof(buf), "%Y%m%d_%H%M%S", std::localtime(&now)))
+
+    if (!format.empty() && std::strftime(buf, sizeof(buf), format.c_str(), std::localtime(&now)))
     {
-        return base_name + buf + ".yml";
+        return base_name + buf + ".yaml";
     }
-    return base_name + ".yml";
+    return base_name + ".yaml";
 }
 
 std::string common_join(const std::vector<int> &vec, const std::string &delimiter)
@@ -293,15 +294,6 @@ void common_print_name_to_address(const name_to_address_t &mapping, std::ostream
     out << std::endl;
 }
 
-// void common_print_metadata(const common_t *common, std::ostream &out)
-// {
-//     out << "common_metadata:\n";
-//     out << "  active_threads: " << common->active_threads << "\n";
-//     out << "  flops_per_cycle: " << common->flops_per_cycle << "\n";
-//     out << "  clock_frequency_hz: " << common->clock_frequency_hz << "\n";
-//     out << "  checksum: " << common->checksum << "\n\n";
-// }
-
 void common_print_metadata(const common_t *common, std::ostream &out)
 {
     out << "common_metadata:\n";
@@ -327,7 +319,7 @@ void common_print_metadata(const common_t *common, std::ostream &out)
 
 void common_print_common_structure(const common_t *common)
 {
-    std::string file_name = common_get_timestamped_filename(common->log_suffix);
+    std::string file_name = common_get_timestamped_filename(common->log_base_name, common->log_date_format);
     std::ofstream out(file_name);
 
     common_print_metadata(common, out);

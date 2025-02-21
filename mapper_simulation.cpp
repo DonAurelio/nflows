@@ -162,7 +162,7 @@ void *mapper_simulation_thread_function(void *arg)
 
     /* SIMULATE MEMORY WRITTING */
 
-    double actual_write_time_us = 0;
+    double actual_write_time_us = 0.0;
 
     for (const auto &succ_ptr : data->exec->get_successors())
     {
@@ -213,10 +213,8 @@ void *mapper_simulation_thread_function(void *arg)
     XBT_INFO("Task ID: %s, Core ID: %d => message: finished.", data->exec->get_cname(), data->assigned_core_id);
 
     /* TIME OFFSETS */
-
-    double actual_finish_time_us = actual_read_time_us + compute_time_us + actual_write_time_us;
     data->common->exec_name_to_rcw_time_offset_payload[data->exec->get_cname()] =
-        time_range_payload_t(actual_start_time_us, actual_finish_time_us, flops);
+        time_range_payload_t(actual_start_time_us, std::max(exec_end_timestamp_us, actual_write_time_us), flops);
 
     /* CLEAN UP */
 

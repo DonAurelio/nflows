@@ -3,21 +3,21 @@ digraph DataRedistribution {
     end     [size=20];
     Intermediate [size=20];
 
-    // Level 1: 32 Tasks
     Task1_1 [size=20];
+    Task1_2 [size=20];
 
-    // Level 3: 32 Tasks
     Task3_1 [size=20];
+    Task3_2 [size=20];
 
-    // Connections from root to level 1 tasks
     root -> Task1_1  [size=200];
+    root -> Task1_2  [size=200];
 
-    // Connections from level 1 tasks to Intermediate
     Task1_1  -> Intermediate [size=200];
+    Task1_2  -> Intermediate [size=200];
 
-    // Connections from Intermediate to level 3 tasks.
     Intermediate -> Task3_1  [size=200];
+    Intermediate -> Task3_2  [size=200];
 
-    // Connections from level 3 tasks to end
     Task3_1  -> end [size=200];
+    Task3_2  -> end [size=200];
 }

@@ -67,7 +67,8 @@ struct common_s
     unsigned long flops_per_cycle;
     unsigned long clock_frequency_hz;
 
-    std::string log_suffix;
+    std::string log_base_name;
+    std::string log_date_format;
 
     // Units are aligned with the reporting units used by Intel Memory Checker.
     // Latency (ns), Bandwidth (GB/s).

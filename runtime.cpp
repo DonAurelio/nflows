@@ -34,7 +34,8 @@ void runtime_initialize(common_t **common, simgrid_execs_t **dag, scheduler_t **
     cmn->flops_per_cycle = data["flops_per_cycle"];
     cmn->clock_frequency_hz = data["clock_frequency_hz"]; // Dynamic (0) clock frequency.
 
-    cmn->log_suffix = data["log_suffix"];
+    cmn->log_base_name = data["log_base_name"];
+    cmn->log_date_format = data["log_date_format"];
 
     // Latency (ns), Bandwidth (GB/s).
     cmn->distance_lat_ns = common_read_distance_matrix_from_file(data["distance_matrices"]["latency"]);
