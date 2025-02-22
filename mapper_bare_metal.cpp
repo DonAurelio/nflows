@@ -1,4 +1,4 @@
-#include "mapper.hpp"
+#include "mapper_bare_metal.hpp"
 
 XBT_LOG_NEW_DEFAULT_CATEGORY(mapper_bare_metal, "Messages specific to this module.");
 
@@ -7,16 +7,11 @@ Mapper_Bare_Metal::Mapper_Bare_Metal(common_t *common, scheduler_t &scheduler) :
     this->set_thread_func_ptr(mapper_bare_metal_thread_function);
 }
 
-Mapper::~Mapper()
+Mapper_Bare_Metal::~Mapper_Bare_Metal()
 {
 }
 
-void Mapper::set_thread_func_ptr(void *(*func)(void *))
-{
-    this->thread_func_ptr = func;
-}
-
-void Mapper::start()
+void Mapper_Bare_Metal::start()
 {
     simgrid_exec_t *selected_exec;
     int selected_core_id;
