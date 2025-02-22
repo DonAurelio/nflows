@@ -33,24 +33,27 @@ for key, total in exec_name_total_offsets.items():
         key_type = "end"
     else:
         key_type = "intermediate"
-    
-    # Compute the expected sum
-    if key_type in ["root", "intermediate"]:
-        for write_key, write in comm_name_write_offsets.items():
-            left, _ = write_key.split("->")
-            if left == key:
-                computed_sum += (write["end"] - write["start"])
 
+    max_read_time = 0
     if key_type in ["intermediate", "end"]:
         for read_key, read in comm_name_read_offsets.items():
             _, right = read_key.split("->")
             if right == key:
-                computed_sum += (read["end"] - read["start"])
-    
-    if key in exec_name_compute_offsets:
-        compute = exec_name_compute_offsets[key]
-        computed_sum += (compute["end"] - compute["start"])
-    
+                max_read_time = max(max_read_time, read["end"] - read["start"])
+
+    compute = exec_name_compute_offsets[key]
+    compute_time = (compute["end"] - compute["start"])
+
+    # Compute the expected sum
+    max_write_time = 0
+    if key_type in ["root", "intermediate"]:
+        for write_key, write in comm_name_write_offsets.items():
+            left, _ = write_key.split("->")
+            if left == key:
+                max_write_time = max(max_write_time, write["end"] - write["start"])
+
+    computed_sum += max_read_time + compute_time + max_write_time
+
     # Validate sum
     if start + computed_sum != end:
         print(f"Validation failed for {key}: expected {end}, got {start + computed_sum}")
