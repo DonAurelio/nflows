@@ -57,5 +57,5 @@ for key, total in exec_name_total_offsets.items():
     # Validate sum
     if start + computed_sum != end:
         print(f"Validation failed for {key}: expected {end}, got {start + computed_sum}")
-    else:
-        print(f"Validation passed for {key}")
+    # else:
+    #     print(f"Validation passed for {key}")
