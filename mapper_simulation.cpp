@@ -174,6 +174,9 @@ void *mapper_simulation_thread_function(void *arg)
 
     XBT_INFO("Task ID: %s, Core ID: %d => message: finished.", data->exec->get_cname(), data->assigned_core_id);
 
+    // Save thread locality.
+    data->common->exec_name_to_thread_locality[data->exec->get_cname()] = {assigned_core_numa_id, data->assigned_core_id, 0, 0, 0};
+
     /* TIME OFFSETS */
     data->common->exec_name_to_rcw_time_offset_payload[data->exec->get_cname()] =
         time_range_payload_t(read_start_timestamp_us, std::max(exec_end_timestamp_us, max_end_write_timestamp_us), flops);
