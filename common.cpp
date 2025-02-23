@@ -141,6 +141,39 @@ name_to_time_range_payload_t common_filter_name_to_time_range_payload(const comm
     return matches;
 }
 
+double common_actual_start_time(const common_t *common, const std::string &exec_name)
+{
+    // Match all communication (Task1->Task2) where this task_name is the destination.
+    name_to_time_range_payload_t name_to_time_range_payload =
+        common_filter_name_to_time_range_payload(common, exec_name, COMM_WRITE_OFFSETS, DST);
+
+    double actual_start_time_us = 0.0;
+
+    for (const auto &[comm_name, time_range_payload] : name_to_time_range_payload)
+    {
+        actual_start_time_us = std::max(actual_start_time_us, (double) std::get<1>(time_range_payload));
+    }
+
+    return actual_start_time_us;
+}
+
+double common_communication_time(const common_t *common, unsigned int src_numa_id, unsigned int dst_numa_id, double payload)
+{
+    double latency_ns = common->distance_lat_ns[src_numa_id][dst_numa_id];
+    double bandwidth_gbps = common->distance_bw_gbps[src_numa_id][dst_numa_id];
+
+    double latency_us = latency_ns / 1000;          // To microseconds
+    double bandwidth_bpus = bandwidth_gbps * 1000;  // To B/us
+
+    return latency_us + (payload / bandwidth_bpus);
+}
+
+double common_compute_time(const common_t *common, double flops, double processor_speed_flops_per_second)
+{
+    // Calculate the compute time in microseconds.
+    return (flops / processor_speed_flops_per_second) * 1000000;
+}
+
 std::vector<std::vector<double>> common_read_distance_matrix_from_file(const std::string &filename)
 {
     std::ifstream file(filename);
@@ -307,10 +340,7 @@ void common_print_metadata(const common_t *common, std::ostream &out)
         out << "  core_availability:\n";
         for (size_t i = 0; i < common->core_avail.size(); ++i)
         {
-            if (common->core_avail[i]) // Only print available cores
-            {
-                out << "    " << i << ": " << common->core_avail_until[i] << "\n";
-            }
+            out << "    " << i << ": " << common->core_avail_until[i] << "\n";
         }
     }
 

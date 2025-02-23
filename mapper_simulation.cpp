@@ -77,82 +77,56 @@ void Mapper_Simulation::start()
 void *mapper_simulation_thread_function(void *arg)
 {
     thread_data_t *data = (thread_data_t *)arg;
+    int assigned_core_numa_id = get_hwloc_numa_id_by_core_id(data->common, data->assigned_core_id);
 
     XBT_INFO("Task ID: %s, Core ID: %d => message: started.", data->exec->get_cname(), data->assigned_core_id);
 
-    // Match all communication (Task1->Task2) where this task_name is the destination.
-    name_to_time_range_payload_t name_to_ts_range_payload =
-        common_filter_name_to_time_range_payload(data->common, data->exec->get_name(), COMM_WRITE_OFFSETS, DST);
-
-    /* FOR THE COMPUTATON OF TIME OFFSETS (DURATIONS) */
-
-    double actual_start_time_us = 0.0;
-
-    for (const auto &[comm_name, time_range_payload] : name_to_ts_range_payload)
-    {
-        auto [parent_exec_name, self_exec_name] = common_split(comm_name, "->");
-        actual_start_time_us = std::max(actual_start_time_us, (double) std::get<1>(time_range_payload));
-    }
+    double actual_start_time_us = common_actual_start_time(data->common, data->exec->get_name());
 
     /* SIMULATE MEMORY READING */
 
-    double actual_read_time_us = 0.0;
-
-    int assigned_core_numa_id = get_hwloc_numa_id_by_core_id(data->common, data->assigned_core_id);
-
-    for (const auto &[comm_name, time_range_payload] : name_to_ts_range_payload)
+    double read_start_timestamp_us = actual_start_time_us;
+    double max_read_end_timestamp_us = 0.0;
+    
+    // Match all communication (Task1->Task2) where this task_name is the destination.
+    for (const auto &[comm_name, time_range_payload] : common_filter_name_to_time_range_payload(data->common, data->exec->get_cname(), COMM_WRITE_OFFSETS, DST))
     {
-        double read_payload_bytes = (double)std::get<2>(time_range_payload);
-
-        double read_start_timestamp_us = actual_start_time_us;
+        double read_payload_bytes = (double) std::get<2>(time_range_payload);
 
         // ASSUMPTION:
         // The simulation assumes that the entire data item is stored in a single memory domain.
         // Future implementations may consider data pages being spread, NUMA balancing (page migration).
 
-        if (data->common->comm_name_to_numa_ids_w.at(comm_name).size() != 1)
-        {
-            std::cerr << "Error: Simulation mode does not support data pages spread across multiple memory domains." << std::endl;
-            exit(EXIT_FAILURE);
-        }
-
         int read_src_numa_id = data->common->comm_name_to_numa_ids_w.at(comm_name).front();
 
-        double read_latency_ns = data->common->distance_lat_ns[read_src_numa_id][assigned_core_numa_id];
-        double read_bandwidth_gbps = data->common->distance_bw_gbps[read_src_numa_id][assigned_core_numa_id];
-
-        double read_latency_us = read_latency_ns / 1000;         // To microseconds
-        double read_bandwidth_bpus = read_bandwidth_gbps * 1000; // To B/us
-
-        double read_time_us = read_latency_us + (read_payload_bytes / read_bandwidth_bpus);
+        double read_time_us = common_communication_time(data->common, read_src_numa_id, assigned_core_numa_id, read_payload_bytes);
 
         double read_end_timestamp_us = read_start_timestamp_us + read_time_us;
+
+        // Save data locality.
+        data->common->comm_name_to_numa_ids_r[comm_name] = {read_src_numa_id};
 
         // Read time offset per dependecy.
         data->common->comm_name_to_r_time_offset_payload[comm_name] = time_range_payload_t(
             read_start_timestamp_us, read_end_timestamp_us, read_payload_bytes);
 
-        actual_read_time_us = std::max(actual_read_time_us, read_end_timestamp_us);
+        max_read_end_timestamp_us = std::max(max_read_end_timestamp_us, read_end_timestamp_us);
 
-        std::string comm_name_left = std::get<0>(common_split(comm_name, "->")).c_str();
-
-        XBT_INFO("Task ID: %s, Core ID: %d => dependency: %s, read (bytes): %f",
-            data->exec->get_cname(), data->assigned_core_id, comm_name_left.c_str(), read_payload_bytes);
+        XBT_INFO("Task ID: %s, Core ID: %d => read: %s, payload (bytes): %f",
+            data->exec->get_cname(), data->assigned_core_id, comm_name.c_str(), read_payload_bytes);
     }
 
     /* SIMULATE COMPUTATION */
 
-    double flops = data->exec->get_remaining();
+    double exec_start_timestamp_us = std::max(actual_start_time_us, max_read_end_timestamp_us);
 
-    double exec_start_timestamp_us = actual_read_time_us;
+    // Calculate the compute time in microseconds.
+    double flops = data->exec->get_remaining();
 
     // Core clock frequency must be static (set to ther value but 0).
     double processor_speed_flops_per_second = (double) get_hwloc_core_performance_by_id(data->common, data->assigned_core_id);
-
-    // Calculate the compute time in microseconds.
-    double compute_time_us = (flops / processor_speed_flops_per_second) * 1000000;
     
-    XBT_INFO("flops: %f, processor_speed_flops: %f, op: %f, compute_time_us: %f", flops, processor_speed_flops_per_second, flops / processor_speed_flops_per_second, compute_time_us);
+    double compute_time_us = common_compute_time(data->common, flops, processor_speed_flops_per_second);
 
     double exec_end_timestamp_us = exec_start_timestamp_us + compute_time_us;
 
@@ -162,59 +136,47 @@ void *mapper_simulation_thread_function(void *arg)
 
     /* SIMULATE MEMORY WRITTING */
 
-    double actual_write_time_us = 0.0;
+    double write_start_timestamp_us = exec_end_timestamp_us;
+    double max_end_write_timestamp_us = 0.0;
 
     for (const auto &succ_ptr : data->exec->get_successors())
     {
         const simgrid_activity_t *succ = succ_ptr.get();
         auto [exec_name, succ_exec_name] = common_split(succ->get_cname(), "->");
 
-        if (succ_exec_name == std::string("end"))
-        {
-            XBT_INFO("Task ID: %s, Core ID: %d => successor: %s, message: skipt writing operation for end task.",
-                     data->exec->get_cname(), data->assigned_core_id, succ_exec_name.c_str());
-
-            continue;
-        }
-
-        double write_payload_bytes = succ->get_remaining();
-
-        double write_start_timestamp_us = exec_end_timestamp_us;
+        // Skipt all task_i->end communications.
+        if (succ_exec_name == std::string("end")) continue;
 
         // ASSUMPTION:
-        // Writes will follow the first-touch policy.
-        int write_dst_numa_id = get_hwloc_numa_id_by_core_id(data->common, data->assigned_core_id);
-
-        double write_latency_ns = data->common->distance_lat_ns[assigned_core_numa_id][write_dst_numa_id];
-        double write_bandwidth_gbps = data->common->distance_bw_gbps[assigned_core_numa_id][write_dst_numa_id];
-
-        double write_latency_us = write_latency_ns / 1000;         // To microseconds
-        double write_bandwidth_bpus = write_bandwidth_gbps * 1000; // To B/us
-        
-        double write_time_us = write_latency_us + (write_payload_bytes / write_bandwidth_bpus);
-
-        double write_end_timestamp_us = write_start_timestamp_us + write_time_us;
+        // Writes will follow the first-touch policy, i.e., data will be saved in 
+        // the numa node that share locality with the core_id.
+        double write_payload_bytes = succ->get_remaining();
+        double write_time_us = common_communication_time(data->common, assigned_core_numa_id, assigned_core_numa_id, write_payload_bytes);
 
         // Compute write time, assuming reads are carried out in parallel.
         // The total read time is determined by the longest individual read time.
-        actual_write_time_us = std::max(actual_write_time_us, write_end_timestamp_us);
+        double write_end_timestamp_us = write_start_timestamp_us + write_time_us;
+        max_end_write_timestamp_us = std::max(max_end_write_timestamp_us, write_end_timestamp_us);
 
         // Compute time offset
         data->common->comm_name_to_w_time_offset_payload[succ->get_cname()] = time_range_payload_t(
             write_start_timestamp_us, write_end_timestamp_us, write_payload_bytes);
 
+        // Save address for subsequent reading.
+        data->common->comm_name_to_address[succ->get_cname()] = nullptr;
+
         // Preserve data locality.
         data->common->comm_name_to_numa_ids_w[succ->get_cname()] = {assigned_core_numa_id};
 
-        XBT_INFO("Task ID: %s, Core ID: %d => successor: %s, write (bytes): %f, ", 
-            data->exec->get_cname(), data->assigned_core_id, succ_exec_name.c_str(), write_payload_bytes);
+        XBT_INFO("Task ID: %s, Core ID: %d => write: %s, payload (bytes): %f.", 
+            data->exec->get_cname(), data->assigned_core_id, succ->get_cname(), write_payload_bytes);
     }
 
     XBT_INFO("Task ID: %s, Core ID: %d => message: finished.", data->exec->get_cname(), data->assigned_core_id);
 
     /* TIME OFFSETS */
     data->common->exec_name_to_rcw_time_offset_payload[data->exec->get_cname()] =
-        time_range_payload_t(actual_start_time_us, std::max(exec_end_timestamp_us, actual_write_time_us), flops);
+        time_range_payload_t(read_start_timestamp_us, std::max(exec_end_timestamp_us, max_end_write_timestamp_us), flops);
 
     /* CLEAN UP */
 

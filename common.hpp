@@ -146,6 +146,10 @@ void common_increment_active_threads_counter(common_t *common);
 void common_decrement_active_threads_counter(common_t *common);
 void common_wait_active_threads(common_t *common);
 
+double common_actual_start_time(const common_t *common, const std::string &exec_name);
+double common_communication_time(const common_t *common, unsigned int src_numa_id, unsigned int dst_numa_id, double payload);
+double common_compute_time(const common_t *common, double flops, double processor_speed_flops_per_second);
+
 void common_print_distance_matrix(const distance_matrix_t &matrix, const std::string &key, std::ostream &out);
 void common_print_name_to_numa_ids(const name_to_numa_ids_t &mapping, std::string header, std::ostream &out);
 void common_print_name_to_thread_locality(const name_to_thread_locality_t &mapping, std::ostream &out);
