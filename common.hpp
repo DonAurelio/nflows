@@ -146,7 +146,7 @@ void common_increment_active_threads_counter(common_t *common);
 void common_decrement_active_threads_counter(common_t *common);
 void common_wait_active_threads(common_t *common);
 
-double common_actual_start_time(const common_t *common, const std::string &exec_name);
+double common_earliest_start_time(const common_t *common, const std::string &exec_name, unsigned int core_id);
 double common_communication_time(const common_t *common, unsigned int src_numa_id, unsigned int dst_numa_id, double payload);
 double common_compute_time(const common_t *common, double flops, double processor_speed_flops_per_second);
 

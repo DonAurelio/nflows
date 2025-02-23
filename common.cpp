@@ -141,20 +141,27 @@ name_to_time_range_payload_t common_filter_name_to_time_range_payload(const comm
     return matches;
 }
 
-double common_actual_start_time(const common_t *common, const std::string &exec_name)
+double common_earliest_start_time(const common_t *common, const std::string &exec_name, unsigned int core_id)
 {
+    double earliest_start_time_us = 0.0;
+    double core_id_avail_until = 0;
+
+    // EST(n_i,p_i) = max{ avail[j], max_{n_{m} e pred(n_i)}( AFT(n_{m}) + c_{m,i} ) };
+    // - avail[j]  => earliest time which processor j will be ready for task execution.
+    // - pred(n_i) => set of immediate predecessor tasks of task n_{i}.
+
+    // In bare-metal mode, core_id_avail_until is always 0, so it has no effect  
+    // in the estimation of the earliest start time.  
+    // In simulation mode, core_id_avail_until represents the time at which the core becomes available.
+
     // Match all communication (Task1->Task2) where this task_name is the destination.
-    name_to_time_range_payload_t name_to_time_range_payload =
-        common_filter_name_to_time_range_payload(common, exec_name, COMM_WRITE_OFFSETS, DST);
-
-    double actual_start_time_us = 0.0;
-
-    for (const auto &[comm_name, time_range_payload] : name_to_time_range_payload)
+    for (const auto &[comm_name, time_range_payload] : common_filter_name_to_time_range_payload(common, exec_name, COMM_WRITE_OFFSETS, DST))
     {
-        actual_start_time_us = std::max(actual_start_time_us, (double) std::get<1>(time_range_payload));
+        earliest_start_time_us = std::max(
+            core_id_avail_until, std::max(earliest_start_time_us, (double) std::get<1>(time_range_payload)));
     }
 
-    return actual_start_time_us;
+    return earliest_start_time_us;
 }
 
 double common_communication_time(const common_t *common, unsigned int src_numa_id, unsigned int dst_numa_id, double payload)

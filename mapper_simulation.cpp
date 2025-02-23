@@ -81,11 +81,11 @@ void *mapper_simulation_thread_function(void *arg)
 
     XBT_INFO("Task ID: %s, Core ID: %d => message: started.", data->exec->get_cname(), data->assigned_core_id);
 
-    double actual_start_time_us = common_actual_start_time(data->common, data->exec->get_name());
+    double earliest_start_time_us = common_earliest_start_time(data->common, data->exec->get_name(), data->assigned_core_id);
 
     /* SIMULATE MEMORY READING */
 
-    double read_start_timestamp_us = actual_start_time_us;
+    double read_start_timestamp_us = earliest_start_time_us;
     double max_read_end_timestamp_us = 0.0;
     
     // Match all communication (Task1->Task2) where this task_name is the destination.
@@ -118,7 +118,7 @@ void *mapper_simulation_thread_function(void *arg)
 
     /* SIMULATE COMPUTATION */
 
-    double exec_start_timestamp_us = std::max(actual_start_time_us, max_read_end_timestamp_us);
+    double exec_start_timestamp_us = std::max(earliest_start_time_us, max_read_end_timestamp_us);
 
     // Calculate the compute time in microseconds.
     double flops = data->exec->get_remaining();
