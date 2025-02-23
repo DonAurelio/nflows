@@ -1,6 +1,6 @@
 # Compiler and Flags
 CXX := g++
-CXXFLAGS := -Wall -O2 -DNLOG # Uncomment for debugging: -fsanitize=address
+CXXFLAGS := -Wall -O2 -g -DNLOG # Uncomment for debugging: -fsanitize=address
 LIBS := -lsimgrid -lhwloc
 
 # Source Files and Object Files
@@ -13,6 +13,11 @@ OBJ := $(SRC:.cpp=.o)
 
 # Output Binary
 TARGET := scheduler
+
+# Define the runtime logging flags
+XBT_RUNTIME_LOG = \
+	--log=mapper_simulation.thresh:debug \
+	--log=scheduler_eft.thresh:debug
 
 # List of Directed Acyclic Graph (DAG) files for workflow scheduling
 DAG_FILES := \
@@ -52,7 +57,7 @@ $(TARGET): $(OBJ)
 
 # Run the scheduler with a sample configuration
 run: $(TARGET)
-	./$(TARGET) $(CONFIG_GEN_TEMPLATE)
+	./$(TARGET) $(CONFIG_GEN_TEMPLATE) $(XBT_RUNTIME_LOG)
 
 # Clean Build Files
 clean:

@@ -15,7 +15,7 @@ void Mapper_Simulation::start()
 {
     simgrid_exec_t *selected_exec;
     int selected_core_id;
-    unsigned long estimated_completion_time;
+    double estimated_completion_time;
 
     while (this->scheduler.has_next())
     {
@@ -45,8 +45,15 @@ void Mapper_Simulation::start()
 
         // Set as assigned.
         selected_exec->set_host(this->dummy_host);
-        common_set_core_id_avail_unitl(common, selected_core_id, estimated_completion_time);
+
+        double core_id_avail_until_before = common_get_core_id_avail_unitl(this->common, selected_core_id);
+        common_set_core_id_avail_unitl(this->common, selected_core_id, estimated_completion_time);
+        double core_id_avail_until_after = common_get_core_id_avail_unitl(this->common, selected_core_id);
+
         this->thread_func_ptr(data);
+
+        XBT_DEBUG("selected_task: %s, selected_core_id: %d, estimated_finish_time: %f, core_id_avail_until_before: %f, core_id_avail_until_after: %f", 
+            selected_exec->get_cname(),selected_core_id, estimated_completion_time, core_id_avail_until_before, core_id_avail_until_after);
     }
 
     // Workaround to properly finalize SimGrid resources.

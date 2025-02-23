@@ -31,8 +31,5 @@ std::tuple<simgrid_exec_t *, int, double> MIN_MIN_Scheduler::next()
         }
     }
 
-    XBT_DEBUG("selected_task: %s, selected_core_id: %d, estimated_finish_time: %f", selected_exec->get_cname(),
-              selected_core_id, estimated_finish_time);
-
     return std::make_tuple(selected_exec, selected_core_id, estimated_finish_time);
 }
