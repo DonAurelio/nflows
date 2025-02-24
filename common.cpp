@@ -52,12 +52,12 @@ std::vector<int> common_get_avail_core_ids(const common_t *common)
     return avail_core_ids;
 }
 
-void common_set_core_id_avail_unitl(common_t *common, unsigned int core_id, uint64_t duration)
+void common_set_core_id_avail_unitl(common_t *common, unsigned int core_id, double duration)
 {
     common->core_avail_until[core_id] = duration;
 }
 
-uint64_t common_get_core_id_avail_unitl(const common_t *common, unsigned int core_id)
+double common_get_core_id_avail_unitl(const common_t *common, unsigned int core_id)
 {
     return common->core_avail_until.at(core_id);
 }
@@ -157,21 +157,11 @@ double common_earliest_start_time(const common_t *common, const std::string &exe
     double max_pred_actual_finish_time = 0.0;
     for (const auto &[comm_name, time_range_payload] : common_filter_name_to_time_range_payload(common, exec_name, COMM_WRITE_OFFSETS, DST))
     {
-        max_pred_actual_finish_time = std::max(max_pred_actual_finish_time, (double) std::get<1>(time_range_payload));
+        max_pred_actual_finish_time = std::max(max_pred_actual_finish_time, std::get<1>(time_range_payload));
     }
 
     double core_id_avail_until = common_get_core_id_avail_unitl(common, core_id);
     double earliest_start_time_us = std::max(core_id_avail_until, max_pred_actual_finish_time);
-
-    XBT_DEBUG(
-        "Task ID: %s, Core ID: %d =>\n"
-        "  earliest_start_time_us: %f,\n"
-        "  core_avail_until: %f.",
-        exec_name.c_str(),
-        core_id,
-        earliest_start_time_us,
-        core_id_avail_until
-    );
     
     return earliest_start_time_us;
 }

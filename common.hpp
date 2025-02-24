@@ -37,7 +37,7 @@ typedef std::unordered_map<std::string, std::vector<int>> name_to_numa_ids_t;
 typedef std::unordered_map<std::string, thread_locality_t> name_to_thread_locality_t;
 
 // Time ranges can be absolute (timestamps) or relative (durations or offsets).
-typedef std::tuple<uint64_t, uint64_t, uint64_t> time_range_payload_t;
+typedef std::tuple<double, double, double> time_range_payload_t;
 typedef std::unordered_map<std::string, time_range_payload_t> name_to_time_range_payload_t;
 
 typedef simgrid::s4u::Exec simgrid_exec_t;
@@ -64,8 +64,8 @@ struct common_s
     size_t checksum;
 
     // To be initialized by the user.
-    unsigned long flops_per_cycle;
-    unsigned long clock_frequency_hz;
+    double flops_per_cycle;
+    double clock_frequency_hz;
 
     std::string log_base_name;
     std::string log_date_format;
@@ -76,7 +76,7 @@ struct common_s
     distance_matrix_t distance_bw_gbps;
 
     std::vector<bool> core_avail;
-    std::vector<uint64_t> core_avail_until;
+    std::vector<double> core_avail_until;
 
     // Locality information collections.
     name_to_address_t comm_name_to_address;
@@ -137,8 +137,8 @@ struct thread_data_s
 };
 typedef struct thread_data_s thread_data_t;
 
-void common_set_core_id_avail_unitl(common_t *common, unsigned int core_id, uint64_t duration);
-uint64_t common_get_core_id_avail_unitl(const common_t *common, unsigned int core_id);
+void common_set_core_id_avail_unitl(common_t *common, unsigned int core_id, double duration);
+double common_get_core_id_avail_unitl(const common_t *common, unsigned int core_id);
 
 void common_set_core_id_as_avail(common_t *common, unsigned int core_id);
 void common_set_core_id_as_unavail(common_t *common, unsigned int core_id);

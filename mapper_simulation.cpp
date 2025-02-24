@@ -95,7 +95,7 @@ void *mapper_simulation_thread_function(void *arg)
     // Match all communication (Task1->Task2) where this task_name is the destination.
     for (const auto &[comm_name, time_range_payload] : common_filter_name_to_time_range_payload(data->common, data->exec->get_cname(), COMM_WRITE_OFFSETS, DST))
     {
-        double read_payload_bytes = (double) std::get<2>(time_range_payload);
+        double read_payload_bytes = std::get<2>(time_range_payload);
 
         // ASSUMPTION:
         // The simulation assumes that the entire data item is stored in a single memory domain.
@@ -128,7 +128,7 @@ void *mapper_simulation_thread_function(void *arg)
     double flops = data->exec->get_remaining();
 
     // Core clock frequency must be static (set to ther value but 0).
-    double processor_speed_flops_per_second = (double) get_hwloc_core_performance_by_id(data->common, data->assigned_core_id);
+    double processor_speed_flops_per_second = get_hwloc_core_performance_by_id(data->common, data->assigned_core_id);
     
     double compute_time_us = common_compute_time(data->common, flops, processor_speed_flops_per_second);
 
@@ -177,28 +177,6 @@ void *mapper_simulation_thread_function(void *arg)
     }
 
     XBT_INFO("Task ID: %s, Core ID: %d => message: finished.", data->exec->get_cname(), data->assigned_core_id);
-
-    XBT_DEBUG(
-        "Task ID: %s, Core ID: %d =>\n"
-        "  earliest_start_time_us: %f,\n"
-        "  read_start_timestamp_us: %f,\n"
-        "  max_read_end_timestamp_us: %f,\n"
-        "  exec_start_timestamp_us: %f,\n"
-        "  exec_end_timestamp_us: %f,\n"
-        "  write_start_timestamp_us: %f,\n"
-        "  max_end_write_timestamp_us: %f,\n"
-        "  core_avail_until: %f.",
-        data->exec->get_cname(),
-        data->assigned_core_id,
-        earliest_start_time_us,
-        read_start_timestamp_us,
-        max_read_end_timestamp_us,
-        exec_start_timestamp_us,
-        exec_end_timestamp_us,
-        write_start_timestamp_us,
-        max_end_write_timestamp_us,
-        (double) common_get_core_id_avail_unitl(data->common, data->assigned_core_id)
-    );
 
     // Save thread locality.
     data->common->exec_name_to_thread_locality[data->exec->get_cname()] = {assigned_core_numa_id, data->assigned_core_id, 0, 0, 0};

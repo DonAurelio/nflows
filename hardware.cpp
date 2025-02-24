@@ -60,7 +60,7 @@ int get_hwloc_numa_id_by_core_id(const common_t *common, int hwloc_core_id)
     return hwloc_numa_id;
 }
 
-unsigned long get_hwloc_core_performance_by_id(const common_t *common, int hwloc_core_id)
+double get_hwloc_core_performance_by_id(const common_t *common, int hwloc_core_id)
 {
     hwloc_topology_t topology = common->topology;
 
@@ -92,12 +92,12 @@ unsigned long get_hwloc_core_performance_by_id(const common_t *common, int hwloc
             return 0;
         }
 
-        unsigned long frequency_khz = 0;
+        double frequency_khz = 0;
         freq_file >> frequency_khz;
         freq_file.close();
 
         // Convert frequency to Hertz.
-        unsigned long frequency_hz = frequency_khz * 1000;
+        double frequency_hz = frequency_khz * 1000;
 
         return common->flops_per_cycle * frequency_hz;
     }
