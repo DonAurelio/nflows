@@ -3,6 +3,8 @@
 #include <iostream>
 #include <ranges>
 
+XBT_LOG_NEW_DEFAULT_CATEGORY(common, "Messages specific to this module.");
+
 simgrid_execs_t common_read_dag_from_dot(const std::string &file_name)
 {
     simgrid_execs_t execs;
@@ -52,7 +54,7 @@ std::vector<int> common_get_avail_core_ids(const common_t *common)
 
 void common_set_core_id_avail_unitl(common_t *common, unsigned int core_id, uint64_t duration)
 {
-    common->core_avail_until[core_id] += duration;
+    common->core_avail_until[core_id] = duration;
 }
 
 uint64_t common_get_core_id_avail_unitl(const common_t *common, unsigned int core_id)
@@ -160,6 +162,16 @@ double common_earliest_start_time(const common_t *common, const std::string &exe
 
     double core_id_avail_until = common_get_core_id_avail_unitl(common, core_id);
     double earliest_start_time_us = std::max(core_id_avail_until, max_pred_actual_finish_time);
+
+    XBT_DEBUG(
+        "Task ID: %s, Core ID: %d =>\n"
+        "  earliest_start_time_us: %f,\n"
+        "  core_avail_until: %f.",
+        exec_name.c_str(),
+        core_id,
+        earliest_start_time_us,
+        core_id_avail_until
+    );
     
     return earliest_start_time_us;
 }

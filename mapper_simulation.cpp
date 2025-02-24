@@ -46,14 +46,11 @@ void Mapper_Simulation::start()
         // Set as assigned.
         selected_exec->set_host(this->dummy_host);
 
-        double core_id_avail_until_before = common_get_core_id_avail_unitl(this->common, selected_core_id);
-        common_set_core_id_avail_unitl(this->common, selected_core_id, estimated_completion_time);
-        double core_id_avail_until_after = common_get_core_id_avail_unitl(this->common, selected_core_id);
-
+        // Task execution must be performed first to ensure that earliest_start_time  
+        // is calculated correctly. Then, core availability must be set. 
         this->thread_func_ptr(data);
 
-        XBT_DEBUG("selected_task: %s, selected_core_id: %d, estimated_finish_time: %f, core_id_avail_until_before: %f, core_id_avail_until_after: %f", 
-            selected_exec->get_cname(),selected_core_id, estimated_completion_time, core_id_avail_until_before, core_id_avail_until_after);
+        common_set_core_id_avail_unitl(this->common, selected_core_id, estimated_completion_time);
     }
 
     // Workaround to properly finalize SimGrid resources.
@@ -180,6 +177,28 @@ void *mapper_simulation_thread_function(void *arg)
     }
 
     XBT_INFO("Task ID: %s, Core ID: %d => message: finished.", data->exec->get_cname(), data->assigned_core_id);
+
+    XBT_DEBUG(
+        "Task ID: %s, Core ID: %d =>\n"
+        "  earliest_start_time_us: %f,\n"
+        "  read_start_timestamp_us: %f,\n"
+        "  max_read_end_timestamp_us: %f,\n"
+        "  exec_start_timestamp_us: %f,\n"
+        "  exec_end_timestamp_us: %f,\n"
+        "  write_start_timestamp_us: %f,\n"
+        "  max_end_write_timestamp_us: %f,\n"
+        "  core_avail_until: %f.",
+        data->exec->get_cname(),
+        data->assigned_core_id,
+        earliest_start_time_us,
+        read_start_timestamp_us,
+        max_read_end_timestamp_us,
+        exec_start_timestamp_us,
+        exec_end_timestamp_us,
+        write_start_timestamp_us,
+        max_end_write_timestamp_us,
+        (double) common_get_core_id_avail_unitl(data->common, data->assigned_core_id)
+    );
 
     // Save thread locality.
     data->common->exec_name_to_thread_locality[data->exec->get_cname()] = {assigned_core_numa_id, data->assigned_core_id, 0, 0, 0};

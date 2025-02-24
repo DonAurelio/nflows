@@ -7,7 +7,7 @@
     },
     "core_avail_mask": "0x03", 
     "core_count": 2,
-    "dag_file": "./tests/workflows/data_redis_4.dot",
+    "dag_file": "./tests/workflows/data_redis_2.dot",
     "scheduler_type": "MIN_MIN",
     "mapper_type": "SIMULATION",
     "log_base_name": "./tests/output",

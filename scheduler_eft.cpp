@@ -59,6 +59,10 @@ std::tuple<int, double> EFT_Scheduler::get_best_core_id(const simgrid_exec_t *ex
             const simgrid_comm_t *comm = dynamic_cast<simgrid_comm_t *>(succ.get());
             double write_payload_bytes = comm->get_remaining();
 
+            // Skipt all task_i->end communications.
+            auto [exec_name, succ_exec_name] = common_split(comm->get_cname(), "->");
+            if (succ_exec_name == std::string("end")) continue;
+
             // Determine the NUMA node that will handle the write operation.
             // ASSUMPTION:
             // Since it is uncertain which NUMA node will handle the write operations for this task,
