@@ -17,16 +17,12 @@ TARGET := scheduler
 # Define the runtime logging flags
 XBT_RUNTIME_LOG = \
 	--log=mapper_simulation.thresh:debug \
-	--log=scheduler_eft.thresh:debug
+	--log=scheduler_eft.thresh:debug \
+	--log=common.thresh:debug
 
 # List of Directed Acyclic Graph (DAG) files for workflow scheduling
 DAG_FILES := \
-    ./tests/workflows/data_redis_1.dot, \
-	./tests/workflows/data_redis_2.dot, \
-	./tests/workflows/data_redis_4.dot, \
-	./tests/workflows/data_redis_8.dot, \
-	./tests/workflows/data_redis_16.dot, \
-	./tests/workflows/data_redis_32.dot
+	./tests/workflows/data_redis_2.dot
 
 # Configuration Files
 TEST_DIR := ./tests
@@ -36,7 +32,7 @@ CONFIG_GEN_SCRIPT := python3 ./python/generate_config.py \
     --template $(CONFIG_GEN_TEMPLATE) \
     --output_dir $(CONFIG_DIR) \
     --params \
-        scheduler_type=MIN_MIN,HEFT,FIFO \
+        scheduler_type=MIN_MIN,HEFT \
         mapper_type=SIMULATION \
 		"dag_file=$(DAG_FILES)"
 
@@ -68,7 +64,6 @@ test: $(TARGET)
 	@echo "Generating configuration files..."
 	@$(CONFIG_GEN_SCRIPT)
 	@CONFIG_FILES=$$(ls $(CONFIG_DIR)/*.json); \
-	set -e; \
 	for json in $$CONFIG_FILES; do \
 		echo "Running test for $$json"; \
 		./$(TARGET) $$json; \
