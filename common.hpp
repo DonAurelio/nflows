@@ -121,7 +121,7 @@ std::vector<int> common_get_avail_core_ids(const common_t *common);
 name_to_time_range_payload_t common_filter_name_to_time_range_payload(const common_t *common, const std::string &name,
                                                                  CommonVectorType type, CommonCommNameMatch comm_name);
 
-uint64_t common_get_time_us();
+double common_get_time_us();
 std::string common_get_timestamped_filename(const std::string &base_name);
 std::string common_join(const std::vector<int> &vec, const std::string &delimiter);
 std::pair<std::string, std::string> common_split(const std::string &input, std::string delimiter);

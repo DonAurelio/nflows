@@ -210,11 +210,11 @@ std::vector<std::vector<double>> common_read_distance_matrix_from_file(const std
     return matrix;
 }
 
-uint64_t common_get_time_us()
+double common_get_time_us()
 {
     struct timeval tv;
     gettimeofday(&tv, NULL);
-    return (uint64_t)tv.tv_sec * 1000000 + tv.tv_usec;
+    return (double)tv.tv_sec * 1000000 + tv.tv_usec;
 }
 
 std::string common_get_timestamped_filename(const std::string &base_name, const std::string &format = "%Y%m%d_%H%M%S")
