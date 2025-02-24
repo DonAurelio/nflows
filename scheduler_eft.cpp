@@ -77,8 +77,6 @@ std::tuple<int, double> EFT_Scheduler::get_best_core_id(const simgrid_exec_t *ex
         double finish_time_us =
             earliest_start_time_us + estimated_read_time_us + estimated_compute_time_us + estimated_write_time_us;
             
-        XBT_DEBUG("task: %s, core_id: %d, earliest_finish_time: %f", exec->get_cname(), core_id, finish_time_us);
-
         if (finish_time_us < earliest_finish_time_us) {
             best_core_id = core_id;
             earliest_finish_time_us = finish_time_us;
