@@ -1,0 +1,15 @@
+{
+    "flops_per_cycle": 1000000,
+    "clock_frequency_hz": 1,
+    "distance_matrices": {
+        "latency": "./tests/system/min_min_simulation/latency.txt",
+        "bandwidth": "./tests/system/min_min_simulation/bandwidth.txt"
+    },
+    "core_avail_mask": "0x03", 
+    "core_count": 2,
+    "dag_file": "./tests/workflows/min_min_simulation/data_redis_1.dot",
+    "scheduler_type": "min_min",
+    "mapper_type": "simulation",
+    "log_base_name": "./tests/output/min_min_simulation/config_1",
+    "log_date_format": ""
+}

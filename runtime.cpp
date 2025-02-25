@@ -62,15 +62,15 @@ void runtime_initialize(common_t **common, simgrid_execs_t **dag, scheduler_t **
     /* SCHEDULER */
     std::string scheduler_type = data["scheduler_type"];
 
-    if (scheduler_type == "MIN_MIN")
+    if (scheduler_type == "min_min")
     {
         *scheduler = new min_min_scheduler_t(cmn, **dag);
     }
-    else if (scheduler_type == "HEFT")
+    else if (scheduler_type == "heft")
     {
         *scheduler = new heft_scheduler_t(cmn, **dag);
     }
-    else if (scheduler_type == "FIFO")
+    else if (scheduler_type == "fifo")
     {
         *scheduler = new fifo_scheduler_t(cmn, **dag);
     }
@@ -83,11 +83,11 @@ void runtime_initialize(common_t **common, simgrid_execs_t **dag, scheduler_t **
     /* MAPPER */
     std::string mapper_type = data["mapper_type"];
 
-    if (mapper_type == "BARE_METAL")
+    if (mapper_type == "bare_metal")
     {
         *mapper = new mapper_bare_metal_t(cmn, **scheduler);
     }
-    else if (mapper_type == "SIMULATION")
+    else if (mapper_type == "simulation")
     {
         *mapper = new mapper_simulation_t(cmn, **scheduler);
     }

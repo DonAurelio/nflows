@@ -1,6 +1,6 @@
 # Compiler and Flags
 CXX := g++
-CXXFLAGS := -Wall -O2 -g -DNLOG # Uncomment for debugging: -fsanitize=address
+CXXFLAGS := -Wall -O2 -g #-DNLOG # Uncomment for debugging: -fsanitize=address
 LIBS := -lsimgrid -lhwloc
 
 # Source Files and Object Files
@@ -14,6 +14,10 @@ OBJ := $(SRC:.cpp=.o)
 # Output Binary
 TARGET := scheduler
 
+# Define available schedulers and execution platforms
+SCHEDULERS := min_min
+MAPPERS := simulation
+
 # Define the runtime logging flags
 XBT_RUNTIME_LOG = \
 	--log=mapper_simulation.thresh:debug \
@@ -24,21 +28,12 @@ XBT_RUNTIME_LOG = \
 DAG_FILES := \
 	./tests/workflows/data_redis_2.dot
 
-# Configuration Files
+# Directories
 TEST_DIR := ./tests
 CONFIG_DIR := $(TEST_DIR)/config
-CONFIG_GEN_TEMPLATE := $(TEST_DIR)/templates/template.json
-CONFIG_GEN_SCRIPT := python3 ./python/generate_config.py \
-    --template $(CONFIG_GEN_TEMPLATE) \
-    --output_dir $(CONFIG_DIR) \
-    --params \
-        scheduler_type=MIN_MIN,HEFT \
-        mapper_type=SIMULATION \
-		"dag_file=$(DAG_FILES)"
-
-# Validator Script
-YAML_OUTPUT := $(TEST_DIR)/output.yaml
-VALIDATOR_SCRIPT := python3 ./python/validate_offsets.py $(YAML_OUTPUT)
+OUTPUT_DIR := $(TEST_DIR)/output
+LOG_DIR := $(TEST_DIR)/logs
+VALIDATOR_DIR := $(TEST_DIR)/validators
 
 # Default target
 all: $(TARGET)
@@ -57,17 +52,16 @@ run: $(TARGET)
 
 # Clean Build Files
 clean:
-	rm -f $(OBJ) $(TARGET) $(TEST_DIR)/*.yaml
+	@rm -f $(OBJ) $(TARGET) $(OUTPUT_DIR)/**/*.yaml $(LOG_DIR)/**/*.log
+	@find $(OUTPUT_DIR) $(LOG_DIR) -type d -empty -exec rmdir {} +
+	@rm -d $(OUTPUT_DIR) $(LOG_DIR) 2>/dev/null
 
-# Generate Configs and Run Tests
-test: $(TARGET)
-	@echo "Generating configuration files..."
-	@$(CONFIG_GEN_SCRIPT)
-	@CONFIG_FILES=$$(ls $(CONFIG_DIR)/*.json); \
-	for json in $$CONFIG_FILES; do \
-		echo "Running test for $$json"; \
-		./$(TARGET) $$json; \
-		$(VALIDATOR_SCRIPT); \
+test-min_min-simulation: $(TARGET)
+	@echo "Generating output and log folders for min_min on simulation..."
+	@mkdir -p "$(OUTPUT_DIR)/min_min_simulation" "$(LOG_DIR)/min_min_simulation"
+
+	@echo "Running min_min on simulation..."
+	@for json in $$(ls $(CONFIG_DIR)/min_min_simulation/*.json 2>/dev/null); do \
+		./$(TARGET) $$json > $(LOG_DIR)/min_min_simulation/`basename $$json .json`.log 2>&1; \
+		python3 $(VALIDATOR_DIR)/validate_min_min.py $(OUTPUT_DIR)/min_min_simulation/`basename $$json .json`.yaml >> $(LOG_DIR)/min_min_simulation/`basename $$json .json`.log 2>&1; \
 	done
-	@echo "Cleaning up generated configuration files..."
-	@rm -f $(CONFIG_DIR)/*.json $(TEST_DIR)/*.yaml
