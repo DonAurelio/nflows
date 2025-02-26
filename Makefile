@@ -52,9 +52,11 @@ run: $(TARGET)
 
 # Clean Build Files
 clean:
-	@rm -f $(OBJ) $(TARGET) $(OUTPUT_DIR)/**/*.yaml $(LOG_DIR)/**/*.log 2>/dev/null
-	@find $(OUTPUT_DIR) $(LOG_DIR) -type d -empty -exec rmdir {} + 2>/dev/null
-	@rm -d $(OUTPUT_DIR) $(LOG_DIR) 2>/dev/null
+	@rm -f $(OBJ) $(TARGET) $(OUTPUT_DIR)/**/*.yaml $(LOG_DIR)/**/*.log
+	@[ -d $(OUTPUT_DIR) ] && find $(OUTPUT_DIR) -type d -empty -exec rmdir {} + || true
+	@[ -d $(LOG_DIR) ] && find $(LOG_DIR) -type d -empty -exec rmdir {} + || true
+	@[ -d $(OUTPUT_DIR) ] && rmdir $(OUTPUT_DIR) 2>/dev/null || true
+	@[ -d $(LOG_DIR) ] && rmdir $(LOG_DIR) 2>/dev/null || true
 
 test-min_min-simulation: $(TARGET)
 	@echo "Generating output and log folders for min_min on simulation..."

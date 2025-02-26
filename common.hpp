@@ -38,6 +38,8 @@ enum CommonClockFrequencyType
 
 typedef CommonClockFrequencyType clock_frequency_type_t;
 
+std::string common_get_str_from_clock_frequency_type(clock_frequency_type_t type);
+
 // Maps data item names (e.g., "task1->task2") to their virtual addresses.
 typedef std::unordered_map<std::string, char *> name_to_address_t;
 // Maps data item names (e.g., "task1->task2") to the NUMA nodes where their pages reside.
@@ -72,9 +74,6 @@ struct common_s
     // Checksum
     size_t checksum;
 
-    std::vector<bool> core_avail;
-    std::vector<double> core_avail_until;
-
     // To be initialized by the user.
     double flops_per_cycle;
     double clock_frequency_hz;
@@ -88,6 +87,9 @@ struct common_s
     // Latency (ns), Bandwidth (GB/s).
     distance_matrix_t distance_lat_ns;
     distance_matrix_t distance_bw_gbps;
+
+    std::vector<bool> core_avail;
+    std::vector<double> core_avail_until;
 
     // Locality information collections.
     name_to_address_t comm_name_to_address;

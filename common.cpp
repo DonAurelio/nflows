@@ -5,6 +5,16 @@
 
 XBT_LOG_NEW_DEFAULT_CATEGORY(common, "Messages specific to this module.");
 
+std::string common_get_str_from_clock_frequency_type(clock_frequency_type_t type)
+{
+    switch (type) {
+        case CommonClockFrequencyType::DYNAMIC_CLOCK_FREQUENCY: return "dynamic";
+        case CommonClockFrequencyType::STATIC_CLOCK_FREQUENCY: return "static";
+        case CommonClockFrequencyType::ARRAY_CLOCK_FREQUENCY: return "array";
+        default: return "unknown";
+    }
+}
+
 simgrid_execs_t common_read_dag_from_dot(const std::string &file_name)
 {
     simgrid_execs_t execs;
@@ -338,22 +348,32 @@ void common_print_name_to_address(const name_to_address_t &mapping, std::ostream
 
 void common_print_metadata(const common_t *common, std::ostream &out)
 {
-    out << "common_metadata:\n";
-    out << "  active_threads: " << common->active_threads << "\n";
-    out << "  flops_per_cycle: " << common->flops_per_cycle << "\n";
-    out << "  clock_frequency_hz: " << common->clock_frequency_hz << "\n";
-    out << "  checksum: " << common->checksum << "\n";
+    out << "checksum: " << common->checksum << "\n";
+    out << "active_threads: " << common->active_threads << "\n";
+    out << "flops_per_cycle: " << common->flops_per_cycle << "\n";
+    out << "clock_frequency_type: " << common_get_str_from_clock_frequency_type(common->clock_frequency_type) << "\n";
+    out << "clock_frequency_hz: " << common->clock_frequency_hz << "\n";
+    out << std::endl;
+
+    if (!common->clock_frequencies_hz.empty())
+    {
+        out << "clock_frequencies_hz:\n";
+        for (size_t i = 0; i < common->core_avail.size(); ++i)
+        {
+            out << "  " << i << ": " << common->clock_frequencies_hz[i] << "\n";
+        }
+        out << std::endl;
+    }
 
     if (!common->core_avail.empty())
     {
-        out << "  core_availability:\n";
+        out << "core_availability:\n";
         for (size_t i = 0; i < common->core_avail.size(); ++i)
         {
-            out << "    " << i << ": {avail: " << common->core_avail[i] << ", avail_until: " << common->core_avail_until[i] << "}" << "\n";
+            out << "  " << i << ": {avail: " << common->core_avail[i] << ", avail_until: " << common->core_avail_until[i] << "}" << "\n";
         }
+        out << std::endl;
     }
-
-    out << std::endl;
 }
 
 void common_print_common_structure(const common_t *common)
