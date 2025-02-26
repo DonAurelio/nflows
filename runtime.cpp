@@ -31,20 +31,17 @@ void runtime_initialize(common_t **common, simgrid_execs_t **dag, scheduler_t **
     /* CHECK READING OPERATION CONSISTENCY */
     cmn->checksum = 0;
 
-    cmn->flops_per_cycle = data["flops_per_cycle"];
-    cmn->clock_frequency_hz = data["clock_frequency_hz"]; // Dynamic (0) clock frequency.
-
-    cmn->log_base_name = data["log_base_name"];
-    cmn->log_date_format = data["log_date_format"];
-
-    // Latency (ns), Bandwidth (GB/s).
-    cmn->distance_lat_ns = common_read_distance_matrix_from_file(data["distance_matrices"]["latency"]);
-    cmn->distance_bw_gbps = common_read_distance_matrix_from_file(data["distance_matrices"]["bandwidth"]);
-
     // Set available cores.
     uint64_t mask = std::stoull(data["core_avail_mask"].get<std::string>(), nullptr, 16);
 
-    int core_count = data["core_count"];
+    // Get core count from mask.
+    int core_count = 0;
+    uint64_t temp_mask = mask;
+    while (temp_mask) {
+        core_count++;
+        temp_mask >>= 1;
+    }
+
     cmn->core_avail.resize(core_count, false);
     cmn->core_avail_until.resize(core_count, 0.0);
 
@@ -55,6 +52,32 @@ void runtime_initialize(common_t **common, simgrid_execs_t **dag, scheduler_t **
             cmn->core_avail[i] = true;
         }
     }
+
+    cmn->flops_per_cycle = data["flops_per_cycle"];
+    std::string clock_frequency_type = data["clock_frequency_type"];
+
+    if (clock_frequency_type == "dynamic") {
+        cmn->clock_frequency_type = DYNAMIC_CLOCK_FREQUENCY;
+        cmn->clock_frequency_hz = 0;
+    } else if (clock_frequency_type == "static") {
+        cmn->clock_frequency_type = STATIC_CLOCK_FREQUENCY;
+        cmn->clock_frequency_hz = data["clock_frequency_hz"];
+    } else if (clock_frequency_type == "array") {
+        cmn->clock_frequency_type = ARRAY_CLOCK_FREQUENCY;
+        cmn->clock_frequencies_hz.resize(core_count, 0.0); // Ensure correct size
+        cmn->clock_frequencies_hz = data["clock_frequencies_hz"].get<std::vector<double>>(); // Assign new values
+    } else {
+        std::cerr << "Unsupported clock frequency type: " << clock_frequency_type << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+
+    cmn->log_base_name = data["log_base_name"];
+    cmn->log_date_format = data["log_date_format"];
+
+    // Latency (ns), Bandwidth (GB/s).
+    cmn->distance_lat_ns = common_read_distance_matrix_from_file(data["distance_matrices"]["latency"]);
+    cmn->distance_bw_gbps = common_read_distance_matrix_from_file(data["distance_matrices"]["bandwidth"]);
+
 
     /* DAG */
     *dag = new simgrid_execs_t(common_read_dag_from_dot(data["dag_file"]));

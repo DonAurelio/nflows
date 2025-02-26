@@ -52,8 +52,8 @@ run: $(TARGET)
 
 # Clean Build Files
 clean:
-	@rm -f $(OBJ) $(TARGET) $(OUTPUT_DIR)/**/*.yaml $(LOG_DIR)/**/*.log
-	@find $(OUTPUT_DIR) $(LOG_DIR) -type d -empty -exec rmdir {} +
+	@rm -f $(OBJ) $(TARGET) $(OUTPUT_DIR)/**/*.yaml $(LOG_DIR)/**/*.log 2>/dev/null
+	@find $(OUTPUT_DIR) $(LOG_DIR) -type d -empty -exec rmdir {} + 2>/dev/null
 	@rm -d $(OUTPUT_DIR) $(LOG_DIR) 2>/dev/null
 
 test-min_min-simulation: $(TARGET)
