@@ -370,7 +370,10 @@ void common_print_metadata(const common_t *common, std::ostream &out)
         out << "core_availability:\n";
         for (size_t i = 0; i < common->core_avail.size(); ++i)
         {
-            out << "  " << i << ": {avail: " << common->core_avail[i] << ", avail_until: " << common->core_avail_until[i] << "}" << "\n";
+            if (common->core_avail[i])  // Print only available cores
+            {
+                out << "  " << i << ": {avail_until: " << common->core_avail_until[i] << "}" << "\n";
+            }        
         }
         out << std::endl;
     }
