@@ -1,5 +1,5 @@
 {
-    "dag_file": "./tests/workflows/min_min_simulation/sample_1.dot",
+    "dag_file": "./tests/workflows/min_min_simulation/config_1.dot",
     "scheduler_type": "min_min",
     "mapper_type": "simulation",
 
@@ -9,8 +9,8 @@
     "clock_frequencies_hz": [1, 2, 4, 8],
 
     "distance_matrices": {
-        "latency": "./tests/system/min_min_simulation/latency.txt",
-        "bandwidth": "./tests/system/min_min_simulation/bandwidth.txt"
+        "latency": "./tests/system/min_min_simulation/1_lat.txt",
+        "bandwidth": "./tests/system/min_min_simulation/1_bw.txt"
     },
 
     "log_base_name": "./tests/output/min_min_simulation/config_1",

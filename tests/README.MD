@@ -58,7 +58,7 @@ The Min-Min algorithm schedules tasks by selecting the task with the minimum com
   - Each core writes a data item to its **local memory**, but `Task3 [size=80]` must perform:  
     - **One local access** to read the first item.  
     - **One remote access** to read the second item.  
-  - The final core availabilities should be **320** (corresponding to the **workflow makespan**) and **180**, respectively.
+  - The final core availabilities should be **300** (corresponding to the **workflow makespan**) and **180**, respectively.
 
 ### Test 3 (Code Verification)
 
@@ -72,7 +72,7 @@ The Min-Min algorithm schedules tasks by selecting the task with the minimum com
 
 - Expected Outcome:  
   - Since memory access is **uniform** in **Test 3**, there is **no additional cost for remote access**.  
-  - As a result, the **workflow makespan** should be **lower** than in **Test 2**.
+  - As a result, the **workflow makespan** should be **lower** (**280**) than in **Test 2** (**300**).
 
 
 # References
