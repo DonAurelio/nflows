@@ -10,7 +10,7 @@ Validation is performed through simulation, as the implemented algorithms produc
 
 The Min-Min algorithm schedules tasks by selecting the task with the minimum completion time first and assigning it to the resource that can complete it the earliest.
 
-### Script 1  
+### Script 1 [validate_min_min.py](./tests/validators/validate_min_min.py)
 
 This script verifies that the execution offsets collected by the tool align with expected total execution times. Specifically, it ensures that the sum of the **read, compute, and write offsets** matches the total execution time for each task.  
 
@@ -29,9 +29,9 @@ This script verifies that the execution offsets collected by the tool align with
     2. Adds the **compute offset** for the task.  
     3. Computes the **maximum write offset** from outgoing communication.  
     4. Derives the **computed total execution time** using:  
-       \[
+       $$
        \text{Computed Total} = \max(\text{Read End}) + \text{Compute Time} + \max(\text{Write Offset})
-       \]  
+       $$ 
     5. Compares the **computed total** against the **expected total execution time** in `exec_name_total_offsets`.  
   - If the computed total does **not match** the expected total, the script **flags a validation error**.  
 
@@ -40,7 +40,7 @@ This script verifies that the execution offsets collected by the tool align with
     - **Dependencies are respected**: A task cannot start execution before its required input data is available.  
     - **Data dependencies influence scheduling**: The order of execution is preserved based on task communication.  
 
-##### Example
+#### Example
 
 ```yaml
 comm_name_read_offsets:
@@ -62,33 +62,29 @@ exec_name_total_offsets:
   Task_1: {start: 0, end: 180, payload: 160}
 ```
 
-**Task 3:**  
-
+Task 3:
 - *Max Read Time:* `max(200, 200) = 200` (from `Task_1->Task_3` and `Task_2->Task_3`)  
 - *Compute Time:* `80` (from `exec_name_compute_offsets`)  
 - *Max Write Time:* `0` (Task 3 is an end task, so no outgoing communication)  
 - *Computed Total:* `200` (Max Read Time) + ``80` (Compute Time) + `0` (Max Write Time) = `280`
 - *Expected Total:* `280` (Validation Passed)  
 
-**Task 2:**  
-
+Task 2:
 - *Max Read Time:* `0` (Task 2 is a root task, no dependencies)  
 - *Compute Time:* `160`  
 - *Max Write Time:* `20` (to `Task_3`)  
 - *Computed Total:*  `0` (Max Read Time) + `160` (Compute Time) + `20` (Max Write Time) = `180`
 - *Expected Total:* `180` (Validation Passed)  
 
-**Task 1:**
-
+Task 1:
 - *Max Read Time:* `0` (Task 1 is a root task, no dependencies)  
 - *Compute Time:* `160`  
 - *Max Write Time:* `20` (to `Task_3`)  
 - *Computed Total:*  `0` (Max Read Time) + `160` (Compute Time) + `20` (Max Write Time) = `180`
 - *Expected Total:* `180` (Validation Passed)  
 
-### Test 1
-
-* Configuration: [`./tests/config/min_min_simulation/config_1.json`](./tests/config/min_min_simulation/config_1.json)  
+### Test 1 [`config_1.json`](./tests/config/min_min_simulation/config_1.json)
+   
 * System Setup:  
   * Processors (physical cores) operate at varying frequencies: `[1, 2, 4, 8]`.  
   * Three tasks with different computational requirements (in FLOPs):  
@@ -107,9 +103,8 @@ exec_name_total_offsets:
   * All tasks should be executed on the **4th core** (the fastest, operating at frequency 8).  
   * The final core availability should be **70**, which corresponds to the **workflow makespan**.
 
-#### Test 2
-
-* Configuration: [`./tests/config/min_min_simulation/config_2.json`](./tests/config/min_min_simulation/config_2.json)  
+#### Test 2 [`config_2.json`](./tests/config/min_min_simulation/config_2.json)
+ 
 * System Setup:  
   * Two processors (physical cores) operate at the same frequency: `1`.  
   * Each processor belongs to a different memory domain.  
@@ -136,9 +131,8 @@ exec_name_total_offsets:
     * **One remote access** to read the second item.  
   * The final core availabilities should be **300** (corresponding to the **workflow makespan**) and **180**, respectively.
 
-#### Test 3
-
-* Configuration: [`./tests/config/min_min_simulation/config_3.json`](./tests/config/min_min_simulation/config_3.json)  
+#### Test 3 [`config_3.json`](./tests/config/min_min_simulation/config_3.json)
+   
 * System Setup:  
   * Same as **Test 2**, with the following difference:  
   * Memory channel bandwidths are **uniform** across memory domains: **4 GB/s**.  
