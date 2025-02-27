@@ -10,7 +10,7 @@ Validation is performed through simulation, as the implemented algorithms produc
 
 The Min-Min algorithm schedules tasks by selecting the task with the minimum completion time first and assigning it to the resource that can complete it the earliest.
 
-### Script 1 [validate_min_min.py](./tests/validators/validate_min_min.py)
+### Script 1 [validate_min_min.py](./validators/validate_min_min.py)
 
 This script verifies that the execution offsets collected by the tool align with expected total execution times. Specifically, it ensures that the sum of the **read, compute, and write offsets** matches the total execution time for each task.  
 
@@ -83,7 +83,7 @@ Task 1:
 - *Computed Total:*  `0` (Max Read Time) + `160` (Compute Time) + `20` (Max Write Time) = `180`
 - *Expected Total:* `180` (Validation Passed)  
 
-### Test 1 [`config_1.json`](./tests/config/min_min_simulation/config_1.json)
+### Test 1 [`config_1.json`](./config/min_min_simulation/config_1.json)
    
 * System Setup:  
   * Processors (physical cores) operate at varying frequencies: `[1, 2, 4, 8]`.  
@@ -103,7 +103,7 @@ Task 1:
   * All tasks should be executed on the **4th core** (the fastest, operating at frequency 8).  
   * The final core availability should be **70**, which corresponds to the **workflow makespan**.
 
-#### Test 2 [`config_2.json`](./tests/config/min_min_simulation/config_2.json)
+#### Test 2 [`config_2.json`](./config/min_min_simulation/config_2.json)
  
 * System Setup:  
   * Two processors (physical cores) operate at the same frequency: `1`.  
@@ -131,7 +131,7 @@ Task 1:
     * **One remote access** to read the second item.  
   * The final core availabilities should be **300** (corresponding to the **workflow makespan**) and **180**, respectively.
 
-#### Test 3 [`config_3.json`](./tests/config/min_min_simulation/config_3.json)
+#### Test 3 [`config_3.json`](./config/min_min_simulation/config_3.json)
    
 * System Setup:  
   * Same as **Test 2**, with the following difference:  
