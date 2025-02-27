@@ -32,6 +32,7 @@ DAG_FILES := \
 TEST_DIR := ./tests
 CONFIG_DIR := $(TEST_DIR)/config
 OUTPUT_DIR := $(TEST_DIR)/output
+OUTPUT_EXPECTED_DIR = $(TEST_DIR)/output_expected
 LOG_DIR := $(TEST_DIR)/logs
 VALIDATOR_DIR := $(TEST_DIR)/validators
 
@@ -65,5 +66,6 @@ test-min_min-simulation: $(TARGET)
 	@echo "Running min_min on simulation..."
 	@for json in $$(ls $(CONFIG_DIR)/min_min_simulation/*.json 2>/dev/null); do \
 		./$(TARGET) $$json > $(LOG_DIR)/min_min_simulation/`basename $$json .json`.log 2>&1; \
-		python3 $(VALIDATOR_DIR)/validate_min_min.py $(OUTPUT_DIR)/min_min_simulation/`basename $$json .json`.yaml >> $(LOG_DIR)/min_min_simulation/`basename $$json .json`.log 2>&1; \
+		python3 $(VALIDATOR_DIR)/validate_offsets.py $(OUTPUT_DIR)/min_min_simulation/`basename $$json .json`.yaml >> $(LOG_DIR)/min_min_simulation/`basename $$json .json`.log 2>&1; \
+		python3 $(VALIDATOR_DIR)/validate_output.py $(OUTPUT_DIR)/min_min_simulation/`basename $$json .json`.yaml $(OUTPUT_EXPECTED_DIR)/min_min_simulation/`basename $$json .json`.yaml >> $(LOG_DIR)/min_min_simulation/`basename $$json .json`.log 2>&1; \
 	done

@@ -3,7 +3,6 @@
 import yaml
 import argparse
 
-
 def load_yaml_data(file_path):
     """Loads YAML data from the given file."""
     with open(file_path, "r") as file:
@@ -65,4 +64,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     yaml_data = load_yaml_data(args.yaml_path)
+    print(f"validate_offsets => output: {args.yaml_path}")
     validate_offsets(yaml_data)
