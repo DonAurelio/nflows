@@ -10,7 +10,83 @@ Validation is performed through simulation, as the implemented algorithms produc
 
 The Min-Min algorithm schedules tasks by selecting the task with the minimum completion time first and assigning it to the resource that can complete it the earliest.
 
-### Test 1 (Code verification)
+### Script 1  
+
+This script verifies that the execution offsets collected by the tool align with expected total execution times. Specifically, it ensures that the sum of the **read, compute, and write offsets** matches the total execution time for each task.  
+
+#### How It Works  
+
+- **Input Data**:  
+  - The script processes a **YAML file** containing the following execution offset data:  
+    - `comm_name_read_offsets`: Communication **read** offsets between tasks.  
+    - `comm_name_write_offsets`: Communication **write** offsets between tasks.  
+    - `exec_name_compute_offsets`: **Compute** offsets for each task.  
+    - `exec_name_total_offsets`: **Total** execution offsets for each task.  
+
+- **Validation Logic**:  
+  - For each task:  
+    1. Computes the **maximum read offset** from incoming communication.  
+    2. Adds the **compute offset** for the task.  
+    3. Computes the **maximum write offset** from outgoing communication.  
+    4. Derives the **computed total execution time** using:  
+       \[
+       \text{Computed Total} = \max(\text{Read End}) + \text{Compute Time} + \max(\text{Write Offset})
+       \]  
+    5. Compares the **computed total** against the **expected total execution time** in `exec_name_total_offsets`.  
+  - If the computed total does **not match** the expected total, the script **flags a validation error**.  
+
+- **Dependency Check (Indirect Validation)**:  
+  - By ensuring the **computed total execution time includes the read offsets**, the script indirectly validates that:  
+    - **Dependencies are respected**: A task cannot start execution before its required input data is available.  
+    - **Data dependencies influence scheduling**: The order of execution is preserved based on task communication.  
+
+##### Example
+
+```yaml
+comm_name_read_offsets:
+  Task_2->Task_3: {start: 180, end: 200, payload: 80}
+  Task_1->Task_3: {start: 180, end: 200, payload: 80}
+
+comm_name_write_offsets:
+  Task_2->Task_3: {start: 160, end: 180, payload: 80}
+  Task_1->Task_3: {start: 160, end: 180, payload: 80}
+
+exec_name_compute_offsets:
+  Task_3: {start: 200, end: 280, payload: 80}
+  Task_2: {start: 0, end: 160, payload: 160}
+  Task_1: {start: 0, end: 160, payload: 160}
+
+exec_name_total_offsets:
+  Task_3: {start: 180, end: 280, payload: 80}
+  Task_2: {start: 0, end: 180, payload: 160}
+  Task_1: {start: 0, end: 180, payload: 160}
+```
+
+**Task 3:**  
+
+- *Max Read Time:* `max(200, 200) = 200` (from `Task_1->Task_3` and `Task_2->Task_3`)  
+- *Compute Time:* `80` (from `exec_name_compute_offsets`)  
+- *Max Write Time:* `0` (Task 3 is an end task, so no outgoing communication)  
+- *Computed Total:* `200` (Max Read Time) + ``80` (Compute Time) + `0` (Max Write Time) = `280`
+- *Expected Total:* `280` (Validation Passed)  
+
+**Task 2:**  
+
+- *Max Read Time:* `0` (Task 2 is a root task, no dependencies)  
+- *Compute Time:* `160`  
+- *Max Write Time:* `20` (to `Task_3`)  
+- *Computed Total:*  `0` (Max Read Time) + `160` (Compute Time) + `20` (Max Write Time) = `180`
+- *Expected Total:* `180` (Validation Passed)  
+
+**Task 1:**
+
+- *Max Read Time:* `0` (Task 1 is a root task, no dependencies)  
+- *Compute Time:* `160`  
+- *Max Write Time:* `20` (to `Task_3`)  
+- *Computed Total:*  `0` (Max Read Time) + `160` (Compute Time) + `20` (Max Write Time) = `180`
+- *Expected Total:* `180` (Validation Passed)  
+
+### Test 1
 
 * Configuration: [`./tests/config/min_min_simulation/config_1.json`](./tests/config/min_min_simulation/config_1.json)  
 * System Setup:  
@@ -31,7 +107,7 @@ The Min-Min algorithm schedules tasks by selecting the task with the minimum com
   * All tasks should be executed on the **4th core** (the fastest, operating at frequency 8).  
   * The final core availability should be **70**, which corresponds to the **workflow makespan**.
 
-### Test 2 (Code Verification)
+#### Test 2
 
 * Configuration: [`./tests/config/min_min_simulation/config_2.json`](./tests/config/min_min_simulation/config_2.json)  
 * System Setup:  
@@ -60,7 +136,7 @@ The Min-Min algorithm schedules tasks by selecting the task with the minimum com
     * **One remote access** to read the second item.  
   * The final core availabilities should be **300** (corresponding to the **workflow makespan**) and **180**, respectively.
 
-### Test 3 (Code Verification)
+#### Test 3
 
 * Configuration: [`./tests/config/min_min_simulation/config_3.json`](./tests/config/min_min_simulation/config_3.json)  
 * System Setup:  
@@ -73,7 +149,6 @@ The Min-Min algorithm schedules tasks by selecting the task with the minimum com
 * Expected Outcome:  
   * Since memory access is **uniform** in **Test 3**, there is **no additional cost for remote access**.  
   * As a result, the **workflow makespan** should be **lower** (**280**) than in **Test 2** (**300**).
-
 
 # References
 
