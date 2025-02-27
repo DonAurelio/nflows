@@ -14,31 +14,25 @@ The Min-Min algorithm schedules tasks by selecting the task with the minimum com
 
 This script verifies that the execution offsets collected by the tool align with expected total execution times. Specifically, it ensures that the sum of the **read, compute, and write offsets** matches the total execution time for each task.  
 
-#### How It Works  
+**Input Data**: The script processes a **YAML file** containing the following execution offset data:  
 
-- **Input Data**:  
-  - The script processes a **YAML file** containing the following execution offset data:  
-    - `comm_name_read_offsets`: Communication **read** offsets between tasks.  
-    - `comm_name_write_offsets`: Communication **write** offsets between tasks.  
-    - `exec_name_compute_offsets`: **Compute** offsets for each task.  
-    - `exec_name_total_offsets`: **Total** execution offsets for each task.  
+- `comm_name_read_offsets`: Communication **read** offsets between tasks.  
+- `comm_name_write_offsets`: Communication **write** offsets between tasks.  
+- `exec_name_compute_offsets`: **Compute** offsets for each task.  
+- `exec_name_total_offsets`: **Total** execution offsets for each task.  
 
-- **Validation Logic**:  
-  - For each task:  
-    1. Computes the **maximum read offset** from incoming communication.  
-    2. Adds the **compute offset** for the task.  
-    3. Computes the **maximum write offset** from outgoing communication.  
-    4. Derives the **computed total execution time** using:  
-       $$
-       \text{Computed Total} = \max(\text{Read End}) + \text{Compute Time} + \max(\text{Write Offset})
-       $$ 
-    5. Compares the **computed total** against the **expected total execution time** in `exec_name_total_offsets`.  
-  - If the computed total does **not match** the expected total, the script **flags a validation error**.  
+**Validation Logic**: For each task:
 
-- **Dependency Check (Indirect Validation)**:  
-  - By ensuring the **computed total execution time includes the read offsets**, the script indirectly validates that:  
-    - **Dependencies are respected**: A task cannot start execution before its required input data is available.  
-    - **Data dependencies influence scheduling**: The order of execution is preserved based on task communication.  
+1. Computes the **maximum read offset** from incoming communication.  
+2. Adds the **compute offset** for the task.  
+3. Computes the **maximum write offset** from outgoing communication.  
+4. Derives the **computed total execution time** using: $\text{Computed Total} = \max(\text{Read End}) + \text{Compute Time} + \max(\text{Write Offset})$ 
+5. Compares the **computed total** against the **expected total execution time** in `exec_name_total_offsets`.  
+6. If the computed total does **not match** the expected total, the script **flags a validation error**.  
+
+**Dependency Check (Indirect Validation)**: By ensuring the **computed total execution time includes the read offsets**, the script indirectly validates that:  
+- **Dependencies are respected**: A task cannot start execution before its required input data is available.  
+- **Data dependencies influence scheduling**: The order of execution is preserved based on task communication.  
 
 #### Example
 
@@ -103,7 +97,7 @@ Task 1:
   * All tasks should be executed on the **4th core** (the fastest, operating at frequency 8).  
   * The final core availability should be **70**, which corresponds to the **workflow makespan**.
 
-#### Test 2 [`config_2.json`](./config/min_min_simulation/config_2.json)
+### Test 2 [`config_2.json`](./config/min_min_simulation/config_2.json)
  
 * System Setup:  
   * Two processors (physical cores) operate at the same frequency: `1`.  
@@ -131,7 +125,7 @@ Task 1:
     * **One remote access** to read the second item.  
   * The final core availabilities should be **300** (corresponding to the **workflow makespan**) and **180**, respectively.
 
-#### Test 3 [`config_3.json`](./config/min_min_simulation/config_3.json)
+### Test 3 [`config_3.json`](./config/min_min_simulation/config_3.json)
    
 * System Setup:  
   * Same as **Test 2**, with the following difference:  
