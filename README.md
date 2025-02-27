@@ -1,8 +1,8 @@
 # Runtime Workflow Scheduler
 
-* The runtime scheduler provides and environment for the modeling and analysis of scientific workflows' performance in real NUMA systems. 
+The runtime scheduler provides and environment for the modeling and analysis of scientific workflows' performance in real NUMA systems. 
 
-## Validation
+### Validation
 
 The proposed and implemented scheduling algorithms, along with the underlying modeling runtime system, were validated based on two credibility and assessment aspects for modeling and simulations proposed in [1]: code verification and solution verification.
 
@@ -10,14 +10,13 @@ The code and solution verification processes in this work integrate mathematical
 
 Validation is performed through simulation, as the implemented algorithms produce deterministic results (i.e., workflow makespan), which are easily predictable for basic instances.
 
-### Min-Min Algorithm (Code verification)
+#### Min-Min Algorithm 
 
 The Min-Min algorithm schedules tasks by selecting the task with the minimum completion time first and assigning it to the resource that can complete it the earliest.
 
-#### Test 1
+##### Test 1 (Code verification)
 
-**Configuration:** [`./tests/config/min_min_simulation/config_1.json`](./tests/config/min_min_simulation/config_1.json)  
-
+- **Configuration:** [`./tests/config/min_min_simulation/config_1.json`](./tests/config/min_min_simulation/config_1.json)  
 - **System Setup:**  
   - Processors (physical cores) operate at varying frequencies: `[1, 2, 4, 8]`.  
   - Four tasks with different computational requirements (in FLOPs):  
@@ -34,7 +33,11 @@ The Min-Min algorithm schedules tasks by selecting the task with the minimum com
 
 - **Expected Outcome:**  
   - All tasks should be executed on the **4th core** (the fastest, operating at frequency 8).  
-  - The final core availability should be **70**, which corresponds to the **workflow makespan**.  
+  - The final core availability should be **70**, which corresponds to the **workflow makespan**.
+
+##### Test 2 (Code verification)
+
+- Memory channel latencies and bandwidths are non-uniform across all memory domains, leading to a **Non-Uniform Memory Access (NUMA) system** (i.e., NUMA effects).  
 
 ## References
 
