@@ -29,6 +29,17 @@ struct thread_locality_s
 };
 typedef struct thread_locality_s thread_locality_t;
 
+enum CommonClockFrequencyType
+{
+    DYNAMIC_CLOCK_FREQUENCY,
+    STATIC_CLOCK_FREQUENCY,
+    ARRAY_CLOCK_FREQUENCY,
+};
+
+typedef CommonClockFrequencyType clock_frequency_type_t;
+
+std::string common_get_str_from_clock_frequency_type(clock_frequency_type_t type);
+
 // Maps data item names (e.g., "task1->task2") to their virtual addresses.
 typedef std::unordered_map<std::string, char *> name_to_address_t;
 // Maps data item names (e.g., "task1->task2") to the NUMA nodes where their pages reside.
@@ -66,6 +77,8 @@ struct common_s
     // To be initialized by the user.
     double flops_per_cycle;
     double clock_frequency_hz;
+    std::vector<double> clock_frequencies_hz;
+    clock_frequency_type_t clock_frequency_type;
 
     std::string log_base_name;
     std::string log_date_format;

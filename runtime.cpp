@@ -1,117 +1,121 @@
 #include "runtime.hpp"
 
-void runtime_initialize(common_t **common, simgrid_execs_t **dag, scheduler_t **scheduler, mapper_t **mapper,
-                        const std::string &config_path)
+
+void runtime_start(mapper_t **mapper)
+{
+    (*mapper)->start();
+}
+
+void runtime_write(common_t **common)
+{
+    common_print_common_structure(*common);
+}
+
+void runtime_initialize(common_t **common, simgrid_execs_t **dag, scheduler_t **scheduler, mapper_t **mapper, const std::string &config_path)
 {
     std::ifstream config_file(config_path);
-
-    if (!config_file)
-    {
-        std::cerr << "Unable to open config file '" << config_path << "'." << std::endl;
-        std::exit(EXIT_FAILURE);
+    if (!config_file) {
+        throw std::runtime_error("Unable to open config file: " + config_path);
     }
 
     nlohmann::json data;
     config_file >> data;
     config_file.close();
 
-    /* INITIALIZE COMMON DATA. */
-    *common = new common_t;
-    common_t *cmn = *common;
+    *common = new common_t();
+    initialize_common(*common, data);
 
-    /* HWLOC TOPOLOGY */
-    hwloc_topology_init(&cmn->topology);
-    hwloc_topology_load(cmn->topology);
-
-    /* TRACK ACTIVE THREADS. */
-    cmn->active_threads = 0;
-    cmn->cond = PTHREAD_COND_INITIALIZER;
-    cmn->mutex = PTHREAD_MUTEX_INITIALIZER;
-
-    /* CHECK READING OPERATION CONSISTENCY */
-    cmn->checksum = 0;
-
-    cmn->flops_per_cycle = data["flops_per_cycle"];
-    cmn->clock_frequency_hz = data["clock_frequency_hz"]; // Dynamic (0) clock frequency.
-
-    cmn->log_base_name = data["log_base_name"];
-    cmn->log_date_format = data["log_date_format"];
-
-    // Latency (ns), Bandwidth (GB/s).
-    cmn->distance_lat_ns = common_read_distance_matrix_from_file(data["distance_matrices"]["latency"]);
-    cmn->distance_bw_gbps = common_read_distance_matrix_from_file(data["distance_matrices"]["bandwidth"]);
-
-    // Set available cores.
-    uint64_t mask = std::stoull(data["core_avail_mask"].get<std::string>(), nullptr, 16);
-
-    int core_count = data["core_count"];
-    cmn->core_avail.resize(core_count, false);
-    cmn->core_avail_until.resize(core_count, 0.0);
-
-    for (int i = 0; i < core_count; ++i)
-    {
-        if (mask & (1ULL << i))
-        {
-            cmn->core_avail[i] = true;
-        }
-    }
-
-    /* DAG */
     *dag = new simgrid_execs_t(common_read_dag_from_dot(data["dag_file"]));
 
-    /* SCHEDULER */
-    std::string scheduler_type = data["scheduler_type"];
+    *scheduler = create_scheduler(data["scheduler_type"], *common, **dag);
+    *mapper = create_mapper(data["mapper_type"], *common, **scheduler);
+}
 
-    if (scheduler_type == "min_min")
-    {
-        *scheduler = new min_min_scheduler_t(cmn, **dag);
-    }
-    else if (scheduler_type == "heft")
-    {
-        *scheduler = new heft_scheduler_t(cmn, **dag);
-    }
-    else if (scheduler_type == "fifo")
-    {
-        *scheduler = new fifo_scheduler_t(cmn, **dag);
-    }
-    else
-    {
-        std::cerr << "Unsupported scheduler '" << scheduler_type << "'." << std::endl;
-        std::exit(EXIT_FAILURE);
+void runtime_finalize(common_t **common, simgrid_execs_t **dag, scheduler_t **scheduler, mapper_t **mapper) {
+    if (*mapper) {
+        delete *mapper;
+        *mapper = nullptr;
     }
 
-    /* MAPPER */
-    std::string mapper_type = data["mapper_type"];
+    if (*scheduler) {
+        delete *scheduler;
+        *scheduler = nullptr;
+    }
 
-    if (mapper_type == "bare_metal")
-    {
-        *mapper = new mapper_bare_metal_t(cmn, **scheduler);
+    if (*dag) {
+        delete *dag;
+        *dag = nullptr;
     }
-    else if (mapper_type == "simulation")
-    {
-        *mapper = new mapper_simulation_t(cmn, **scheduler);
-    }
-    else
-    {
-        std::cerr << "Unsupported scheduler '" << scheduler_type << "'." << std::endl;
-        std::exit(EXIT_FAILURE);
+
+    if (*common) {
+        hwloc_topology_destroy((*common)->topology); // Release hwloc resources
+        delete *common;
+        *common = nullptr;
     }
 }
 
-void runtime_finalize(common_t *common, simgrid_execs_t *dag, scheduler_t *scheduler, mapper_t *mapper)
-{
-    delete common;
-    delete dag;
-    delete scheduler;
-    delete mapper;
+void initialize_common(common_t *common, const nlohmann::json &data) {
+    hwloc_topology_init(&(common->topology));
+    hwloc_topology_load(common->topology);
+
+    common->active_threads = 0;
+    common->cond = PTHREAD_COND_INITIALIZER;
+    common->mutex = PTHREAD_MUTEX_INITIALIZER;
+    common->checksum = 0;
+
+    size_t core_count;
+    common->core_avail = parse_core_avail_mask(std::stoull(data["core_avail_mask"].get<std::string>(), nullptr, 16), core_count);
+    common->core_avail_until.resize(core_count, 0.0);
+
+    common->flops_per_cycle = data["flops_per_cycle"];
+    std::string clock_frequency_type = data["clock_frequency_type"];
+
+    if (clock_frequency_type == "dynamic") {
+        common->clock_frequency_type = DYNAMIC_CLOCK_FREQUENCY;
+        common->clock_frequency_hz = 0;
+    } else if (clock_frequency_type == "static") {
+        common->clock_frequency_type = STATIC_CLOCK_FREQUENCY;
+        common->clock_frequency_hz = data["clock_frequency_hz"];
+    } else if (clock_frequency_type == "array") {
+        common->clock_frequency_type = ARRAY_CLOCK_FREQUENCY;
+        common->clock_frequencies_hz = data["clock_frequencies_hz"].get<std::vector<double>>();
+    } else {
+        throw std::runtime_error("Unsupported clock frequency type: " + clock_frequency_type);
+    }
+
+    common->log_base_name = data["log_base_name"];
+    common->log_date_format = data["log_date_format"];
+
+    common->distance_lat_ns = common_read_distance_matrix_from_file(data["distance_matrices"]["latency"]);
+    common->distance_bw_gbps = common_read_distance_matrix_from_file(data["distance_matrices"]["bandwidth"]);
 }
 
-void runtime_start(mapper_t *mapper)
-{
-    mapper->start();
+std::vector<bool> parse_core_avail_mask(uint64_t mask, size_t &core_count) {
+    core_count = 0;
+    uint64_t temp_mask = mask;
+    while (temp_mask) {
+        core_count++;
+        temp_mask >>= 1;
+    }
+
+    std::vector<bool> core_avail(core_count, false);
+    for (size_t i = 0; i < core_count; ++i) {
+        if (mask & (1ULL << i)) {
+            core_avail[i] = true;
+        }
+    }
+    return core_avail;
 }
 
-void runtime_write(common_t *common)
-{
-    common_print_common_structure(common);
+scheduler_t* create_scheduler(const std::string &type, common_t *common, simgrid_execs_t &dag) {
+    if (type == "min_min") return new min_min_scheduler_t(common, dag);
+    if (type == "heft") return new heft_scheduler_t(common, dag);
+    if (type == "fifo") return new fifo_scheduler_t(common, dag);
+    throw std::runtime_error("Unsupported scheduler: " + type);
+}
+
+mapper_t* create_mapper(const std::string &type, common_t *common, scheduler_t &scheduler) {
+    if (type == "bare_metal") return new mapper_bare_metal_t(common, scheduler);
+    if (type == "simulation") return new mapper_simulation_t(common, scheduler);
+    throw std::runtime_error("Unsupported mapper: " + type);
 }

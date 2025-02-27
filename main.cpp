@@ -13,9 +13,9 @@ int main(int argc, char *argv[])
     mapper_t *mapper;
 
     runtime_initialize(&common, &dag, &scheduler, &mapper, argv[1]);
-    runtime_start(mapper);
-    runtime_write(common);
-    runtime_finalize(common, dag, scheduler, mapper);
+    runtime_start(&mapper);
+    runtime_write(&common);
+    runtime_finalize(&common, &dag, &scheduler, &mapper);
 
     return 0;
 }

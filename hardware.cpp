@@ -79,31 +79,34 @@ double get_hwloc_core_performance_by_id(const common_t *common, int hwloc_core_i
         }
     }
 
-    // Compute core_speed.
-    if (common->clock_frequency_hz == 0)
-    {
-        // Path to the current frequency file for the given os core id.
-        std::string path = "/sys/devices/system/cpu/cpu" + std::to_string(os_core_id) + "/cpufreq/scaling_cur_freq";
-        std::ifstream freq_file(path);
+    switch (common->clock_frequency_type) {
+        case DYNAMIC_CLOCK_FREQUENCY: {
+            // Path to the current frequency file for the given os core id.
+            std::string path = "/sys/devices/system/cpu/cpu" + std::to_string(os_core_id) + "/cpufreq/scaling_cur_freq";
+            std::ifstream freq_file(path);
 
-        if (!freq_file.is_open())
-        {
-            std::cerr << "Error: Unable to open file for core " << os_core_id << std::endl;
-            return 0;
+            if (!freq_file.is_open())
+            {
+                std::cerr << "Error: Unable to open file for core " << os_core_id << std::endl;
+                std::exit(EXIT_FAILURE);
+            }
+
+            double frequency_khz = 0;
+            freq_file >> frequency_khz;
+            freq_file.close();
+
+            // Convert frequency to Hertz.
+            double frequency_hz = frequency_khz * 1000;
+            return common->flops_per_cycle * frequency_hz;
         }
 
-        double frequency_khz = 0;
-        freq_file >> frequency_khz;
-        freq_file.close();
+        case ARRAY_CLOCK_FREQUENCY:
+            return common->flops_per_cycle * common->clock_frequencies_hz[hwloc_core_id];
 
-        // Convert frequency to Hertz.
-        double frequency_hz = frequency_khz * 1000;
-
-        return common->flops_per_cycle * frequency_hz;
+        default:
+            // STATIC_CLOCK_FREQUENCY
+            return common->flops_per_cycle * common->clock_frequency_hz;
     }
-
-    // # of flops the system can perform in one second.
-    return common->flops_per_cycle * common->clock_frequency_hz;
 }
 
 std::vector<int> get_hwloc_numa_ids_by_address(const common_t *common, char *address, size_t size)

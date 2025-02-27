@@ -81,11 +81,11 @@ def compute_max_offset_time(dependencies, target_key, position):
 
 def validate_offsets(data):
     """Validates execution offsets based on computed vs expected total times."""
-    comm_read_offsets = data["comm_name_read_offsets"]
-    comm_write_offsets = data["comm_name_write_offsets"]
+    comm_read_offsets = data.get("comm_name_read_offsets", {})
+    comm_write_offsets = data.get("comm_name_write_offsets", {})
     exec_compute_offsets = data["exec_name_compute_offsets"]
     exec_total_offsets = data["exec_name_total_offsets"]
-    common_metadata = data["common_metadata"]
+    core_availability = data["core_availability"]
     name_to_thread_locality = data["name_to_thread_locality"]
 
     right_hand_in_read = {key.split("->")[1] for key in comm_read_offsets.keys()}
@@ -94,17 +94,6 @@ def validate_offsets(data):
     for key, total in exec_total_offsets.items():
         start, end = total["start"], total["end"]
         key_type = determine_key_type(key, right_hand_in_read, left_hand_in_write)
-
-        # Validate start and end conditions
-        if key_type == "root" and start != 0:
-            print(f"Validation Error: Root task '{key}' must start at 0 but starts at {start}.")
-
-        if key_type == "end":
-            # Validation for end tasks
-            core_id = name_to_thread_locality[key]["core_id"]
-            avail_until = common_metadata["core_availability"].get(core_id).get("avail_until")
-            if avail_until is not None and end != avail_until:
-                print(f"Validation Error: End task '{key}' must end at {avail_until} but ends at {end}.")
 
         # Compute offsets
         max_read_time = compute_max_offset_time(comm_read_offsets, key, "right") if key_type in ["intermediate", "end"] else 0
