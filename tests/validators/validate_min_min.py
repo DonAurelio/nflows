@@ -1,50 +1,5 @@
 #!/bin/python3
 
-"""
-validate_execution_offsets.py
-
-This script validates execution offsets based on data from a YAML file.
-It checks whether the computed sum of read, compute, and write offsets 
-matches the expected total offsets for each key.
-
-Validation Rules:
-    1. Identifies root, intermediate, and end nodes based on read/write dependencies.
-    2. Ensures root tasks start at 0 and end tasks finish at the `avail_until` value of the core where the task was executed.
-    3. Computes expected execution time for each key as:
-       max(read time) + compute time + max(write time).
-    4. Compares the computed execution time with the expected total offset.
-    5. Prints validation failures if any discrepancies are found.
-
-Data Sources:
-    The YAML file should contain the following keys:
-    - comm_name_read_offsets: Dictionary mapping communication read dependencies 
-      with start and end times.
-    - comm_name_write_offsets: Dictionary mapping communication write dependencies 
-      with start and end times.
-    - exec_name_compute_offsets: Dictionary mapping execution compute times 
-      with start and end times.
-    - exec_name_total_offsets: Dictionary mapping execution total offsets 
-      with start and end times.
-    - core_availability (optional): Dictionary mapping core IDs to availability times 
-      for end tasks.
-
-Example YAML Structure:
-    comm_name_read_offsets:
-        "A->B": { "start": 0, "end": 5 }
-    comm_name_write_offsets:
-        "B->C": { "start": 6, "end": 10 }
-    exec_name_compute_offsets:
-        "B": { "start": 5, "end": 6 }
-    exec_name_total_offsets:
-        "B": { "start": 0, "end": 10 }
-    core_availability:
-        "core_1": { "avail_until": 10 }
-
-Validation Output:
-    If a validation fails, an error message is printed:
-        "Validation failed for <key>: expected <expected_time>, got <computed_time>"
-"""
-
 import yaml
 import argparse
 
@@ -85,8 +40,6 @@ def validate_offsets(data):
     comm_write_offsets = data.get("comm_name_write_offsets", {})
     exec_compute_offsets = data["exec_name_compute_offsets"]
     exec_total_offsets = data["exec_name_total_offsets"]
-    core_availability = data["core_availability"]
-    name_to_thread_locality = data["name_to_thread_locality"]
 
     right_hand_in_read = {key.split("->")[1] for key in comm_read_offsets.keys()}
     left_hand_in_write = {key.split("->")[0] for key in comm_write_offsets.keys()}
