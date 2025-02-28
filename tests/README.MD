@@ -139,6 +139,35 @@ The HEFT (Heterogeneous Earliest Finish Time) scheduling algorithm prioritizes t
   * As a result, the **workflow makespan** should be **lower** (**440**) than in **Test 2** (**460**).
   * Therefore, there is a penalty (**20 seconds**) when performing remote memory accesses in NUMA systems that must be taken into consideration when scheduling workflows.
 
+## FIFO Algorithm
+
+The FIFO (First-In, First-Out) scheduling algorithm selects tasks in the order they arrive, without prioritization. The oldest (earliest arrived) task in the queue is selected first. The first available core is assigned to execute the selected task.
+
+### Test 1 [`config_1.json`](./config/fifo_simulation/config_1.json)
+   
+* System Setup:
+  * A single processor (physical core) operating at **1 Hz**, making computational cost equivalent to execution time.  
+  * Memory channel latencies and bandwidths are set so that communication time is equal to communication cost.  
+  * Memory channel latencies and bandwidths are **uniform** across all memory domains, resulting in a **Uniform Memory Access (UMA) system** (i.e., no NUMA effects).  
+  * Processor speed and clock frequency are set so that **computation time is directly determined** by dividing the task size (in FLOPs) by the processor frequency.  
+  * Five tasks, each with identical **computational (10 FLOPs) and communication (10 bytes)** requirements.  
+
+```nginx
+       Task_1
+      /      \
+  Task_2    Task_5
+   /    \
+Task_3  Task_4
+```
+
+* Validation Criteria:
+  * Ensures the scheduler selects tasks following the FIFO order.
+  * Confirms that **core availability** is correctly updated throughout the scheduling process.  
+
+* Expected Outcome:
+  * FIFO order (assuming **level-order traversal, depth-first approach**): `Task_1 → Task_2 → Task_5 → Task_3 → Task_4`  
+  * The final core availability should be **110**, which corresponds to the **workflow makespan**.
+
 ## Generic Validations
 
 ### Script 1 [validate_offsets.py](./validators/validate_offsets.py)
