@@ -9,8 +9,9 @@
 class FIFO_Scheduler : public Base_Scheduler
 {
   private:
-    uint64_t compute_data_locality_score(simgrid_exec_t *task);
-    std::unordered_map<std::string, uint64_t> get_data_locality_scores(simgrid_execs_t &execs);
+    std::deque<simgrid_exec_t*> queue;
+    double compute_data_locality_score(simgrid_exec_t *task);
+    std::unordered_map<std::string, double> get_data_locality_scores(simgrid_execs_t &execs);
 
   protected:
     std::tuple<int, double> get_best_core_id(const simgrid_exec_t *exec) override;

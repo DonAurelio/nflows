@@ -114,40 +114,47 @@ std::tuple<int, double> FIFO_Scheduler::get_best_core_id(const simgrid_exec_t *e
 
 std::tuple<simgrid_exec_t *, int, double> FIFO_Scheduler::next()
 {
-    int selected_core_id = -1;
-    double estimated_finish_time = 0.0;
-    simgrid_exec_t *selected_exec = nullptr;
+    int selected_core_id = -1;  
+    double estimated_finish_time = 0.0;  
+    simgrid_exec_t *selected_exec = nullptr;  
+
     simgrid_execs_t ready_execs = common_get_ready_tasks(this->dag);
 
-    if (ready_execs.empty())
-    {
-        return std::make_tuple(selected_exec, selected_core_id, estimated_finish_time);
-    }
+    if (ready_execs.empty()) return {selected_exec, selected_core_id, estimated_finish_time};
 
-    std::unordered_map<std::string, uint64_t> name_to_data_locality_scores =
-        this->get_data_locality_scores(ready_execs);
+    auto name_to_data_locality_score = this->get_data_locality_scores(ready_execs);
 
     std::sort(ready_execs.begin(), ready_execs.end(), [&](simgrid_exec_t *a, simgrid_exec_t *b) {
-        return name_to_data_locality_scores[a->get_name()] >
-               name_to_data_locality_scores[b->get_name()]; // Higher score first
+        return name_to_data_locality_score[a->get_name()] >
+               name_to_data_locality_score[b->get_name()]; // Higher score first
     });
+    
+    // Append only new ready tasks to the queue
+    for (const auto &exec : ready_execs) {
+        if (std::find(this->queue.begin(), this->queue.end(), exec) == this->queue.end()) {
+            this->queue.push_back(exec);
+        }
+    }
 
-    selected_exec = ready_execs.front();
+    selected_exec = this->queue.front();
+    this->queue.pop_front();
+    
+    // Select the best core for execution
     std::tie(selected_core_id, estimated_finish_time) = this->get_best_core_id(selected_exec);
-
-    XBT_DEBUG("selected_task: %s, selected_core_id: %d, estimated_finish_time: %f", selected_exec->get_cname(),
-              selected_core_id, estimated_finish_time);
+    
+    XBT_DEBUG("selected_task: %s, selected_core_id: %d, estimated_finish_time: %f",
+              selected_exec->get_cname(), selected_core_id, estimated_finish_time);
 
     return std::make_tuple(selected_exec, selected_core_id, estimated_finish_time);
 }
 
-uint64_t FIFO_Scheduler::compute_data_locality_score(simgrid_exec_t *exec)
+double FIFO_Scheduler::compute_data_locality_score(simgrid_exec_t *exec)
 {
-    uint64_t exec_data_locality_score_bytes = 0;
+    double exec_data_locality_score_bytes = 0.0;
 
     // Get all writtings (data items) where this exec is the destionation.
     name_to_time_range_payload_t comm_name_to_time_range_payload =
-        common_filter_name_to_time_range_payload(this->common, exec->get_name(), COMM_WRITE_TIMESTAMPS, DST);
+        common_filter_name_to_time_range_payload(this->common, exec->get_name(), COMM_WRITE_OFFSETS, DST);
 
     for (const auto &[comm_name, time_range_payload] : comm_name_to_time_range_payload)
     {
@@ -157,9 +164,9 @@ uint64_t FIFO_Scheduler::compute_data_locality_score(simgrid_exec_t *exec)
     return exec_data_locality_score_bytes;
 }
 
-std::unordered_map<std::string, uint64_t> FIFO_Scheduler::get_data_locality_scores(simgrid_execs_t &execs)
+std::unordered_map<std::string, double> FIFO_Scheduler::get_data_locality_scores(simgrid_execs_t &execs)
 {
-    std::unordered_map<std::string, uint64_t> name_to_data_locality_scores;
+    std::unordered_map<std::string, double> name_to_data_locality_scores;
     for (simgrid_exec_t *exec : execs)
     {
         name_to_data_locality_scores[exec->get_name()] = this->compute_data_locality_score(exec);
