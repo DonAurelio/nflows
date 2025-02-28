@@ -14,19 +14,7 @@ OBJ := $(SRC:.cpp=.o)
 # Output Binary
 TARGET := scheduler
 
-# Define available schedulers and execution platforms
-SCHEDULERS := min_min
-MAPPERS := simulation
-
-# Define the runtime logging flags
-XBT_RUNTIME_LOG = \
-	--log=mapper_simulation.thresh:debug \
-	--log=scheduler_eft.thresh:debug \
-	--log=common.thresh:debug
-
-# List of Directed Acyclic Graph (DAG) files for workflow scheduling
-DAG_FILES := \
-	./tests/workflows/data_redis_2.dot
+SIMULATIONS := min_min_simulation heft_simulation
 
 # Directories
 TEST_DIR := ./tests
@@ -59,13 +47,13 @@ clean:
 	@[ -d $(OUTPUT_DIR) ] && rmdir $(OUTPUT_DIR) 2>/dev/null || true
 	@[ -d $(LOG_DIR) ] && rmdir $(LOG_DIR) 2>/dev/null || true
 
-test-min_min-simulation: $(TARGET)
-	@echo "Generating output and log folders for min_min on simulation..."
-	@mkdir -p "$(OUTPUT_DIR)/min_min_simulation" "$(LOG_DIR)/min_min_simulation"
+test-%: $(TARGET)
+	@echo "Generating output and log folders for $*..."
+	@mkdir -p "$(OUTPUT_DIR)/$*" "$(LOG_DIR)/$*"
 
-	@echo "Running min_min on simulation..."
-	@for json in $$(ls $(CONFIG_DIR)/min_min_simulation/*.json 2>/dev/null); do \
-		./$(TARGET) $$json > $(LOG_DIR)/min_min_simulation/`basename $$json .json`.log 2>&1; \
-		python3 $(VALIDATOR_DIR)/validate_offsets.py $(OUTPUT_DIR)/min_min_simulation/`basename $$json .json`.yaml >> $(LOG_DIR)/min_min_simulation/`basename $$json .json`.log 2>&1; \
-		python3 $(VALIDATOR_DIR)/validate_output.py $(OUTPUT_DIR)/min_min_simulation/`basename $$json .json`.yaml $(OUTPUT_EXPECTED_DIR)/min_min_simulation/`basename $$json .json`.yaml >> $(LOG_DIR)/min_min_simulation/`basename $$json .json`.log 2>&1; \
+	@echo "Running $*..."
+	@for json in $$(ls $(CONFIG_DIR)/$*/*.json 2>/dev/null); do \
+		./$(TARGET) $$json > "$(LOG_DIR)/$*/$$(basename $$json .json).log" 2>&1; \
+		python3 $(VALIDATOR_DIR)/validate_offsets.py "$(OUTPUT_DIR)/$*/$$(basename $$json .json).yaml" >> "$(LOG_DIR)/$*/$$(basename $$json .json).log" 2>&1; \
+		python3 $(VALIDATOR_DIR)/validate_output.py "$(OUTPUT_DIR)/$*/$$(basename $$json .json).yaml" "$(OUTPUT_EXPECTED_DIR)/$*/$$(basename $$json .json).yaml" >> "$(LOG_DIR)/$*/$$(basename $$json .json).log" 2>&1; \
 	done
