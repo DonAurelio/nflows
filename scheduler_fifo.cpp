@@ -13,34 +13,27 @@ FIFO_Scheduler::~FIFO_Scheduler()
 std::tuple<int, double> FIFO_Scheduler::get_best_core_id(const simgrid_exec_t *exec)
 {
     int best_core_id = -1;
+    int best_numa_id = -1;
     double earliest_finish_time_us = 0.0;
     std::vector<int> avail_core_ids = common_get_avail_core_ids(this->common);
 
-    if (avail_core_ids.empty())
-    {
-        return {best_core_id, earliest_finish_time_us};
-    }
+    if (avail_core_ids.empty()) return {best_core_id, earliest_finish_time_us};
 
-    /* COUNT THE AMOUNT OF DATA TO BE READ BY THE EXEC PER NUMA DOMAIN. */
+    /* Count the amount of data (bytes) to be read per memory domain. */
     std::unordered_map<int, double> numa_id_to_payload;
 
-    // Get all writtings (data items) where this exec is the destionation.
-    name_to_time_range_payload_t comm_name_to_time_range_payload =
-        common_filter_name_to_time_range_payload(this->common, exec->get_name(), COMM_WRITE_TIMESTAMPS, DST);
-
-    for (const auto &[comm_name, time_range_payload] : comm_name_to_time_range_payload)
+    // ASSUMPTION:
+    // If data item pages are spread across multiple NUMA domains, we assume
+    // the data is evenly distributed, i.e., all data pages have the same size.
+    for (const auto &[comm_name, time_range_payload] : 
+        common_filter_name_to_time_range_payload(this->common, exec->get_name(), COMM_WRITE_OFFSETS, DST))
     {
-        // ASSUMPTION:
-        // If data item pages are spread across multiple NUMA domains, we assume
-        // the data is evenly distributed, i.e., all data pages have the same size.
         std::vector<int> numa_ids = this->common->comm_name_to_numa_ids_w.at(comm_name);
         for (int numa_id : numa_ids)
-        {
             numa_id_to_payload[numa_id] = std::get<2>(time_range_payload) / numa_ids.size();
-        }
     }
 
-    /* SORT NUMA DOMAIN IDS BY AMOUNT OF DATA TO BE READ BY THE EXEC. */
+    /* Sort numa domain ids by the amount of data to be read by the executor. */
     std::vector<int> ordered_numa_ids;
     ordered_numa_ids.reserve(numa_id_to_payload.size());
 
@@ -52,7 +45,12 @@ std::tuple<int, double> FIFO_Scheduler::get_best_core_id(const simgrid_exec_t *e
     std::sort(ordered_numa_ids.begin(), ordered_numa_ids.end(),
               [numa_id_to_payload](int a, int b) { return numa_id_to_payload.at(a) < numa_id_to_payload.at(b); });
 
-    /* ASSIGN THE EXECUTOR TO THE CORE WHOSE LOCAL MEMORY (NUMA DOMAIN) CONTAINS THE MOST DATA. */
+    // if none of the available cores correspond to any of the numa domains 
+    // holding the data required by the executor, assign the first available core.
+    best_core_id = avail_core_ids.front();
+    best_numa_id = get_hwloc_numa_id_by_core_id(this->common, best_core_id);
+
+    /* Assign the exec to the core whose local memory (NUMA domain) contains the most data. */
     for (const auto &ordered_numa_id : ordered_numa_ids)
     {
         for (const auto &avail_core_id : avail_core_ids)
@@ -60,13 +58,56 @@ std::tuple<int, double> FIFO_Scheduler::get_best_core_id(const simgrid_exec_t *e
             if (get_hwloc_numa_id_by_core_id(this->common, avail_core_id) == ordered_numa_id)
             {
                 best_core_id = avail_core_id;
+                best_numa_id = ordered_numa_id;
             }
         }
     }
 
-    // IF NONE OF THE AVAILABLE CORES CORRESPOND TO ANY OF THE NUMA DOMAINS
-    // HOLDING THE DATA REQUIRED BY THE EXEC, ASSIGN THE FIRST AVAILABLE CORE.
-    best_core_id = (best_core_id == -1) ? avail_core_ids.front() : best_core_id;
+    double earliest_start_time_us = common_earliest_start_time(this->common, exec->get_name(), best_core_id);
+
+    double estimated_read_time_us = 0.0;
+
+    for (const auto &[comm_name, time_range_payload] : 
+        common_filter_name_to_time_range_payload(this->common, exec->get_name(), COMM_WRITE_OFFSETS, DST))
+    {
+        double read_payload_bytes = (double) std::get<2>(time_range_payload);
+
+        // ASSUMPTION:
+        // For the read time estimation, we assume that the entire data item is stored in a single memory domain, the first one.
+        int read_src_numa_id = this->common->comm_name_to_numa_ids_w.at(comm_name).front();
+
+        estimated_read_time_us = std::max(
+            estimated_read_time_us, common_communication_time(this->common, read_src_numa_id, best_numa_id, read_payload_bytes));
+    }
+
+    double flops = exec->get_remaining();
+    double processor_speed_flops_per_second = (double) get_hwloc_core_performance_by_id(this->common, best_core_id);
+    double estimated_compute_time_us = common_compute_time(this->common, flops, processor_speed_flops_per_second);
+
+    double estimated_write_time_us = 0.0;
+
+    for (const auto &succ : exec->get_successors())
+    {
+        const simgrid_comm_t *comm = dynamic_cast<simgrid_comm_t *>(succ.get());
+        double write_payload_bytes = comm->get_remaining();
+
+        // Skipt all task_i->end communications.
+        auto [exec_name, succ_exec_name] = common_split(comm->get_cname(), "->");
+        if (succ_exec_name == std::string("end")) continue;
+
+        // Determine the NUMA node that will handle the write operation.
+        // ASSUMPTION:
+        // Since it is uncertain which NUMA node will handle the write operations for this task,
+        // writes will follow the first-touch policy, i.e., data will be saved in 
+        // the numa node that share locality with the core_id.
+
+        estimated_write_time_us = std::max(
+            estimated_write_time_us, common_communication_time(
+                this->common, best_numa_id, best_numa_id, write_payload_bytes));
+    }
+
+    earliest_finish_time_us =
+        earliest_start_time_us + estimated_read_time_us + estimated_compute_time_us + estimated_write_time_us;
 
     return {best_core_id, earliest_finish_time_us};
 }
