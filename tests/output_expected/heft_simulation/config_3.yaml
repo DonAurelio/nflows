@@ -1,0 +1,8 @@
+core_availability:
+  0: {avail_until: 440}
+  24: {avail_until: 180}
+
+exec_name_total_offsets:
+  Task_3: {start: 340, end: 440, payload: 80}
+  Task_2: {start: 0, end: 340, payload: 320}
+  Task_1: {start: 0, end: 180, payload: 160}

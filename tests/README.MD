@@ -69,8 +69,8 @@ The Min-Min algorithm schedules tasks by selecting the task with the minimum com
 
 * Expected Outcome:  
   * Since memory access is **uniform** in **Test 3**, there is **no additional cost for remote access**.  
-  * As a result, the **workflow makespan** should be **lower** (**280**) than in **Test 2** (**380**).
-  * Therefore, there is a penalty when performing remote memory accesses in NUMA systems that must be taken into consideration when scheduling workflows.
+  * As a result, the **workflow makespan** should be **lower** (**440**) than in **Test 2** (**460**).
+  * Therefore, there is a penalty (**20 seconds**) when performing remote memory accesses in NUMA systems that must be taken into consideration when scheduling workflows.
 
 ## HEFT Algorithm 
 
@@ -124,6 +124,20 @@ The HEFT (Heterogeneous Earliest Finish Time) scheduling algorithm prioritizes t
     * **One remote access** to read the second item.  
   * The final core availabilities should be **340** and **460** (corresponding to the **workflow makespan**), respectively.
   * Although it provides the same workflow makespan as Min-Min, it differs in core selection.
+
+### Test 3 [`config_3.json`](./config/heft_simulation/config_3.json)
+   
+* System Setup:  
+  * Same as **Test 2**, with the following difference:  
+  * Memory channel bandwidths are **uniform** across memory domains: **4 GB/s**.  
+
+* Validation Criteria:
+  * Compares the **workflow makespan** between **Test 2** and **Test 3** to evaluate the impact of uniform vs. non-uniform memory access.  
+
+* Expected Outcome:  
+  * Since memory access is **uniform** in **Test 3**, there is **no additional cost for remote access**.  
+  * As a result, the **workflow makespan** should be **lower** (**440**) than in **Test 2** (**460**).
+  * Therefore, there is a penalty (**20 seconds**) when performing remote memory accesses in NUMA systems that must be taken into consideration when scheduling workflows.
 
 ## Generic Validations
 
