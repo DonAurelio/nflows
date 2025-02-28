@@ -22,13 +22,13 @@ void HEFT_Scheduler::initialize_compute_and_communication_costs()
         if (exec->get_name() == "end")
             continue; // Skip this exec
 
-        size_t flops = (size_t)exec->get_remaining(); // # of Float operations to be performed.
-        double avg_estimated_compute_time_seconds = 0;
-        size_t exec_count = 0;
+        double flops = exec->get_remaining(); // # of Float operations to be performed.
+        double avg_estimated_compute_time_seconds = 0.0;
+        double exec_count = 0.0;
         for (int core_id : core_avail)
         {
             // # of flops the system can perform in one second.
-            unsigned long flops_per_second = get_hwloc_core_performance_by_id(this->common, core_id);
+            double flops_per_second = get_hwloc_core_performance_by_id(this->common, core_id);
             avg_estimated_compute_time_seconds += (flops / flops_per_second);
             exec_count += 1;
         }
@@ -52,8 +52,8 @@ void HEFT_Scheduler::initialize_compute_and_communication_costs()
         }
     }
 
-    avg_latency_ns = avg_latency_ns / core_avail.size();
-    avg_bandwidth_gbps = avg_bandwidth_gbps / core_avail.size();
+    avg_latency_ns = avg_latency_ns / (double) core_avail.size();
+    avg_bandwidth_gbps = avg_bandwidth_gbps / (double) core_avail.size();
 
     // Initialize average communication costs.
     for (simgrid_exec_t *exec : this->dag)
@@ -64,7 +64,7 @@ void HEFT_Scheduler::initialize_compute_and_communication_costs()
             const simgrid_exec_t *succ_exec = dynamic_cast<simgrid_exec_t *>(succ_comm->get_successors().front().get());
             if (succ_exec && succ_exec->get_name() != "end")
             {
-                size_t payload_bytes = (size_t)succ_comm->get_remaining();
+                double payload_bytes = succ_comm->get_remaining();
                 this->name_to_cost_seconds[succ_comm->get_cname()] =
                     (avg_latency_ns / 1000000000) + (payload_bytes / avg_bandwidth_gbps);
             }
