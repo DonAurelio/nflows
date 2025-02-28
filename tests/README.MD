@@ -35,11 +35,11 @@ The Min-Min algorithm schedules tasks by selecting the task with the minimum com
 * System Setup:  
   * Two processors (physical cores) operate at the same frequency: `1`.  
   * Each processor belongs to a different memory domain.  
-  * Four tasks with different computational requirements (in FLOPs):  
+  * Three tasks with different computational requirements (in FLOPs):  
     * `Task1 [size=160]`  
-    * `Task2 [size=160]`  
+    * `Task2 [size=360]`  
     * `Task3 [size=80]`  
-  * Tasks 1 and 2 reduce to Task 3:  
+  * Tasks 1 and 2 reduce to Task 3:
     * `Task1 -> Task3 [size=80]`  
     * `Task2 -> Task3 [size=80]`  
   * Memory channel latencies are set to `0`, so communication cost **only depends on bandwidths**.  
@@ -52,11 +52,11 @@ The Min-Min algorithm schedules tasks by selecting the task with the minimum com
   * Confirms that **core availability** is correctly updated throughout the scheduling process.  
 
 * Expected Outcome: 
-  * The first task, `Task1 [size=160]`, will be executed on the first core, while `Task2 [size=160]` will be executed on the second core.  
+  * The first task, `Task1 [size=160]`, will be executed on the first core, while `Task2 [size=360]` will be executed on the second core.  
   * Each core writes a data item to its **local memory**, but `Task3 [size=80]` must perform:  
     * **One local access** to read the first item.  
     * **One remote access** to read the second item.  
-  * The final core availabilities should be **300** (corresponding to the **workflow makespan**) and **180**, respectively.
+  * The final core availabilities should be **460** (corresponding to the **workflow makespan**) and **340**, respectively.
 
 ### Test 3 [`config_3.json`](./config/min_min_simulation/config_3.json)
    
@@ -69,7 +69,8 @@ The Min-Min algorithm schedules tasks by selecting the task with the minimum com
 
 * Expected Outcome:  
   * Since memory access is **uniform** in **Test 3**, there is **no additional cost for remote access**.  
-  * As a result, the **workflow makespan** should be **lower** (**280**) than in **Test 2** (**300**).
+  * As a result, the **workflow makespan** should be **lower** (**280**) than in **Test 2** (**380**).
+  * Therefore, there is a penalty when performing remote memory accesses in NUMA systems that must be taken into consideration when scheduling workflows.
 
 ## HEFT Algorithm 
 
@@ -93,7 +94,36 @@ The HEFT (Heterogeneous Earliest Finish Time) scheduling algorithm prioritizes t
 
 * Expected Outcome:
   * Execution order should be `Task3` (core 3), `Task2` (core 2), and `Task1` (core 1).
-  * The final core availability should be **70**, which corresponds to the **workflow makespan**.
+  * The final core availability should be **40**, which corresponds to the **workflow makespan**.
+
+### Test 2 [`config_2.json`](./config/heft_simulation/config_2.json)
+ 
+* System Setup:  
+  * Two processors (physical cores) operate at the same frequency: `1`.  
+  * Each processor belongs to a different memory domain.  
+  * Three tasks with different computational requirements (in FLOPs):  
+    * `Task1 [size=160]`  
+    * `Task2 [size=320]`  
+    * `Task3 [size=80]`  
+  * Tasks 1 and 2 reduce to Task 3:  
+    * `Task1 -> Task3 [size=80]`  
+    * `Task2 -> Task3 [size=80]`  
+  * Memory channel latencies are set to `0`, so communication cost **only depends on bandwidths**.  
+  * Memory channel bandwidths are **non-uniform** across memory domains:  
+    * **Local access:** 4 GB/s  
+    * **Remote access:** 2 GB/s  
+
+* Validation Criteria:  
+  * Ensures the scheduler selects the task with the **highest upward rank** and assigns it to the resource where the **earliest completion time** is achieved, considering **non-uniform memory access times**.
+  * Confirms that **core availability** is correctly updated throughout the scheduling process.  
+
+* Expected Outcome: 
+  * Task, `Task2 [size=320]`, will be executed on the first core, while `Task1 [size=160]` will be executed on the second core.  
+  * Each core writes a data item to its **local memory**, but `Task3 [size=80]` must perform:  
+    * **One local access** to read the first item.  
+    * **One remote access** to read the second item.  
+  * The final core availabilities should be **340** and **460** (corresponding to the **workflow makespan**), respectively.
+  * Although it provides the same workflow makespan as Min-Min, it differs in core selection.
 
 ## Generic Validations
 
