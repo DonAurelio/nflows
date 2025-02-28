@@ -3,6 +3,12 @@ CXX := g++
 CXXFLAGS := -Wall -O2 -g #-DNLOG # Uncomment for debugging: -fsanitize=address
 LIBS := -lsimgrid -lhwloc
 
+# Header Files
+HDR := common.hpp hardware.hpp scheduler_base.hpp scheduler_fifo.hpp \
+       scheduler_eft.hpp scheduler_heft.hpp scheduler_min_min.hpp \
+       mapper_base.hpp mapper_bare_metal.hpp mapper_simulation.hpp \
+       runtime.hpp
+
 # Source Files and Object Files
 SRC := common.cpp hardware.cpp scheduler_base.cpp scheduler_fifo.cpp \
        scheduler_eft.cpp scheduler_heft.cpp scheduler_min_min.cpp \
@@ -14,7 +20,7 @@ OBJ := $(SRC:.cpp=.o)
 # Output Binary
 TARGET := scheduler
 
-SIMULATIONS := min_min_simulation heft_simulation
+TESTS := min_min_simulation heft_simulation fifo_simulation
 
 # Directories
 TEST_DIR := ./tests
@@ -32,7 +38,7 @@ $(TARGET): $(OBJ)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
 # Compile Object Files
-%.o: %.cpp
+%.o: %.cpp $(HDR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Run the scheduler with a sample configuration
@@ -47,13 +53,17 @@ clean:
 	@[ -d $(OUTPUT_DIR) ] && rmdir $(OUTPUT_DIR) 2>/dev/null || true
 	@[ -d $(LOG_DIR) ] && rmdir $(LOG_DIR) 2>/dev/null || true
 
-test-%: $(TARGET)
-	@echo "Generating output and log folders for $*..."
-	@mkdir -p "$(OUTPUT_DIR)/$*" "$(LOG_DIR)/$*"
+.PHONY: $(TESTS)
+$(TESTS): %: $(TARGET)
+	@echo "Generating output and log folders for $@..."
+	@mkdir -p "$(OUTPUT_DIR)/$@" "$(LOG_DIR)/$@"
 
-	@echo "Running $*..."
-	@for json in $$(ls $(CONFIG_DIR)/$*/*.json 2>/dev/null); do \
-		./$(TARGET) $$json > "$(LOG_DIR)/$*/$$(basename $$json .json).log" 2>&1; \
-		python3 $(VALIDATOR_DIR)/validate_offsets.py "$(OUTPUT_DIR)/$*/$$(basename $$json .json).yaml" >> "$(LOG_DIR)/$*/$$(basename $$json .json).log" 2>&1; \
-		python3 $(VALIDATOR_DIR)/validate_output.py "$(OUTPUT_DIR)/$*/$$(basename $$json .json).yaml" "$(OUTPUT_EXPECTED_DIR)/$*/$$(basename $$json .json).yaml" >> "$(LOG_DIR)/$*/$$(basename $$json .json).log" 2>&1; \
+	@echo "Running $@..."
+	@for json in $$(ls $(CONFIG_DIR)/$@/*.json 2>/dev/null); do \
+		./$(TARGET) $$json > "$(LOG_DIR)/$@/$$(basename $$json .json).log" 2>&1; \
+		python3 $(VALIDATOR_DIR)/validate_offsets.py "$(OUTPUT_DIR)/$@/$$(basename $$json .json).yaml" >> "$(LOG_DIR)/$@/$$(basename $$json .json).log" 2>&1; \
+		python3 $(VALIDATOR_DIR)/validate_output_and_order.py "$(OUTPUT_DIR)/$@/$$(basename $$json .json).yaml" "$(OUTPUT_EXPECTED_DIR)/$@/$$(basename $$json .json).yaml" --check-order >> "$(LOG_DIR)/$@/$$(basename $$json .json).log" 2>&1; \
 	done
+
+.PHONY: test
+test: $(TESTS)
