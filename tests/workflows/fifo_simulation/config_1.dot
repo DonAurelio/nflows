@@ -1,0 +1,22 @@
+digraph DataRedistribution {
+    root    [size=2]; // Ignored in processing.
+    end     [size=2]; // Ignored in processing.
+
+    root -> Task_1  [size=2]; // Edge ignored.
+
+    Task_1  [size=10];
+    Task_2  [size=10];
+    Task_3  [size=10];
+    Task_4  [size=10];
+    Task_5  [size=10];
+
+    Task_1 -> Task_2 [size=10];
+    Task_1 -> Task_5 [size=10];
+
+    Task_2 -> Task_3 [size=10];
+    Task_2 -> Task_4 [size=10];
+
+    Task_3 -> end   [size=2]; // Edge ignored.
+    Task_4 -> end   [size=2]; // Edge ignored.
+    Task_5 -> end   [size=2]; // Edge ignored.
+}
