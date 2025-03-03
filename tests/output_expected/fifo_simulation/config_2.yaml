@@ -1,0 +1,12 @@
+core_availability:
+  0: {avail_until: 70}
+  1: {avail_until: 50}
+  2: {avail_until: 40}
+  3: {avail_until: 70}
+
+exec_name_total_offsets:
+  Task_4: {start: 50, end: 70, payload: 10}
+  Task_3: {start: 50, end: 70, payload: 10}
+  Task_5: {start: 20, end: 40, payload: 10}
+  Task_2: {start: 20, end: 50, payload: 10}
+  Task_1: {start: 0, end: 20, payload: 10}

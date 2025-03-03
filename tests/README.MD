@@ -168,6 +168,20 @@ Task_3  Task_4
   * FIFO order (assuming **level-order traversal, depth-first approach**): `Task_1 → Task_2 → Task_5 → Task_3 → Task_4`  
   * The final core availability should be **110**, which corresponds to the **workflow makespan**.
 
+### Test 2 [`config_2.json`](./config/fifo_simulation/config_2.json)
+   
+* System Setup:
+  * Same as **Test 1**, with the following difference:  
+  * Four processors (physical cores) operating at **1 Hz**.  
+
+* Validation Criteria:
+  * Ensures the scheduler selects the next core in a round robin fashion.
+  * Confirms that **core availability** is correctly updated throughout the scheduling process.  
+
+* Expected Outcome:
+  * FIFO order task selection order and round-robin core selection: `Task_1 (core 0) → Task_2 (core 1) → Task_5 (core 2) → Task_3 (core 3) → Task_4 (core 0)`  
+  * The final core availability should be **70**, which corresponds to the **workflow makespan**.
+
 ## Generic Validations
 
 ### Script 1 [validate_offsets.py](./validators/validate_offsets.py)

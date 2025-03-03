@@ -4,6 +4,7 @@ XBT_LOG_NEW_DEFAULT_CATEGORY(fifo_scheduler, "Messages specific to this module."
 
 FIFO_Scheduler::FIFO_Scheduler(const common_t *common, simgrid_execs_t &dag) : Base_Scheduler(common, dag)
 {
+    this->next_core_index = 0;
 }
 
 FIFO_Scheduler::~FIFO_Scheduler()
@@ -19,56 +20,54 @@ std::tuple<int, double> FIFO_Scheduler::get_best_core_id(const simgrid_exec_t *e
 
     if (avail_core_ids.empty()) return {best_core_id, earliest_finish_time_us};
 
-    /* Count the amount of data (bytes) to be read per memory domain. */
-    std::unordered_map<int, double> numa_id_to_payload;
-
     // ASSUMPTION:
     // If data item pages are spread across multiple NUMA domains, we assume
     // the data is evenly distributed, i.e., all data pages have the same size.
+
+    /* Count the amount of data (bytes) to be read per memory domain. */
+    std::unordered_map<int, double> numa_id_to_payload;
     for (const auto &[comm_name, time_range_payload] : 
-        common_filter_name_to_time_range_payload(this->common, exec->get_name(), COMM_WRITE_OFFSETS, DST))
+        common_filter_name_to_time_range_payload(this->common, exec->get_name(), COMM_WRITE_OFFSETS, COMM_DST))
     {
         std::vector<int> numa_ids = this->common->comm_name_to_numa_ids_w.at(comm_name);
         for (int numa_id : numa_ids)
-            numa_id_to_payload[numa_id] = std::get<2>(time_range_payload) / numa_ids.size();
+            numa_id_to_payload[numa_id] += std::get<2>(time_range_payload) / numa_ids.size();
     }
 
-    /* Sort numa domain ids by the amount of data to be read by the executor. */
-    std::vector<int> ordered_numa_ids;
-    ordered_numa_ids.reserve(numa_id_to_payload.size());
+    // Prioritize cores associated with NUMA nodes that have the most data to read.
+    std::sort(avail_core_ids.begin(), avail_core_ids.end(),
+              [&](int a, int b) {
+                int a_numa_id = get_hwloc_numa_id_by_core_id(this->common, a);
+                int b_numa_id = get_hwloc_numa_id_by_core_id(this->common, b);
 
-    // Copy keys into the vector
-    for (const auto &[key, _] : numa_id_to_payload)
-        ordered_numa_ids.push_back(key);
+                double a_score = (numa_id_to_payload.find(a_numa_id) != numa_id_to_payload.end()) ? numa_id_to_payload.at(a_numa_id) : 0.0;
+                double b_score = (numa_id_to_payload.find(b_numa_id) != numa_id_to_payload.end()) ? numa_id_to_payload.at(b_numa_id) : 0.0; 
 
-    // Sort keys based on their corresponding values in the map
-    std::sort(ordered_numa_ids.begin(), ordered_numa_ids.end(),
-              [numa_id_to_payload](int a, int b) { return numa_id_to_payload.at(a) < numa_id_to_payload.at(b); });
+                return a_score > b_score; 
+            });
 
-    // if none of the available cores correspond to any of the numa domains 
-    // holding the data required by the executor, assign the first available core.
-    best_core_id = avail_core_ids.front();
-    best_numa_id = get_hwloc_numa_id_by_core_id(this->common, best_core_id);
-
-    /* Assign the exec to the core whose local memory (NUMA domain) contains the most data. */
-    for (const auto &ordered_numa_id : ordered_numa_ids)
+    if (this->common->mapper_type == SIMULATION)
     {
-        for (const auto &avail_core_id : avail_core_ids)
-        {
-            if (get_hwloc_numa_id_by_core_id(this->common, avail_core_id) == ordered_numa_id)
-            {
-                best_core_id = avail_core_id;
-                best_numa_id = ordered_numa_id;
-            }
-        }
+        // Get the current simulation time.
+        double current_simulation_time = *std::min_element(
+            this->common->core_avail_until.begin(), this->common->core_avail_until.end());
+
+        // Find the first available core
+        best_core_id = *std::find_if(avail_core_ids.begin(), avail_core_ids.end(), [&](int core_id) {
+            return this->common->core_avail_until[core_id] <= current_simulation_time;
+        });
+    } else {
+        best_core_id = avail_core_ids.front();
     }
+
+    best_numa_id = get_hwloc_numa_id_by_core_id(this->common, best_core_id);
 
     double earliest_start_time_us = common_earliest_start_time(this->common, exec->get_name(), best_core_id);
 
     double estimated_read_time_us = 0.0;
 
     for (const auto &[comm_name, time_range_payload] : 
-        common_filter_name_to_time_range_payload(this->common, exec->get_name(), COMM_WRITE_OFFSETS, DST))
+        common_filter_name_to_time_range_payload(this->common, exec->get_name(), COMM_WRITE_OFFSETS, COMM_DST))
     {
         double read_payload_bytes = (double) std::get<2>(time_range_payload);
 
@@ -154,7 +153,7 @@ double FIFO_Scheduler::compute_data_locality_score(simgrid_exec_t *exec)
 
     // Get all writtings (data items) where this exec is the destionation.
     name_to_time_range_payload_t comm_name_to_time_range_payload =
-        common_filter_name_to_time_range_payload(this->common, exec->get_name(), COMM_WRITE_OFFSETS, DST);
+        common_filter_name_to_time_range_payload(this->common, exec->get_name(), COMM_WRITE_OFFSETS, COMM_DST);
 
     for (const auto &[comm_name, time_range_payload] : comm_name_to_time_range_payload)
     {
