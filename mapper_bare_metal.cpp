@@ -95,7 +95,7 @@ void *mapper_bare_metal_thread_function(void *arg)
     double actual_read_time_us = 0.0;
 
     // Match all communication (Task1->Task2) where this task_name is the destination.
-    for (const auto &[comm_name, time_range_payload] : common_filter_name_to_time_range_payload(data->common, data->exec->get_name(), COMM_WRITE_OFFSETS, DST))
+    for (const auto &[comm_name, time_range_payload] : common_filter_name_to_time_range_payload(data->common, data->exec->get_name(), COMM_WRITE_OFFSETS, COMM_DST))
     {
         char *read_buffer = data->common->comm_name_to_address.at(comm_name);
         double read_payload_bytes = std::get<2>(time_range_payload);

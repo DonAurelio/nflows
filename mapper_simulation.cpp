@@ -93,7 +93,7 @@ void *mapper_simulation_thread_function(void *arg)
     double max_read_end_timestamp_us = 0.0;
     
     // Match all communication (Task1->Task2) where this task_name is the destination.
-    for (const auto &[comm_name, time_range_payload] : common_filter_name_to_time_range_payload(data->common, data->exec->get_cname(), COMM_WRITE_OFFSETS, DST))
+    for (const auto &[comm_name, time_range_payload] : common_filter_name_to_time_range_payload(data->common, data->exec->get_cname(), COMM_WRITE_OFFSETS, COMM_DST))
     {
         double read_payload_bytes = std::get<2>(time_range_payload);
 
