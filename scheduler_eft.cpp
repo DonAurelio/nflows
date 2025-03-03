@@ -29,7 +29,7 @@ std::tuple<int, double> EFT_Scheduler::get_best_core_id(const simgrid_exec_t *ex
         int read_dst_numa_id = get_hwloc_numa_id_by_core_id(this->common, core_id);
 
         // Match all communication (Task1->Task2) where this task_name is the destination.
-        for (const auto &[comm_name, time_range_payload] : common_filter_name_to_time_range_payload(this->common, exec->get_name(), COMM_WRITE_OFFSETS, DST))
+        for (const auto &[comm_name, time_range_payload] : common_filter_name_to_time_range_payload(this->common, exec->get_name(), COMM_WRITE_OFFSETS, COMM_DST))
         {
             double read_payload_bytes = (double) std::get<2>(time_range_payload);
 
