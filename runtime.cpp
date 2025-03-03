@@ -108,14 +108,29 @@ std::vector<bool> parse_core_avail_mask(uint64_t mask, size_t &core_count) {
 }
 
 scheduler_t* create_scheduler(const std::string &type, common_t *common, simgrid_execs_t &dag) {
-    if (type == "min_min") return new min_min_scheduler_t(common, dag);
-    if (type == "heft") return new heft_scheduler_t(common, dag);
-    if (type == "fifo") return new fifo_scheduler_t(common, dag);
+    if (type == "min_min") {
+        common->scheduler_type = MIN_MIN;
+        return new min_min_scheduler_t(common, dag);
+    }
+    if (type == "heft") {
+        common->scheduler_type = HEFT;
+        return new heft_scheduler_t(common, dag);
+    }
+    if (type == "fifo") {
+        common->scheduler_type = FIFO;
+        return new fifo_scheduler_t(common, dag);
+    }
     throw std::runtime_error("Unsupported scheduler: " + type);
 }
 
 mapper_t* create_mapper(const std::string &type, common_t *common, scheduler_t &scheduler) {
-    if (type == "bare_metal") return new mapper_bare_metal_t(common, scheduler);
-    if (type == "simulation") return new mapper_simulation_t(common, scheduler);
+    if (type == "bare_metal") {
+        common->mapper_type = BARE_METAL;
+        return new mapper_bare_metal_t(common, scheduler);
+    }
+    if (type == "simulation") {
+        common->mapper_type = SIMULATION;
+        return new mapper_simulation_t(common, scheduler);
+    }
     throw std::runtime_error("Unsupported mapper: " + type);
 }
