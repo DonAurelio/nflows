@@ -35,10 +35,40 @@ enum CommonClockFrequencyType
     STATIC_CLOCK_FREQUENCY,
     ARRAY_CLOCK_FREQUENCY,
 };
-
 typedef CommonClockFrequencyType clock_frequency_type_t;
 
-std::string common_get_str_from_clock_frequency_type(clock_frequency_type_t type);
+enum CommonSchedulerType
+{
+    MIN_MIN,
+    HEFT,
+    FIFO,
+};
+typedef CommonSchedulerType scheduler_type_t;
+
+enum CommonMapperType
+{
+    BARE_METAL,
+    SIMULATION,
+};
+typedef CommonMapperType mapper_type_t;
+
+enum CommonTimeRangePayloadType
+{
+    COMM_READ_TIMESTAMPS,
+    COMM_WRITE_TIMESTAMPS,
+    COMPUTE_TIMESTAMPS,
+    COMM_READ_OFFSETS,
+    COMM_WRITE_OFFSETS,
+    COMPUTE_OFFSETS,
+};
+typedef CommonTimeRangePayloadType time_range_payload_type_t;
+
+enum CommonCommNameMatch
+{
+    COMM_SRC,
+    COMM_DST,
+};
+typedef CommonCommNameMatch comm_name_match_t;
 
 // Maps data item names (e.g., "task1->task2") to their virtual addresses.
 typedef std::unordered_map<std::string, char *> name_to_address_t;
@@ -91,6 +121,9 @@ struct common_s
     std::vector<bool> core_avail;
     std::vector<double> core_avail_until;
 
+    scheduler_type_t scheduler_type;
+    mapper_type_t mapper_type;
+
     // Locality information collections.
     name_to_address_t comm_name_to_address;
     name_to_numa_ids_t comm_name_to_numa_ids_r;
@@ -110,35 +143,6 @@ struct common_s
 };
 typedef struct common_s common_t;
 
-simgrid_execs_t common_read_dag_from_dot(const std::string &filename);
-simgrid_execs_t common_get_ready_tasks(const simgrid_execs_t &dag);
-std::vector<std::vector<double>> common_read_distance_matrix_from_file(const std::string &filename);
-
-enum CommonVectorType
-{
-    COMM_READ_TIMESTAMPS,
-    COMM_WRITE_TIMESTAMPS,
-    COMPUTE_TIMESTAMPS,
-    COMM_READ_OFFSETS,
-    COMM_WRITE_OFFSETS,
-    COMPUTE_OFFSETS,
-};
-
-enum CommonCommNameMatch
-{
-    SRC,
-    DST
-};
-
-std::vector<int> common_get_avail_core_ids(const common_t *common);
-name_to_time_range_payload_t common_filter_name_to_time_range_payload(const common_t *common, const std::string &name,
-                                                                 CommonVectorType type, CommonCommNameMatch comm_name);
-
-double common_get_time_us();
-std::string common_get_timestamped_filename(const std::string &base_name);
-std::string common_join(const std::vector<int> &vec, const std::string &delimiter);
-std::pair<std::string, std::string> common_split(const std::string &input, std::string delimiter);
-
 typedef void *(*thread_function_t)(void *);
 
 struct thread_data_s
@@ -149,6 +153,21 @@ struct thread_data_s
     int assigned_core_id;
 };
 typedef struct thread_data_s thread_data_t;
+
+simgrid_execs_t common_read_dag_from_dot(const std::string &filename);
+simgrid_execs_t common_get_ready_tasks(const simgrid_execs_t &dag);
+
+std::string common_get_str_from_clock_frequency_type(clock_frequency_type_t type);
+std::vector<std::vector<double>> common_read_distance_matrix_from_file(const std::string &filename);
+
+std::vector<int> common_get_avail_core_ids(const common_t *common);
+name_to_time_range_payload_t common_filter_name_to_time_range_payload(
+    const common_t *common, const std::string &name,time_range_payload_type_t type, comm_name_match_t comm_name);
+
+double common_get_time_us();
+std::string common_get_timestamped_filename(const std::string &base_name);
+std::string common_join(const std::vector<int> &vec, const std::string &delimiter);
+std::pair<std::string, std::string> common_split(const std::string &input, std::string delimiter);
 
 void common_set_core_id_avail_unitl(common_t *common, unsigned int core_id, double duration);
 double common_get_core_id_avail_unitl(const common_t *common, unsigned int core_id);

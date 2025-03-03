@@ -107,9 +107,8 @@ void common_wait_active_threads(common_t *common)
     pthread_mutex_unlock(&(common->mutex));
 }
 
-name_to_time_range_payload_t common_filter_name_to_time_range_payload(const common_t *common, const std::string &name,
-                                                                 CommonVectorType type,
-                                                                 CommonCommNameMatch comm_part_to_match)
+name_to_time_range_payload_t common_filter_name_to_time_range_payload(
+    const common_t *common, const std::string &name, time_range_payload_type_t type, comm_name_match_t comm_part_to_match)
 {
     name_to_time_range_payload_t matches;
     name_to_time_range_payload_t map;
@@ -143,7 +142,7 @@ name_to_time_range_payload_t common_filter_name_to_time_range_payload(const comm
     {
         auto [left, right] = common_split(key, "->");
 
-        std::string name_to_match = left.empty() ? name : (comm_part_to_match == SRC) ? left : right;
+        std::string name_to_match = left.empty() ? name : (comm_part_to_match == COMM_SRC) ? left : right;
         if (name_to_match == name)
         {
             matches[key] = value;
@@ -165,7 +164,7 @@ double common_earliest_start_time(const common_t *common, const std::string &exe
 
     // Match all communication (Task1->Task2) where this task_name is the destination.
     double max_pred_actual_finish_time = 0.0;
-    for (const auto &[comm_name, time_range_payload] : common_filter_name_to_time_range_payload(common, exec_name, COMM_WRITE_OFFSETS, DST))
+    for (const auto &[comm_name, time_range_payload] : common_filter_name_to_time_range_payload(common, exec_name, COMM_WRITE_OFFSETS, COMM_DST))
     {
         max_pred_actual_finish_time = std::max(max_pred_actual_finish_time, std::get<1>(time_range_payload));
     }
