@@ -11,6 +11,14 @@ Validation is performed through simulation, as the implemented algorithms produc
 The Min-Min algorithm schedules tasks by selecting the task with the minimum completion time first and assigning it to the resource that can complete it the earliest.
 
 ### Test 1 [`config_1.json`](./config/min_min_simulation/config_1.json)
+
+* Validation Criteria:
+  * Ensures the scheduler selects the task with the **minimum completion time first** and assigns it to the resource where the **earliest completion time** is achieved.  
+  * Confirms that **core availability** is correctly updated throughout the scheduling process.  
+
+* Expected Outcome: 
+  * All tasks should be executed on the **4th core** (the fastest, operating at frequency 8).  
+  * The final core availability should be **70**, which corresponds to the **workflow makespan**.
    
 * System Setup:  
   * Processors (physical cores) operate at varying frequencies: `[1, 2, 4, 8]`.  
@@ -22,15 +30,18 @@ The Min-Min algorithm schedules tasks by selecting the task with the minimum com
   * Memory channel latencies and bandwidths are uniform across all memory domains, leading to a **Uniform Memory Access (UMA) system** (i.e., no NUMA effects).  
   * Processor speeds and clock frequencies are set so that **computation time can be directly obtained** by dividing the task size (in FLOPs) by the processor frequency.  
 
-* Validation Criteria:
-  * Ensures the scheduler selects the task with the **minimum completion time first** and assigns it to the resource where the **earliest completion time** is achieved.  
+### Test 2 [`config_2.json`](./config/min_min_simulation/config_2.json)
+
+* Validation Criteria:  
+  * Ensures the scheduler selects the task with the **minimum completion time first** and assigns it to the resource where the **earliest completion time** is achieved, considering **non-uniform memory access times**.  
   * Confirms that **core availability** is correctly updated throughout the scheduling process.  
 
 * Expected Outcome: 
-  * All tasks should be executed on the **4th core** (the fastest, operating at frequency 8).  
-  * The final core availability should be **70**, which corresponds to the **workflow makespan**.
-
-### Test 2 [`config_2.json`](./config/min_min_simulation/config_2.json)
+  * The first task, `Task1 [size=160]`, will be executed on the first core, while `Task2 [size=360]` will be executed on the second core.  
+  * Each core writes a data item to its **local memory**, but `Task3 [size=80]` must perform:  
+    * **One local access** to read the first item.  
+    * **One remote access** to read the second item.  
+  * The final core availabilities should be **460** (corresponding to the **workflow makespan**) and **340**, respectively.
  
 * System Setup:  
   * Two processors (physical cores) operate at the same frequency: `1`.  
@@ -47,22 +58,7 @@ The Min-Min algorithm schedules tasks by selecting the task with the minimum com
     * **Local access:** 4 GB/s  
     * **Remote access:** 2 GB/s  
 
-* Validation Criteria:  
-  * Ensures the scheduler selects the task with the **minimum completion time first** and assigns it to the resource where the **earliest completion time** is achieved, considering **non-uniform memory access times**.  
-  * Confirms that **core availability** is correctly updated throughout the scheduling process.  
-
-* Expected Outcome: 
-  * The first task, `Task1 [size=160]`, will be executed on the first core, while `Task2 [size=360]` will be executed on the second core.  
-  * Each core writes a data item to its **local memory**, but `Task3 [size=80]` must perform:  
-    * **One local access** to read the first item.  
-    * **One remote access** to read the second item.  
-  * The final core availabilities should be **460** (corresponding to the **workflow makespan**) and **340**, respectively.
-
 ### Test 3 [`config_3.json`](./config/min_min_simulation/config_3.json)
-   
-* System Setup:  
-  * Same as **Test 2**, with the following difference:  
-  * Memory channel bandwidths are **uniform** across memory domains: **4 GB/s**.  
 
 * Validation Criteria:
   * Compares the **workflow makespan** between **Test 2** and **Test 3** to evaluate the impact of uniform vs. non-uniform memory access.  
@@ -71,13 +67,25 @@ The Min-Min algorithm schedules tasks by selecting the task with the minimum com
   * Since memory access is **uniform** in **Test 3**, there is **no additional cost for remote access**.  
   * As a result, the **workflow makespan** should be **lower** (**440**) than in **Test 2** (**460**).
   * Therefore, there is a penalty (**20 seconds**) when performing remote memory accesses in NUMA systems that must be taken into consideration when scheduling workflows.
+   
+* System Setup:  
+  * Same as **Test 2**, with the following difference:  
+  * Memory channel bandwidths are **uniform** across memory domains: **4 GB/s**.  
 
 ## HEFT Algorithm 
 
 The HEFT (Heterogeneous Earliest Finish Time) scheduling algorithm prioritizes tasks in a task dependency graph based on their upward rank, which considers task execution time and communication delays. It then assigns each task to the processor that minimizes its earliest finish time [2].
 
 ### Test 1 [`config_1.json`](./config/heft_simulation/config_1.json)
-   
+
+* Validation Criteria:
+  * Ensures the scheduler selects the task with the **maximum upward rank** and assigns it to the resource where the **earliest completion time** is achieved.
+  * Confirms that **core availability** is correctly updated throughout the scheduling process.  
+
+* Expected Outcome:
+  * Execution order should be `Task3` (core 3), `Task2` (core 2), and `Task1` (core 1).
+  * The final core availability should be **40**, which corresponds to the **workflow makespan**.
+
 * System Setup:  
   * Processors (physical cores) operate at varying frequencies: `[1, 2, 4, 8]`.  
   * Three tasks with different computational requirements (in FLOPs):  
@@ -88,15 +96,19 @@ The HEFT (Heterogeneous Earliest Finish Time) scheduling algorithm prioritizes t
   * Memory channel latencies and bandwidths are uniform across all memory domains, leading to a **Uniform Memory Access (UMA) system** (i.e., no NUMA effects).  
   * Processor speeds and clock frequencies are set so that **computation time can be directly obtained** by dividing the task size (in FLOPs) by the processor frequency.  
 
-* Validation Criteria:
-  * Ensures the scheduler selects the task with the **maximum upward rank** and assigns it to the resource where the **earliest completion time** is achieved.
+### Test 2 [`config_2.json`](./config/heft_simulation/config_2.json)
+
+* Validation Criteria:  
+  * Ensures the scheduler selects the task with the **highest upward rank** and assigns it to the resource where the **earliest completion time** is achieved, considering **non-uniform memory access times**.
   * Confirms that **core availability** is correctly updated throughout the scheduling process.  
 
-* Expected Outcome:
-  * Execution order should be `Task3` (core 3), `Task2` (core 2), and `Task1` (core 1).
-  * The final core availability should be **40**, which corresponds to the **workflow makespan**.
-
-### Test 2 [`config_2.json`](./config/heft_simulation/config_2.json)
+* Expected Outcome: 
+  * Task, `Task2 [size=320]`, will be executed on the first core, while `Task1 [size=160]` will be executed on the second core.  
+  * Each core writes a data item to its **local memory**, but `Task3 [size=80]` must perform:  
+    * **One local access** to read the first item.  
+    * **One remote access** to read the second item.  
+  * The final core availabilities should be **340** and **460** (corresponding to the **workflow makespan**), respectively.
+  * Although it provides the same workflow makespan as Min-Min, it differs in core selection.
  
 * System Setup:  
   * Two processors (physical cores) operate at the same frequency: `1`.  
@@ -113,23 +125,7 @@ The HEFT (Heterogeneous Earliest Finish Time) scheduling algorithm prioritizes t
     * **Local access:** 4 GB/s  
     * **Remote access:** 2 GB/s  
 
-* Validation Criteria:  
-  * Ensures the scheduler selects the task with the **highest upward rank** and assigns it to the resource where the **earliest completion time** is achieved, considering **non-uniform memory access times**.
-  * Confirms that **core availability** is correctly updated throughout the scheduling process.  
-
-* Expected Outcome: 
-  * Task, `Task2 [size=320]`, will be executed on the first core, while `Task1 [size=160]` will be executed on the second core.  
-  * Each core writes a data item to its **local memory**, but `Task3 [size=80]` must perform:  
-    * **One local access** to read the first item.  
-    * **One remote access** to read the second item.  
-  * The final core availabilities should be **340** and **460** (corresponding to the **workflow makespan**), respectively.
-  * Although it provides the same workflow makespan as Min-Min, it differs in core selection.
-
 ### Test 3 [`config_3.json`](./config/heft_simulation/config_3.json)
-   
-* System Setup:  
-  * Same as **Test 2**, with the following difference:  
-  * Memory channel bandwidths are **uniform** across memory domains: **4 GB/s**.  
 
 * Validation Criteria:
   * Compares the **workflow makespan** between **Test 2** and **Test 3** to evaluate the impact of uniform vs. non-uniform memory access.  
@@ -138,6 +134,10 @@ The HEFT (Heterogeneous Earliest Finish Time) scheduling algorithm prioritizes t
   * Since memory access is **uniform** in **Test 3**, there is **no additional cost for remote access**.  
   * As a result, the **workflow makespan** should be **lower** (**440**) than in **Test 2** (**460**).
   * Therefore, there is a penalty (**20 seconds**) when performing remote memory accesses in NUMA systems that must be taken into consideration when scheduling workflows.
+
+* System Setup:  
+  * Same as **Test 2**, with the following difference:  
+  * Memory channel bandwidths are **uniform** across memory domains: **4 GB/s**.  
 
 ## FIFO Algorithm
 
