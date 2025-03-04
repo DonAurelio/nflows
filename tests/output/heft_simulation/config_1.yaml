@@ -1,0 +1,41 @@
+checksum: 0
+active_threads: 0
+flops_per_cycle: 1e+06
+clock_frequency_type: array
+clock_frequency_hz: 0
+
+clock_frequencies_hz:
+  0: 1
+  1: 2
+  2: 4
+  3: 8
+
+core_availability:
+  0: {avail_until: 0}
+  1: {avail_until: 40}
+  2: {avail_until: 40}
+  3: {avail_until: 40}
+
+distance_latency_ns:
+  - [20000, 20000]
+  - [20000, 20000]
+
+distance_bandwidth_gbs:
+  - [0.01, 0.01]
+  - [0.01, 0.01]
+
+name_to_thread_locality:
+  Task_1: {numa_id: 0, core_id: 1, voluntary_cs: 0, involuntary_cs: 0, core_migrations: 0}
+  Task_2: {numa_id: 0, core_id: 2, voluntary_cs: 0, involuntary_cs: 0, core_migrations: 0}
+  Task_3: {numa_id: 0, core_id: 3, voluntary_cs: 0, involuntary_cs: 0, core_migrations: 0}
+
+exec_name_compute_offsets:
+  Task_1: {start: 0, end: 40, payload: 80}
+  Task_2: {start: 0, end: 40, payload: 160}
+  Task_3: {start: 0, end: 40, payload: 320}
+
+exec_name_total_offsets:
+  Task_1: {start: 0, end: 40, payload: 80}
+  Task_2: {start: 0, end: 40, payload: 160}
+  Task_3: {start: 0, end: 40, payload: 320}
+

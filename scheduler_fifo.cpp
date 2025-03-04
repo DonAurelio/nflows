@@ -4,7 +4,6 @@ XBT_LOG_NEW_DEFAULT_CATEGORY(fifo_scheduler, "Messages specific to this module."
 
 FIFO_Scheduler::FIFO_Scheduler(const common_t *common, simgrid_execs_t &dag) : Base_Scheduler(common, dag)
 {
-    this->next_core_index = 0;
 }
 
 FIFO_Scheduler::~FIFO_Scheduler()
@@ -46,21 +45,33 @@ std::tuple<int, double> FIFO_Scheduler::get_best_core_id(const simgrid_exec_t *e
                 return a_score > b_score; 
             });
 
+    for (int avail_core_id : avail_core_ids) {
+        XBT_DEBUG("avail_core_id: %d, avail_core_until: %f", avail_core_id,
+            common_get_core_id_avail_unitl(this->common, avail_core_id));
+    }
+
     if (this->common->mapper_type == SIMULATION)
     {
         // Get the current simulation time.
-        double current_simulation_time = *std::min_element(
-            this->common->core_avail_until.begin(), this->common->core_avail_until.end());
+        double current_simulation_time = std::numeric_limits<double>::max();
+        for (int avail_core_id : avail_core_ids)
+            current_simulation_time = std::min(current_simulation_time,
+                common_get_core_id_avail_unitl(this->common, avail_core_id));
+
+        XBT_DEBUG("current_simulation_time: %f", current_simulation_time);
 
         // Find the first available core
         best_core_id = *std::find_if(avail_core_ids.begin(), avail_core_ids.end(), [&](int core_id) {
             return this->common->core_avail_until[core_id] <= current_simulation_time;
         });
+
     } else {
         best_core_id = avail_core_ids.front();
     }
 
     best_numa_id = get_hwloc_numa_id_by_core_id(this->common, best_core_id);
+
+    XBT_DEBUG("best_core_id: %d, best_numa_id: %d", best_core_id, best_numa_id);
 
     double earliest_start_time_us = common_earliest_start_time(this->common, exec->get_name(), best_core_id);
 

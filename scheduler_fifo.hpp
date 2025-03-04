@@ -9,9 +9,8 @@
 class FIFO_Scheduler : public Base_Scheduler
 {
   private:
-    size_t next_core_index;
     std::deque<simgrid_exec_t*> queue;
-    std::unordered_map<int, size_t> numa_id_to_next_core_index;
+
     double compute_data_locality_score(simgrid_exec_t *task);
     std::unordered_map<std::string, double> get_data_locality_scores(simgrid_execs_t &execs);
 

@@ -1,0 +1,8 @@
+[0.000000] [mapper_simulation/INFO] Task ID: Task_3, Core ID: 3 => message: started.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_3, Core ID: 3 => message: finished.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_2, Core ID: 2 => message: started.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_2, Core ID: 2 => message: finished.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_1, Core ID: 1 => message: started.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_1, Core ID: 1 => message: finished.
+validate_offsets => output: ./tests/output/heft_simulation/config_1.yaml
+Validation successful.

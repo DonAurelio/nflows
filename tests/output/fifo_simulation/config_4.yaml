@@ -1,0 +1,54 @@
+checksum: 0
+active_threads: 0
+flops_per_cycle: 1e+06
+clock_frequency_type: static
+clock_frequency_hz: 1
+
+core_availability:
+  0: {avail_until: 12}
+  24: {avail_until: 14}
+  25: {avail_until: 29}
+
+distance_latency_ns:
+  - [0, 0]
+  - [0, 0]
+
+distance_bandwidth_gbs:
+  - [0.005, 0.002]
+  - [0.002, 0.005]
+
+numa_mappings_write:
+  Task_2->Task_3: {numa_ids: [1]}
+  Task_1->Task_3: {numa_ids: [0]}
+
+numa_mappings_read:
+  Task_2->Task_3: {numa_ids: [1]}
+  Task_1->Task_3: {numa_ids: [0]}
+
+name_to_thread_locality:
+  Task_3: {numa_id: 1, core_id: 25, voluntary_cs: 0, involuntary_cs: 0, core_migrations: 0}
+  Task_2: {numa_id: 1, core_id: 24, voluntary_cs: 0, involuntary_cs: 0, core_migrations: 0}
+  Task_1: {numa_id: 0, core_id: 0, voluntary_cs: 0, involuntary_cs: 0, core_migrations: 0}
+
+name_to_address:
+  Task_2->Task_3: {address: 0}
+  Task_1->Task_3: {address: 0}
+
+comm_name_read_offsets:
+  Task_2->Task_3: {start: 14, end: 18, payload: 20}
+  Task_1->Task_3: {start: 14, end: 19, payload: 10}
+
+comm_name_write_offsets:
+  Task_2->Task_3: {start: 10, end: 14, payload: 20}
+  Task_1->Task_3: {start: 10, end: 12, payload: 10}
+
+exec_name_compute_offsets:
+  Task_3: {start: 19, end: 29, payload: 10}
+  Task_2: {start: 0, end: 10, payload: 10}
+  Task_1: {start: 0, end: 10, payload: 10}
+
+exec_name_total_offsets:
+  Task_3: {start: 14, end: 29, payload: 10}
+  Task_2: {start: 0, end: 14, payload: 10}
+  Task_1: {start: 0, end: 12, payload: 10}
+

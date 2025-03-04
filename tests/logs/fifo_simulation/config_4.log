@@ -1,0 +1,30 @@
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 0, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 24, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 25, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:61: [fifo_scheduler/DEBUG] current_simulation_time: 0.000000
+[0.000000] scheduler_fifo.cpp:74: [fifo_scheduler/DEBUG] best_core_id: 0, best_numa_id: 0
+[0.000000] scheduler_fifo.cpp:155: [fifo_scheduler/DEBUG] selected_task: Task_1, selected_core_id: 0, estimated_finish_time: 12.000000
+[0.000000] [mapper_simulation/INFO] Task ID: Task_1, Core ID: 0 => message: started.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_1, Core ID: 0 => write: Task_1->Task_3, payload (bytes): 10.000000.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_1, Core ID: 0 => message: finished.
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 0, avail_core_until: 12.000000
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 24, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 25, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:61: [fifo_scheduler/DEBUG] current_simulation_time: 0.000000
+[0.000000] scheduler_fifo.cpp:74: [fifo_scheduler/DEBUG] best_core_id: 24, best_numa_id: 1
+[0.000000] scheduler_fifo.cpp:155: [fifo_scheduler/DEBUG] selected_task: Task_2, selected_core_id: 24, estimated_finish_time: 14.000000
+[0.000000] [mapper_simulation/INFO] Task ID: Task_2, Core ID: 24 => message: started.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_2, Core ID: 24 => write: Task_2->Task_3, payload (bytes): 20.000000.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_2, Core ID: 24 => message: finished.
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 24, avail_core_until: 14.000000
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 25, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 0, avail_core_until: 12.000000
+[0.000000] scheduler_fifo.cpp:61: [fifo_scheduler/DEBUG] current_simulation_time: 0.000000
+[0.000000] scheduler_fifo.cpp:74: [fifo_scheduler/DEBUG] best_core_id: 25, best_numa_id: 1
+[0.000000] scheduler_fifo.cpp:155: [fifo_scheduler/DEBUG] selected_task: Task_3, selected_core_id: 25, estimated_finish_time: 29.000000
+[0.000000] [mapper_simulation/INFO] Task ID: Task_3, Core ID: 25 => message: started.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_3, Core ID: 25 => read: Task_1->Task_3, payload (bytes): 10.000000
+[0.000000] [mapper_simulation/INFO] Task ID: Task_3, Core ID: 25 => read: Task_2->Task_3, payload (bytes): 20.000000
+[0.000000] [mapper_simulation/INFO] Task ID: Task_3, Core ID: 25 => message: finished.
+validate_offsets => output: ./tests/output/fifo_simulation/config_4.yaml
+Validation successful.

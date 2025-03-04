@@ -1,0 +1,12 @@
+[0.000000] [mapper_simulation/INFO] Task ID: Task_2, Core ID: 0 => message: started.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_2, Core ID: 0 => write: Task_2->Task_3, payload (bytes): 80.000000.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_2, Core ID: 0 => message: finished.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_1, Core ID: 24 => message: started.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_1, Core ID: 24 => write: Task_1->Task_3, payload (bytes): 80.000000.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_1, Core ID: 24 => message: finished.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_3, Core ID: 0 => message: started.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_3, Core ID: 0 => read: Task_2->Task_3, payload (bytes): 80.000000
+[0.000000] [mapper_simulation/INFO] Task ID: Task_3, Core ID: 0 => read: Task_1->Task_3, payload (bytes): 80.000000
+[0.000000] [mapper_simulation/INFO] Task ID: Task_3, Core ID: 0 => message: finished.
+validate_offsets => output: ./tests/output/heft_simulation/config_3.yaml
+Validation successful.

@@ -1,0 +1,55 @@
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 0, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 1, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 2, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 3, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:61: [fifo_scheduler/DEBUG] current_simulation_time: 0.000000
+[0.000000] scheduler_fifo.cpp:74: [fifo_scheduler/DEBUG] best_core_id: 0, best_numa_id: 0
+[0.000000] scheduler_fifo.cpp:155: [fifo_scheduler/DEBUG] selected_task: Task_1, selected_core_id: 0, estimated_finish_time: 30.000000
+[0.000000] [mapper_simulation/INFO] Task ID: Task_1, Core ID: 0 => message: started.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_1, Core ID: 0 => write: Task_1->Task_2, payload (bytes): 10.000000.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_1, Core ID: 0 => write: Task_1->Task_5, payload (bytes): 20.000000.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_1, Core ID: 0 => message: finished.
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 0, avail_core_until: 30.000000
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 1, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 2, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 3, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:61: [fifo_scheduler/DEBUG] current_simulation_time: 0.000000
+[0.000000] scheduler_fifo.cpp:74: [fifo_scheduler/DEBUG] best_core_id: 1, best_numa_id: 0
+[0.000000] scheduler_fifo.cpp:155: [fifo_scheduler/DEBUG] selected_task: Task_5, selected_core_id: 1, estimated_finish_time: 60.000000
+[0.000000] [mapper_simulation/INFO] Task ID: Task_5, Core ID: 1 => message: started.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_5, Core ID: 1 => read: Task_1->Task_5, payload (bytes): 20.000000
+[0.000000] [mapper_simulation/INFO] Task ID: Task_5, Core ID: 1 => message: finished.
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 0, avail_core_until: 30.000000
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 1, avail_core_until: 60.000000
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 2, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 3, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:61: [fifo_scheduler/DEBUG] current_simulation_time: 0.000000
+[0.000000] scheduler_fifo.cpp:74: [fifo_scheduler/DEBUG] best_core_id: 2, best_numa_id: 0
+[0.000000] scheduler_fifo.cpp:155: [fifo_scheduler/DEBUG] selected_task: Task_2, selected_core_id: 2, estimated_finish_time: 70.000000
+[0.000000] [mapper_simulation/INFO] Task ID: Task_2, Core ID: 2 => message: started.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_2, Core ID: 2 => read: Task_1->Task_2, payload (bytes): 10.000000
+[0.000000] [mapper_simulation/INFO] Task ID: Task_2, Core ID: 2 => write: Task_2->Task_3, payload (bytes): 10.000000.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_2, Core ID: 2 => write: Task_2->Task_4, payload (bytes): 20.000000.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_2, Core ID: 2 => message: finished.
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 0, avail_core_until: 30.000000
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 1, avail_core_until: 60.000000
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 2, avail_core_until: 70.000000
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 3, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:61: [fifo_scheduler/DEBUG] current_simulation_time: 0.000000
+[0.000000] scheduler_fifo.cpp:74: [fifo_scheduler/DEBUG] best_core_id: 3, best_numa_id: 0
+[0.000000] scheduler_fifo.cpp:155: [fifo_scheduler/DEBUG] selected_task: Task_4, selected_core_id: 3, estimated_finish_time: 100.000000
+[0.000000] [mapper_simulation/INFO] Task ID: Task_4, Core ID: 3 => message: started.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_4, Core ID: 3 => read: Task_2->Task_4, payload (bytes): 20.000000
+[0.000000] [mapper_simulation/INFO] Task ID: Task_4, Core ID: 3 => message: finished.
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 0, avail_core_until: 30.000000
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 1, avail_core_until: 60.000000
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 2, avail_core_until: 70.000000
+[0.000000] scheduler_fifo.cpp:49: [fifo_scheduler/DEBUG] avail_core_id: 3, avail_core_until: 100.000000
+[0.000000] scheduler_fifo.cpp:61: [fifo_scheduler/DEBUG] current_simulation_time: 30.000000
+[0.000000] scheduler_fifo.cpp:74: [fifo_scheduler/DEBUG] best_core_id: 0, best_numa_id: 0
+[0.000000] scheduler_fifo.cpp:155: [fifo_scheduler/DEBUG] selected_task: Task_3, selected_core_id: 0, estimated_finish_time: 90.000000
+[0.000000] [mapper_simulation/INFO] Task ID: Task_3, Core ID: 0 => message: started.
+[0.000000] [mapper_simulation/INFO] Task ID: Task_3, Core ID: 0 => read: Task_2->Task_3, payload (bytes): 10.000000
+[0.000000] [mapper_simulation/INFO] Task ID: Task_3, Core ID: 0 => message: finished.
+validate_offsets => output: ./tests/output/fifo_simulation/config_3.yaml
+Validation successful.

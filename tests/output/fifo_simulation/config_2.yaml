@@ -1,0 +1,71 @@
+checksum: 0
+active_threads: 0
+flops_per_cycle: 1e+06
+clock_frequency_type: static
+clock_frequency_hz: 1
+
+core_availability:
+  0: {avail_until: 70}
+  1: {avail_until: 50}
+  2: {avail_until: 40}
+  3: {avail_until: 70}
+
+distance_latency_ns:
+  - [0, 0]
+  - [0, 0]
+
+distance_bandwidth_gbs:
+  - [0.001, 0.001]
+  - [0.001, 0.001]
+
+numa_mappings_write:
+  Task_2->Task_4: {numa_ids: [0]}
+  Task_2->Task_3: {numa_ids: [0]}
+  Task_1->Task_5: {numa_ids: [0]}
+  Task_1->Task_2: {numa_ids: [0]}
+
+numa_mappings_read:
+  Task_2->Task_4: {numa_ids: [0]}
+  Task_2->Task_3: {numa_ids: [0]}
+  Task_1->Task_5: {numa_ids: [0]}
+  Task_1->Task_2: {numa_ids: [0]}
+
+name_to_thread_locality:
+  Task_4: {numa_id: 0, core_id: 0, voluntary_cs: 0, involuntary_cs: 0, core_migrations: 0}
+  Task_3: {numa_id: 0, core_id: 3, voluntary_cs: 0, involuntary_cs: 0, core_migrations: 0}
+  Task_5: {numa_id: 0, core_id: 2, voluntary_cs: 0, involuntary_cs: 0, core_migrations: 0}
+  Task_2: {numa_id: 0, core_id: 1, voluntary_cs: 0, involuntary_cs: 0, core_migrations: 0}
+  Task_1: {numa_id: 0, core_id: 0, voluntary_cs: 0, involuntary_cs: 0, core_migrations: 0}
+
+name_to_address:
+  Task_2->Task_4: {address: 0}
+  Task_2->Task_3: {address: 0}
+  Task_1->Task_5: {address: 0}
+  Task_1->Task_2: {address: 0}
+
+comm_name_read_offsets:
+  Task_2->Task_4: {start: 50, end: 60, payload: 10}
+  Task_2->Task_3: {start: 50, end: 60, payload: 10}
+  Task_1->Task_5: {start: 20, end: 30, payload: 10}
+  Task_1->Task_2: {start: 20, end: 30, payload: 10}
+
+comm_name_write_offsets:
+  Task_2->Task_4: {start: 40, end: 50, payload: 10}
+  Task_2->Task_3: {start: 40, end: 50, payload: 10}
+  Task_1->Task_5: {start: 10, end: 20, payload: 10}
+  Task_1->Task_2: {start: 10, end: 20, payload: 10}
+
+exec_name_compute_offsets:
+  Task_4: {start: 60, end: 70, payload: 10}
+  Task_3: {start: 60, end: 70, payload: 10}
+  Task_5: {start: 30, end: 40, payload: 10}
+  Task_2: {start: 30, end: 40, payload: 10}
+  Task_1: {start: 0, end: 10, payload: 10}
+
+exec_name_total_offsets:
+  Task_4: {start: 50, end: 70, payload: 10}
+  Task_3: {start: 50, end: 70, payload: 10}
+  Task_5: {start: 20, end: 40, payload: 10}
+  Task_2: {start: 20, end: 50, payload: 10}
+  Task_1: {start: 0, end: 20, payload: 10}
+
