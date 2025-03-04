@@ -196,6 +196,30 @@ Task_3  Task_4
   * FIFO task selection order and round-robin like core selection: `Task_1 (core 0) → Task_5 (core 1) → Task_2 (core 2) → Task_4 (core 3) → Task_3 (core 0)`  
   * The final core availability should be **70**, which corresponds to the **workflow makespan**.
 
+### Test 3 [`config_4.json`](./config/fifo_simulation/config_4.json)
+
+## Validation Criteria
+- Ensure that the scheduler selects the core local to the memory domain that holds the majority of a task's data.  
+- Verify that **core availability** is correctly updated throughout the scheduling process.  
+
+## Expected Outcome  
+- Since `Task2` is executed on the second NUMA node and performs the most significant data writing (`Task2 -> Task3 [size=20]`), `Task3` should be executed in the second memory domain. This is because it holds most of the data required by `Task3`, even though `Task3` must perform a remote access to retrieve `Task1 -> Task3 [size=10]` from the first memory domain.  
+
+## System Setup  
+- Two physical cores operating at the same frequency: `1`.  
+- Each processor belongs to a different memory domain.  
+- Three tasks with the same computational requirements (in FLOPs):  
+  - `Task1 [size=10]`  
+  - `Task2 [size=10]`  
+  - `Task3 [size=10]`  
+- Task dependencies:  
+  - `Task1 -> Task3 [size=10]`  
+  - `Task2 -> Task3 [size=20]`  
+- Memory channel latencies are set to `0`, so communication cost **depends only on bandwidth**.  
+- Memory channel bandwidths are **non-uniform** across memory domains:  
+  - **Local access:** 4 GB/s  
+  - **Remote access:** 2 GB/s 
+
 ## Generic Validations
 
 ### Script 1 [validate_offsets.py](./validators/validate_offsets.py)
