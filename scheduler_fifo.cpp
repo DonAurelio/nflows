@@ -140,20 +140,27 @@ std::tuple<simgrid_exec_t *, int, double> FIFO_Scheduler::next()
     });
     
     // Append only new ready tasks to the queue
+    std::unordered_set<simgrid_exec_t *> queue_set(this->queue.begin(), this->queue.end());
+
     for (const auto &exec : ready_execs) {
-        if (std::find(this->queue.begin(), this->queue.end(), exec) == this->queue.end()) {
+        if (queue_set.insert(exec).second) { // insert returns {iterator, bool}, `true` means new
             this->queue.push_back(exec);
         }
     }
 
-    selected_exec = this->queue.front();
-    this->queue.pop_front();
-    
+    for (const auto &exec : this->queue)
+        XBT_DEBUG("queued_task: %s, score: %f", exec->get_cname(), name_to_data_locality_score[exec->get_name()]);
+
     // Select the best core for execution
-    std::tie(selected_core_id, estimated_finish_time) = this->get_best_core_id(selected_exec);
-    
-    XBT_DEBUG("selected_task: %s, selected_core_id: %d, estimated_finish_time: %f",
-              selected_exec->get_cname(), selected_core_id, estimated_finish_time);
+    if (auto [core_id, finish_time] = this->get_best_core_id(this->queue.front()); core_id != -1) {
+        selected_exec = this->queue.front();
+        selected_core_id = core_id;
+        estimated_finish_time = finish_time;
+        this->queue.pop_front();
+
+        XBT_DEBUG("selected_task: %s, selected_core_id: %d, estimated_finish_time: %f",
+            selected_exec->get_cname(), selected_core_id, estimated_finish_time);
+    }
 
     return std::make_tuple(selected_exec, selected_core_id, estimated_finish_time);
 }
