@@ -166,7 +166,9 @@ double common_earliest_start_time(const common_t *common, const std::string &exe
     double max_pred_actual_finish_time = 0.0;
     for (const auto &[comm_name, time_range_payload] : common_filter_name_to_time_range_payload(common, exec_name, COMM_WRITE_OFFSETS, COMM_DST))
     {
-        max_pred_actual_finish_time = std::max(max_pred_actual_finish_time, std::get<1>(time_range_payload));
+        auto [pred_exec_name, self_exec_name] = common_split(comm_name, "->");
+        max_pred_actual_finish_time = std::max(
+            max_pred_actual_finish_time, std::get<1>(common->exec_name_to_rcw_time_offset_payload.at(pred_exec_name)));
     }
 
     double core_id_avail_until = common_get_core_id_avail_unitl(common, core_id);
