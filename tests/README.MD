@@ -141,15 +141,24 @@ The HEFT (Heterogeneous Earliest Finish Time) scheduling algorithm prioritizes t
 
 ## FIFO Algorithm
 
-The FIFO (First-In, First-Out) scheduling algorithm selects tasks in the order they arrive, without prioritization. The oldest (earliest arrived) task in the queue is selected first. The first available core is assigned to execute the selected task.
+The FIFO (First-In, First-Out) scheduling algorithm selects tasks in the order of their arrival, assuming a level-order traversal in a task dependency graph, without prioritization. The oldest task in the queue is selected first, and the first available core is assigned to execute it.
+
+To introduce NUMA-awareness into the algorithm, task and core selection were prioritized as suggested in [3]. In task prioritization, a data locality score is computed for each task in the ready queue, representing the amount of data (in bytes) the task must read from memory. Tasks are then sorted in decreasing order, prioritizing those with higher data locality scores. For core prioritization, available cores are ranked based on the amount of local data accessible to the task on each core. Cores with the most accessible data are listed first, and the highest-ranked core is selected.
 
 ### Test 1 [`config_1.json`](./config/fifo_simulation/config_1.json)
-   
+
+* Validation Criteria:
+  * Verify that the scheduler maintains **FIFO order in task selection** when all tasks at the same level of the DAG have identical data locality scores.
+  * Ensure that core availability is correctly updated throughout the scheduling process.
+
+* Expected Outcome:
+  * FIFO order (assuming **level-order traversal**): `Task_1 → Task_2 → Task_5 → Task_3 → Task_4`  
+  * The final core availability should be **110**, which corresponds to the **workflow makespan**.
+
 * System Setup:
   * A single processor (physical core) operating at **1 Hz**, making computational cost equivalent to execution time.  
   * Memory channel latencies and bandwidths are set so that communication time is equal to communication cost.  
   * Memory channel latencies and bandwidths are **uniform** across all memory domains, resulting in a **Uniform Memory Access (UMA) system** (i.e., no NUMA effects).  
-  * Processor speed and clock frequency are set so that **computation time is directly determined** by dividing the task size (in FLOPs) by the processor frequency.  
   * Five tasks, each with identical **computational (10 FLOPs) and communication (10 bytes)** requirements.  
 
 ```nginx
@@ -160,26 +169,31 @@ The FIFO (First-In, First-Out) scheduling algorithm selects tasks in the order t
 Task_3  Task_4
 ```
 
+### Test 2 [`config_2.json`](./config/fifo_simulation/config_2.json)
+
 * Validation Criteria:
-  * Ensures the scheduler selects tasks following the FIFO order.
+  * Ensures the scheduler **selects the first available core** when core priorities are equal for every task to be scheduled. 
   * Confirms that **core availability** is correctly updated throughout the scheduling process.  
 
 * Expected Outcome:
-  * FIFO order (assuming **level-order traversal, depth-first approach**): `Task_1 → Task_2 → Task_5 → Task_3 → Task_4`  
-  * The final core availability should be **110**, which corresponds to the **workflow makespan**.
+  * FIFO task selection order and round-robin like core selection: `Task_1 (core 0) → Task_2 (core 1) → Task_5 (core 2) → Task_3 (core 3) → Task_4 (core 0)`  
+  * The final core availability should be **70**, which corresponds to the **workflow makespan**.
 
-### Test 2 [`config_2.json`](./config/fifo_simulation/config_2.json)
-   
 * System Setup:
   * Same as **Test 1**, with the following difference:  
-  * Four processors (physical cores) operating at **1 Hz**.  
+  * Four processors (physical cores) operating at **1 Hz**. 
 
-* Validation Criteria:
-  * Ensures the scheduler selects the next core in a round robin fashion.
-  * Confirms that **core availability** is correctly updated throughout the scheduling process.  
+### Test 3 [`config_3.json`](./config/fifo_simulation/config_3.json)
 
-* Expected Outcome:
-  * FIFO order task selection order and round-robin core selection: `Task_1 (core 0) → Task_2 (core 1) → Task_5 (core 2) → Task_3 (core 3) → Task_4 (core 0)`  
+* Validation Criteria:  
+  * Ensures the scheduler selects first tasks with higher data locality score, that is data to be read.
+  * Confirms that **core availability** is correctly updated throughout the scheduling process.
+
+* System Setup:  
+  * Same workflow as **Test 2**, but `Task_1 -> Task_5 [size=20]` and `Task_1 -> Task_5 [size=20]` to enforce them to be executed first and break FIFO task selection order.
+
+* Expected Outcome: 
+  * FIFO task selection order and round-robin like core selection: `Task_1 (core 0) → Task_5 (core 1) → Task_2 (core 2) → Task_4 (core 3) → Task_3 (core 0)`  
   * The final core availability should be **70**, which corresponds to the **workflow makespan**.
 
 ## Generic Validations
@@ -255,3 +269,4 @@ Task 1:
 
 1. Blattnig, S., Green, L., Luckring, J., Morrison, J., Tripathi, R., & Zang, T. (2008). Towards a credibility assessment of models and simulations. In 49th AIAA/ASME/ASCE/AHS/ASC Structures, Structural Dynamics, and Materials Conference, 16th AIAA/ASME/AHS Adaptive Structures Conference, 10th AIAA Non-Deterministic Approaches Conference, 9th AIAA Gossamer Spacecraft Forum, 4th AIAA Multidisciplinary Design Optimization Specialists Conference (p. 2156).
 2. Topcuoglu, H., Hariri, S., & Wu, M. Y. (2002). Performance-effective and low-complexity task scheduling for heterogeneous computing. IEEE transactions on parallel and distributed systems, 13(3), 260-274.
+3. Amela Milian, R. (2019). Scheduling policies for Big Data workflows (Master's thesis, Universitat Politècnica de Catalunya).
