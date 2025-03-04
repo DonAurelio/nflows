@@ -287,7 +287,63 @@ Task 1:
 - *Compute Time:* `160`  
 - *Max Write Time:* `20` (to `Task_3`)  
 - *Computed Total:*  `0` (Max Read Time) + `160` (Compute Time) + `20` (Max Write Time) = `180`
-- *Expected Total:* `180` (Validation Passed)  
+- *Expected Total:* `180` (Validation Passed)
+
+### Script 2 [validate_output_and_order.py](./validators/validate_output_and_order.py)
+
+This script validates whether the contents of a YAML file match an expected reference YAML file. It ensures that the keys and values are correctly structured and, optionally, checks whether the key order at the first depth level is preserved.
+
+**Input Data**: The script processes two **YAML files**:
+
+- `output_yaml`: The YAML file containing the actual output.
+- `expected_yaml`: The YAML file containing the expected output.
+- `--check-order` (optional): If provided, the script checks whether the order of keys at the first depth level matches between the two YAML files.
+
+**Validation Logic**:
+
+1. **Load YAML files**: Reads and parses the `output_yaml` and `expected_yaml` files.
+2. **Recursive Comparison**:
+   - If a dictionary is encountered:
+     - Ensures that all expected keys are present.
+     - If `--check-order` is enabled, verifies that first-level keys appear in the same order.
+   - If a list is encountered:
+     - Ensures that both lists have the same length.
+     - Recursively compares corresponding elements.
+   - If a scalar value is encountered:
+     - Checks for exact value matches.
+3. **Error Reporting**:
+   - Missing keys are flagged.
+   - Value mismatches are reported.
+   - List length discrepancies are highlighted.
+   - Key order mismatches (if `--check-order` is enabled) are noted.
+
+**Example**:
+
+Consider the following YAML files:
+
+*expected.yaml*
+```yaml
+config:
+  version: 1.2
+  parameters:
+    timeout: 30
+    retry: 3
+```
+
+*output.yaml*
+```yaml
+config:
+  version: 1.2
+  parameters:
+    retry: 3
+    timeout: 25
+```
+
+**Output**:
+```
+Mismatch at config.parameters.timeout: expected 30, got 25
+Validation failed.
+```
 
 # References
 
