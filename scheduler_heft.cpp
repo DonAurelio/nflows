@@ -140,6 +140,10 @@ std::tuple<simgrid_exec_t *, int, double> HEFT_Scheduler::next()
         return this->upward_ranks[a->get_name()] > this->upward_ranks[b->get_name()]; // Higher rank first
     });
 
+    for (simgrid_exec_t *exec : ready_execs) {
+        XBT_DEBUG("priority_queued_task: %s, upward_rank: %f", exec->get_cname(), this->upward_ranks[exec->get_name()]);
+    }
+
     selected_exec = ready_execs.front();
 
     std::tie(selected_core_id, estimated_finish_time) = this->get_best_core_id(selected_exec);
