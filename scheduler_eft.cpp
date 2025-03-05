@@ -1,6 +1,6 @@
 #include "scheduler_eft.hpp"
 
-XBT_LOG_NEW_DEFAULT_CATEGORY(scheduler_eft, "Messages specific to this module.");
+XBT_LOG_NEW_DEFAULT_CATEGORY(eft_scheduler, "Messages specific to this module.");
 
 EFT_Scheduler::EFT_Scheduler(const common_t *common, simgrid_execs_t &dag) : Base_Scheduler(common, dag)
 {
@@ -21,6 +21,8 @@ std::tuple<int, double> EFT_Scheduler::get_best_core_id(const simgrid_exec_t *ex
         /* 1. ESTIMATE EARLIEST_START_TIME(n_i). */
         double earliest_start_time_us = common_earliest_start_time(this->common, exec->get_name(), core_id);
 
+        XBT_DEBUG("task: %s, core_id: %d, earliest_start_time_us: %f", exec->get_cname(), core_id, earliest_start_time_us);
+
         /* 2. ESTIMATE READ_TIME(EXEC) */
 
         double estimated_read_time_us = 0.0;
@@ -37,8 +39,12 @@ std::tuple<int, double> EFT_Scheduler::get_best_core_id(const simgrid_exec_t *ex
             // For the read time estimation, we assume that the entire data item is stored in a single memory domain, the first one.
             int read_src_numa_id = this->common->comm_name_to_numa_ids_w.at(comm_name).front();
 
-            estimated_read_time_us = std::max(
-                estimated_read_time_us, common_communication_time(this->common, read_src_numa_id, read_dst_numa_id, read_payload_bytes));
+            double read_time_us = common_communication_time(this->common, read_src_numa_id, read_dst_numa_id, read_payload_bytes);
+            
+            estimated_read_time_us = std::max(estimated_read_time_us, read_time_us);
+            
+            XBT_DEBUG("task: %s, core_id: %d, comm_name: %s, read_time_us: %f, payload: %f, estimated_read_time_us: %f",
+                exec->get_cname(), core_id, comm_name.c_str(), read_time_us, read_payload_bytes, estimated_read_time_us);
         }
 
         /* 3. ESTIMATE COMPUTE_TIME(EXEC). */
@@ -46,6 +52,8 @@ std::tuple<int, double> EFT_Scheduler::get_best_core_id(const simgrid_exec_t *ex
         double flops = exec->get_remaining();
         double processor_speed_flops_per_second = (double) get_hwloc_core_performance_by_id(this->common, core_id);
         double estimated_compute_time_us = common_compute_time(this->common, flops, processor_speed_flops_per_second);
+
+        XBT_DEBUG("task: %s, core_id: %d, estimated_compute_time_us: %f", exec->get_cname(), core_id, estimated_compute_time_us);
 
         /* 4. ESTIMATE WRITE_TIME(EXEC) */
 
@@ -69,13 +77,17 @@ std::tuple<int, double> EFT_Scheduler::get_best_core_id(const simgrid_exec_t *ex
             // writes will follow the first-touch policy, i.e., data will be saved in 
             // the numa node that share locality with the core_id.
 
-            estimated_write_time_us = std::max(
-                estimated_write_time_us, common_communication_time(
-                    this->common, write_src_numa_id, write_src_numa_id, write_payload_bytes));
+            double write_time_us = common_communication_time(this->common, write_src_numa_id, write_src_numa_id, write_payload_bytes);
+            estimated_write_time_us = std::max(estimated_write_time_us, write_time_us);
+
+            XBT_DEBUG("task: %s, core_id: %d, comm_name: %s, write_time_us: %f, payload: %f, estimated_read_time_us: %f",
+                exec->get_cname(), core_id, comm->get_cname(), write_time_us, write_payload_bytes, estimated_read_time_us);
         }
 
         double finish_time_us =
             earliest_start_time_us + estimated_read_time_us + estimated_compute_time_us + estimated_write_time_us;
+
+        XBT_DEBUG("task: %s, core_id: %d, finish_time_us: %f", exec->get_cname(), core_id, finish_time_us);
             
         if (finish_time_us < earliest_finish_time_us) {
             best_core_id = core_id;
