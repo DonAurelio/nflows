@@ -73,7 +73,7 @@ $(TESTS): %: $(TARGET)
 	@for json in $$(ls $(CONFIG_DIR)/$@/*.json 2>/dev/null); do \
 		./$(TARGET) $(XBT_RUNTIME_LOG) $$json > "$(LOG_DIR)/$@/$$(basename $$json .json).log" 2>&1; \
 		python3 $(VALIDATOR_DIR)/validate_offsets.py "$(OUTPUT_DIR)/$@/$$(basename $$json .json).yaml" >> "$(LOG_DIR)/$@/$$(basename $$json .json).log" 2>&1; \
-		python3 $(VALIDATOR_DIR)/validate_output_and_order_v3.py  --check-order exec_name_total_offsets "$(OUTPUT_DIR)/$@/$$(basename $$json .json).yaml" "$(OUTPUT_EXPECTED_DIR)/$@/$$(basename $$json .json).yaml" >> "$(LOG_DIR)/$@/$$(basename $$json .json).log" 2>&1; \
+		python3 $(VALIDATOR_DIR)/validate_output.py  --check-order exec_name_total_offsets "$(OUTPUT_DIR)/$@/$$(basename $$json .json).yaml" "$(OUTPUT_EXPECTED_DIR)/$@/$$(basename $$json .json).yaml" >> "$(LOG_DIR)/$@/$$(basename $$json .json).log" 2>&1; \
 	done
 
 .PHONY: test
