@@ -21,9 +21,11 @@ OBJ := $(SRC:.cpp=.o)
 TARGET := scheduler
 
 XBT_RUNTIME_LOG := \
-	--log=fifo_scheduler.thres:debug
+	--log=fifo_scheduler.thres:debug \
+	--log=heft_scheduler.thres:debug \
+	--log=eft_scheduler.thres:debug
 
-TESTS := min_min_simulation heft_simulation fifo_simulation fifo_bare_metal
+TESTS := min_min_simulation heft_simulation fifo_simulation fifo_bare_metal heft_bare_metal
 
 # Directories
 TEST_DIR := ./tests
