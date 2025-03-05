@@ -149,7 +149,7 @@ std::tuple<simgrid_exec_t *, int, double> FIFO_Scheduler::next()
     }
 
     for (const auto &exec : this->queue)
-        XBT_DEBUG("queued_task: %s, score: %f", exec->get_cname(), name_to_data_locality_score[exec->get_name()]);
+        XBT_DEBUG("priority_queued_task: %s, score: %f", exec->get_cname(), name_to_data_locality_score[exec->get_name()]);
 
     // Select the best core for execution
     if (auto [core_id, finish_time] = this->get_best_core_id(this->queue.front()); core_id != -1) {
