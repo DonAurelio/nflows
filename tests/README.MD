@@ -186,7 +186,7 @@ Task_3  Task_4
 ### Test 3 [`config_3.json`](./config/fifo_simulation/config_3.json)
 
 * Validation Criteria:  
-  * Ensures the scheduler selects first tasks with higher data locality score, that is data to be read.
+  * Ensures the scheduler selects first tasks with higher data locality score (data to be read).
   * Confirms that **core availability** is correctly updated throughout the scheduling process.
 
 * System Setup:  
@@ -196,7 +196,7 @@ Task_3  Task_4
   * FIFO task selection order and round-robin like core selection: `Task_1 (core 0) → Task_5 (core 1) → Task_2 (core 2) → Task_4 (core 3) → Task_3 (core 0)`  
   * The final core availability should be **70**, which corresponds to the **workflow makespan**.
 
-### Test 3 [`config_4.json`](./config/fifo_simulation/config_4.json)
+### Test 4 [`config_4.json`](./config/fifo_simulation/config_4.json)
 
 ## Validation Criteria
 - Ensure that the scheduler selects the core local to the memory domain that holds the majority of a task's data.  
