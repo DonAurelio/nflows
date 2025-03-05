@@ -1,0 +1,10 @@
+core_availability:
+  0: {avail_until: 0}
+  1: {avail_until: 0}
+  2: {avail_until: 0}
+  3: {avail_until: 0}
+
+name_to_thread_locality:
+  Task_3: {numa_id: 0, core_id: 1}
+  Task_2: {numa_id: 0, core_id: 2}
+  Task_1: {numa_id: 0, core_id: 3}
