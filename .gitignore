@@ -1,7 +1,7 @@
 .vscode
 *.yml
-tests/logs
-tests/output
+logs
+output
 
 # Prerequisites
 *.d

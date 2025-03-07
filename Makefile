@@ -33,6 +33,9 @@ TESTS := \
 	heft_bare_metal \
 	min_min_bare_metal
 
+EVAL := \
+	min_min_single
+
 # Directories
 TEST_DIR := ./tests
 CONFIG_DIR := $(TEST_DIR)/config
@@ -40,6 +43,11 @@ OUTPUT_DIR := $(TEST_DIR)/output
 OUTPUT_EXPECTED_DIR = $(TEST_DIR)/output_expected
 LOG_DIR := $(TEST_DIR)/logs
 VALIDATOR_DIR := $(TEST_DIR)/validators
+
+EVAL_DIR := ./eval
+CONFIG_EVAL_DIR := $(EVAL_DIR)/config
+OUTPUT_EVAL_DIR := $(EVAL_DIR)/output
+LOG_EVAL_DIR := $(EVAL_DIR)/logs
 
 # Default target
 all: $(TARGET)
@@ -64,6 +72,12 @@ clean:
 	@[ -d $(OUTPUT_DIR) ] && rmdir $(OUTPUT_DIR) 2>/dev/null || true
 	@[ -d $(LOG_DIR) ] && rmdir $(LOG_DIR) 2>/dev/null || true
 
+	@rm -f $(OUTPUT_EVAL_DIR)/**/*.yaml $(LOG_EVAL_DIR)/**/*.log
+	@[ -d $(OUTPUT_EVAL_DIR) ] && find $(OUTPUT_EVAL_DIR) -type d -empty -exec rmdir {} + || true
+	@[ -d $(LOG_EVAL_DIR) ] && find $(LOG_EVAL_DIR) -type d -empty -exec rmdir {} + || true
+	@[ -d $(OUTPUT_EVAL_DIR) ] && rmdir $(OUTPUT_EVAL_DIR) 2>/dev/null || true
+	@[ -d $(LOG_EVAL_DIR) ] && rmdir $(LOG_EVAL_DIR) 2>/dev/null || true
+
 .PHONY: $(TESTS)
 $(TESTS): %: $(TARGET)
 	@echo "Generating output and log folders for $@..."
@@ -78,3 +92,17 @@ $(TESTS): %: $(TARGET)
 
 .PHONY: test
 test: $(TESTS)
+
+.PHONY: $(EVAL)
+$(EVAL): %: $(TARGET)
+	@echo "Generating output and log folders for $@..."
+	@mkdir -p "$(OUTPUT_EVAL_DIR)/$@" "$(LOG_EVAL_DIR)/$@"
+
+	@echo "Running $@..."
+	@for json in $$(ls $(CONFIG_EVAL_DIR)/$@/*.json 2>/dev/null); do \
+		./$(TARGET) $(XBT_RUNTIME_LOG) $$json > "$(LOG_EVAL_DIR)/$@/$$(basename $$json .json).log" 2>&1; \
+		python3 $(VALIDATOR_DIR)/validate_offsets.py "$(OUTPUT_EVAL_DIR)/$@/$$(basename $$json .json).yaml" >> "$(LOG_EVAL_DIR)/$@/$$(basename $$json .json).log" 2>&1; \
+	done
+
+.PHONY: eval
+eval: $(EVAL)
