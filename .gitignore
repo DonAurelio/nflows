@@ -2,6 +2,7 @@
 *.yml
 logs
 output
+.env
 
 # Prerequisites
 *.d
