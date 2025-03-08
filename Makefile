@@ -4,28 +4,29 @@ CXXFLAGS := -Wall -O2 #-g #-DNLOG # Uncomment for debugging: -fsanitize=address
 LIBS := -lsimgrid -lhwloc
 
 # Header Files
-HDR := common.hpp hardware.hpp scheduler_base.hpp scheduler_fifo.hpp \
-       scheduler_eft.hpp scheduler_heft.hpp scheduler_min_min.hpp \
-       mapper_base.hpp mapper_bare_metal.hpp mapper_simulation.hpp \
-       runtime.hpp
+HEADERS := common.hpp hardware.hpp scheduler_base.hpp scheduler_fifo.hpp \
+           scheduler_eft.hpp scheduler_heft.hpp scheduler_min_min.hpp \
+           mapper_base.hpp mapper_bare_metal.hpp mapper_simulation.hpp \
+           runtime.hpp
 
 # Source Files and Object Files
-SRC := common.cpp hardware.cpp scheduler_base.cpp scheduler_fifo.cpp \
-       scheduler_eft.cpp scheduler_heft.cpp scheduler_min_min.cpp \
-       mapper_base.cpp mapper_bare_metal.cpp mapper_simulation.cpp \
-       runtime.cpp main.cpp
+SOURCES := common.cpp hardware.cpp scheduler_base.cpp scheduler_fifo.cpp \
+           scheduler_eft.cpp scheduler_heft.cpp scheduler_min_min.cpp \
+           mapper_base.cpp mapper_bare_metal.cpp mapper_simulation.cpp \
+           runtime.cpp main.cpp
 
-OBJ := $(SRC:.cpp=.o)
+OBJECTS := $(SOURCES:.cpp=.o)
 
 # Output Binary
-TARGET := scheduler
+EXECUTABLE := scheduler
 
-XBT_RUNTIME_LOG := \
+RUNTIME_LOG_FLAGS := \
 	--log=fifo_scheduler.thres:debug \
 	--log=heft_scheduler.thres:debug \
 	--log=eft_scheduler.thres:debug
 
-TESTS := \
+# Test and Evaluation Targets
+TEST_CASES := \
 	min_min_simulation \
 	heft_simulation \
 	fifo_simulation \
@@ -33,90 +34,91 @@ TESTS := \
 	heft_bare_metal \
 	min_min_bare_metal
 
-EVAL := \
-	min_min
+EVALUATION_CASES := min_min
+EVALUATION_REPEATS := 1
 
 # Directories
-TEST_DIR := ./tests
-CONFIG_DIR := $(TEST_DIR)/config
-OUTPUT_DIR := $(TEST_DIR)/output
-OUTPUT_EXPECTED_DIR = $(TEST_DIR)/output_expected
-LOG_DIR := $(TEST_DIR)/logs
-VALIDATOR_DIR := $(TEST_DIR)/validators
+TEST_ROOT_DIR := ./tests
+TEST_CONFIG_DIR := $(TEST_ROOT_DIR)/config
+TEST_OUTPUT_DIR := $(TEST_ROOT_DIR)/output
+TEST_EXPECTED_OUTPUT_DIR := $(TEST_ROOT_DIR)/output_expected
+TEST_LOG_DIR := $(TEST_ROOT_DIR)/logs
+TEST_VALIDATOR_DIR := $(TEST_ROOT_DIR)/validators
 
-EVAL_DIR := ./eval
-CONFIG_EVAL_DIR := $(EVAL_DIR)/config
-CONFIG_GEN_DIR := $(EVAL_DIR)/generators
-CONFIG_TEMPLATES_DIR := $(EVAL_DIR)/templates
-OUTPUT_EVAL_DIR := $(EVAL_DIR)/output
-LOG_EVAL_DIR := $(EVAL_DIR)/logs
+EVAL_ROOT_DIR := ./eval
+EVAL_CONFIG_DIR := $(EVAL_ROOT_DIR)/config
+EVAL_GENERATOR_DIR := $(EVAL_ROOT_DIR)/generators
+EVAL_TEMPLATE_DIR := $(EVAL_ROOT_DIR)/templates
+EVAL_OUTPUT_DIR := $(EVAL_ROOT_DIR)/output
+EVAL_LOG_DIR := $(EVAL_ROOT_DIR)/logs
 
+# Paths to clean
+CLEAN_PATHS := $(OBJECTS) $(EXECUTABLE) \
+               $(TEST_OUTPUT_DIR)/**/*.yaml $(TEST_LOG_DIR)/**/*.log \
+               $(EVAL_OUTPUT_DIR)/**/*.yaml $(EVAL_LOG_DIR)/**/*.log \
+               $(EVAL_CONFIG_DIR)/**/*.json
 
 # Default target
-all: $(TARGET)
+all: $(EXECUTABLE)
 
 # Build Target
-$(TARGET): $(OBJ)
+$(EXECUTABLE): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
 # Compile Object Files
-%.o: %.cpp $(HDR)
+%.o: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Run the scheduler with a sample configuration
-run: $(TARGET)
-	./$(TARGET) $(CONFIG_GEN_TEMPLATE) $(XBT_RUNTIME_LOG)
+run: $(EXECUTABLE)
+	./$(EXECUTABLE) $(CONFIG_GEN_TEMPLATE) $(RUNTIME_LOG_FLAGS)
 
 # Clean Build Files
 clean:
-	@rm -f $(OBJ) $(TARGET) $(OUTPUT_DIR)/**/*.yaml $(LOG_DIR)/**/*.log
-	@[ -d $(OUTPUT_DIR) ] && find $(OUTPUT_DIR) -type d -empty -exec rmdir {} + || true
-	@[ -d $(LOG_DIR) ] && find $(LOG_DIR) -type d -empty -exec rmdir {} + || true
-	@[ -d $(OUTPUT_DIR) ] && rmdir $(OUTPUT_DIR) 2>/dev/null || true
-	@[ -d $(LOG_DIR) ] && rmdir $(LOG_DIR) 2>/dev/null || true
+	@echo "Cleaning build and output files..."
+	@rm -f $(CLEAN_PATHS)
+	@for dir in $(TEST_OUTPUT_DIR) $(TEST_LOG_DIR) $(EVAL_OUTPUT_DIR) $(EVAL_LOG_DIR) $(EVAL_CONFIG_DIR); do \
+		[ -d $$dir ] && find $$dir -type d -empty -exec rmdir {} + || true; \
+	done
 
-	@rm -f $(OUTPUT_EVAL_DIR)/**/*.yaml $(LOG_EVAL_DIR)/**/*.log "$(CONFIG_EVAL_DIR)/**/*.json"
-	@[ -d $(OUTPUT_EVAL_DIR) ] && find $(OUTPUT_EVAL_DIR) -type d -empty -exec rmdir {} + || true
-	@[ -d $(LOG_EVAL_DIR) ] && find $(LOG_EVAL_DIR) -type d -empty -exec rmdir {} + || true
-	@[ -d $(CONFIG_EVAL_DIR) ] && find $(LOG_EVAL_DIR) -type d -empty -exec rmdir {} + || true
-	@[ -d $(OUTPUT_EVAL_DIR) ] && rmdir $(OUTPUT_EVAL_DIR) 2>/dev/null || true
-	@[ -d $(LOG_EVAL_DIR) ] && rmdir $(LOG_EVAL_DIR) 2>/dev/null || true
-	@[ -d $(CONFIG_EVAL_DIR) ] && rmdir $(LOG_EVAL_DIR) 2>/dev/null || true
-
-
-.PHONY: $(TESTS)
-$(TESTS): %: $(TARGET)
+# Run test cases
+.PHONY: $(TEST_CASES)
+$(TEST_CASES): %: $(EXECUTABLE)
 	@echo "Generating output and log folders for $@..."
-	@mkdir -p "$(OUTPUT_DIR)/$@" "$(LOG_DIR)/$@"
+	@mkdir -p "$(TEST_OUTPUT_DIR)/$@" "$(TEST_LOG_DIR)/$@"
 
-	@echo "Running $@..."
-	@for json in $$(ls $(CONFIG_DIR)/$@/*.json 2>/dev/null); do \
-		./$(TARGET) $(XBT_RUNTIME_LOG) $$json > "$(LOG_DIR)/$@/$$(basename $$json .json).log" 2>&1; \
-		python3 $(VALIDATOR_DIR)/validate_offsets.py "$(OUTPUT_DIR)/$@/$$(basename $$json .json).yaml" >> "$(LOG_DIR)/$@/$$(basename $$json .json).log" 2>&1; \
-		python3 $(VALIDATOR_DIR)/validate_output.py  --check-order exec_name_total_offsets "$(OUTPUT_DIR)/$@/$$(basename $$json .json).yaml" "$(OUTPUT_EXPECTED_DIR)/$@/$$(basename $$json .json).yaml" >> "$(LOG_DIR)/$@/$$(basename $$json .json).log" 2>&1; \
+	@echo "Running test case: $@"
+	@for config_file in $$(ls $(TEST_CONFIG_DIR)/$@/*.json 2>/dev/null); do \
+		TEST_NAME=$$(basename $$config_file .json); \
+		./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) $$config_file > "$(TEST_LOG_DIR)/$@/$$TEST_NAME.log" 2>&1; \
+		python3 $(TEST_VALIDATOR_DIR)/validate_offsets.py "$(TEST_OUTPUT_DIR)/$@/$$TEST_NAME.yaml" >> "$(TEST_LOG_DIR)/$@/$$TEST_NAME.log" 2>&1; \
+		python3 $(TEST_VALIDATOR_DIR)/validate_output.py --check-order exec_name_total_offsets \
+			"$(TEST_OUTPUT_DIR)/$@/$$TEST_NAME.yaml" "$(TEST_EXPECTED_OUTPUT_DIR)/$@/$$TEST_NAME.yaml" \
+			>> "$(TEST_LOG_DIR)/$@/$$TEST_NAME.log" 2>&1; \
 	done
 
 .PHONY: test
-test: $(TESTS)
+test: $(TEST_CASES)
 
-.PHONY: $(EVAL)
-$(EVAL): %: $(TARGET)
-	@echo "Generating output and log folders for $@..."
-	@mkdir -p "$(OUTPUT_EVAL_DIR)/$@" "$(LOG_EVAL_DIR)/$@" "$(CONFIG_EVAL_DIR)/$@"
+# Run evaluation cases
+.PHONY: $(EVALUATION_CASES)
+$(EVALUATION_CASES): %: $(EXECUTABLE)
+	@echo "Generating output and log folders for evaluation: $@"
+	@mkdir -p "$(EVAL_OUTPUT_DIR)/$@" "$(EVAL_LOG_DIR)/$@" "$(EVAL_CONFIG_DIR)/$@"
 
-	@echo "Running $@..."
-	@for template in $$(ls $(CONFIG_TEMPLATES_DIR)/$@/*.json 2>/dev/null); do \
-		for i in $$(seq 1 $(N)); do \
+	@echo "Running evaluation case: $@"
+	@for template in $$(ls $(EVAL_TEMPLATE_DIR)/$@/*.json 2>/dev/null); do \
+		for i in $$(seq 1 $(EVALUATION_REPEATS)); do \
 			TEMPLATE_NAME=$$(basename $$template .json); \
-			SUFFIX="$${TEMPLATE_NAME}_iter_$${i}"; \
-			python3 $(CONFIG_GEN_DIR)/generate_config.py \
-				--params log_base_name="$(OUTPUT_EVAL_DIR)/$@/$$SUFFIX" \
+			ITERATION_SUFFIX="$${TEMPLATE_NAME}_iter_$${i}"; \
+			python3 $(EVAL_GENERATOR_DIR)/generate_config.py \
+				--params log_base_name="$(EVAL_OUTPUT_DIR)/$@/$$ITERATION_SUFFIX" \
 				--template $$template \
-				--output_file "$(CONFIG_EVAL_DIR)/$@/$${SUFFIX}.json" > "$(LOG_EVAL_DIR)/$@/$${SUFFIX}.log" 2>&1; \
-			./$(TARGET) $(XBT_RUNTIME_LOG) "$(CONFIG_EVAL_DIR)/$@/$${SUFFIX}.json" >> "$(LOG_EVAL_DIR)/$@/$${SUFFIX}.log" 2>&1; \
-			python3 $(VALIDATOR_DIR)/validate_offsets.py "$(OUTPUT_EVAL_DIR)/$@/$${SUFFIX}.yaml" >> "$(LOG_EVAL_DIR)/$@/$${SUFFIX}.log" 2>&1; \
+				--output_file "$(EVAL_CONFIG_DIR)/$@/$${ITERATION_SUFFIX}.json" > "$(EVAL_LOG_DIR)/$@/$${ITERATION_SUFFIX}.log" 2>&1; \
+			./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$(EVAL_CONFIG_DIR)/$@/$${ITERATION_SUFFIX}.json" >> "$(EVAL_LOG_DIR)/$@/$${ITERATION_SUFFIX}.log" 2>&1; \
+			python3 $(TEST_VALIDATOR_DIR)/validate_offsets.py "$(EVAL_OUTPUT_DIR)/$@/$${ITERATION_SUFFIX}.yaml" >> "$(EVAL_LOG_DIR)/$@/$${ITERATION_SUFFIX}.log" 2>&1; \
 		done \
 	done
 
 .PHONY: eval
-eval: $(EVAL)
+eval: $(EVALUATION_CASES)
