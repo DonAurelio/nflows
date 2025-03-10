@@ -8,6 +8,11 @@ import argparse
 from tabulate import tabulate
 from colorama import Fore, Style
 
+
+def scale_time(value, unit):
+    scale_factors = {'us': 1, 'ms': 1e3, 's': 1e6, 'min': 6e7}
+    return float(value) / float(scale_factors[unit])
+
 def process_accesses(data):
     # Extract relevant data
     name_to_thread_locality = data["name_to_thread_locality"]
@@ -137,45 +142,85 @@ def data_access_pattern_performance(t_accesses_matrix, d_relatve_latencies):
 
     return numa_metric
 
-def print_profile(data, matrix_relative_latencies):
+def compute_durations(data):
+    read_time = sum(float(entry['end']) - float(entry['start']) for entry in data['comm_name_read_offsets'].values())
+    write_time = sum(float(entry['end']) - float(entry['start']) for entry in data['comm_name_write_offsets'].values())
+    compute_time = sum(float(entry['end']) - float(entry['start']) for entry in data['exec_name_compute_offsets'].values())
+    
+    comp_to_comm_ratio = compute_time / (read_time + write_time) if (read_time + write_time) > 0 else float('inf')
+    comm_to_comp_ratio = (read_time + write_time) / compute_time if compute_time > 0 else float('inf')
+    
+    return read_time, write_time, compute_time, comp_to_comm_ratio, comm_to_comp_ratio
+
+def compute_makespan(data):
+    return max(float(entry['end']) for entry in data['exec_name_total_offsets'].values())
+
+def print_profile(data, matrix_relative_latencies, time_unit):
     df = process_accesses(data)
+
+    checksum = data.get("checksum", None)
+    active_threads = data.get("active_threads", None)
+
+    print(f"{Fore.CYAN}System Validation Flags:{Style.RESET_ALL}")
+    print("")
+    print(f"  {Fore.YELLOW}Checksum:{Style.RESET_ALL} {checksum}")
+    print(f"  {Fore.YELLOW}Active Threads:{Style.RESET_ALL} {active_threads}")
 
     average_numa_factor = machine_average_numa_factor(data)
     print(f"\n{Fore.CYAN}Machine AVG NUMA Factor: {Fore.YELLOW}{average_numa_factor:.2f}{Style.RESET_ALL}")
 
     matrix_total_accesses_none = aggregation_matrix(df, equal=None)
     data_access_performance = data_access_pattern_performance(matrix_total_accesses_none, matrix_relative_latencies)
-    print(f"{Fore.CYAN}Algorithm Data Access Pattern Performance:{Style.RESET_ALL} {Fore.YELLOW}{data_access_performance:.2f}{Style.RESET_ALL}\n")
+
+    read_time, write_time, compute_time, comp_to_comm_ratio, comm_to_comp_ratio = compute_durations(data)
+    makespan = compute_makespan(data)
+
+    print(f"\n{Fore.CYAN}Workflow Execution Metrics:{Style.RESET_ALL}")
+    print("")
+    print(f"  {Fore.YELLOW}Total Read Time ({time_unit}):{Style.RESET_ALL} {scale_time(read_time, time_unit):.2f}")
+    print(f"  {Fore.YELLOW}Total Write Time ({time_unit}):{Style.RESET_ALL} {scale_time(write_time, time_unit):.2f}")
+    print(f"  {Fore.YELLOW}Total Compute Time ({time_unit}):{Style.RESET_ALL} {scale_time(compute_time, time_unit):.2f}")
+    print(f"  {Fore.YELLOW}Workflow Makespan ({time_unit}):{Style.RESET_ALL} {scale_time(makespan, time_unit):.2f}")
+    print(f"  {Fore.YELLOW}Computation-to-Communication Ratio:{Style.RESET_ALL} {comp_to_comm_ratio:.2f}")
+    print(f"  {Fore.YELLOW}Communication-to-Computation Ratio:{Style.RESET_ALL} {comm_to_comp_ratio:.2f}")
+    print(f"  {Fore.YELLOW}Data Access Pattern Performance:{Style.RESET_ALL} {data_access_performance:.2f}")
 
     total_accesses = matrix_total_accesses_none.values.sum()
-    print(f"{Fore.CYAN}Data Access Pattern: {Fore.YELLOW}{total_accesses.sum():.2f}{Fore.CYAN} accesses.{Style.RESET_ALL}")
-    print(tabulate(df[["task_name", "core_id", "cpu_node", "mem_node", "data_item", "access_type"]], headers="keys", tablefmt="grid", showindex=False))
-    print("")
+    print(f"\n{Fore.CYAN}Data Access Pattern: {Fore.YELLOW}{total_accesses.sum():.2f}{Fore.CYAN} accesses.{Style.RESET_ALL}")
+    table_str = tabulate(df[["task_name", "core_id", "cpu_node", "mem_node", "data_item", "access_type"]], headers="keys", tablefmt="grid", showindex=False)
+    print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
+    # print(tabulate(df[["task_name", "core_id", "cpu_node", "mem_node", "data_item", "access_type"]], headers="keys", tablefmt="grid", showindex=False))
+    # print("")
 
     matrix_local_accesses_equal = aggregation_matrix(df, equal=True)
-    print(f"{Fore.GREEN}Local Accesses:{Style.RESET_ALL}")
-    print(tabulate(matrix_local_accesses_equal, tablefmt="grid", showindex=False))
-    print(f"Total: {Fore.YELLOW}{matrix_local_accesses_equal.sum().sum()}{Style.RESET_ALL}\n")
+    print(f"\n{Fore.GREEN}Local Accesses: {Fore.YELLOW}{matrix_local_accesses_equal.sum().sum()}{Style.RESET_ALL}")
+    table_str = tabulate(matrix_local_accesses_equal, tablefmt="grid", showindex=False)
+    print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
+    # print(tabulate(matrix_local_accesses_equal, tablefmt="grid", showindex=False))
 
-    print(f"{Fore.GREEN}Local Accesses (%):{Style.RESET_ALL}")
     local_accesses_percentage = matrix_local_accesses_equal / total_accesses
-    print(tabulate(local_accesses_percentage, tablefmt="grid", showindex=False))
-    print(f"Total: {Fore.YELLOW}{local_accesses_percentage.sum().sum() * 100:.2f}%{Style.RESET_ALL}\n")
+    print(f"\n{Fore.GREEN}Local Accesses (%): {Fore.YELLOW}{local_accesses_percentage.sum().sum() * 100:.2f}%{Style.RESET_ALL}")
+    table_str = tabulate(local_accesses_percentage, tablefmt="grid", showindex=False)
+    print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
+    # print(tabulate(local_accesses_percentage, tablefmt="grid", showindex=False))
 
     matrix_remote_accesses_different = aggregation_matrix(df, equal=False)
-    print(f"{Fore.BLUE}Remote Accesses:{Style.RESET_ALL}")
-    print(tabulate(matrix_remote_accesses_different, tablefmt="grid", showindex=False))
-    print(f"Total: {Fore.YELLOW}{matrix_remote_accesses_different.sum().sum()}{Style.RESET_ALL}\n")
+    print(f"\n{Fore.BLUE}Remote Accesses: {Fore.YELLOW}{matrix_remote_accesses_different.sum().sum()}{Style.RESET_ALL}")
+    table_str = tabulate(matrix_remote_accesses_different, tablefmt="grid", showindex=False)
+    print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
+    # print(tabulate(matrix_remote_accesses_different, tablefmt="grid", showindex=False))
 
-    print(f"{Fore.BLUE}Remote Accesses (%):{Style.RESET_ALL}")
     remote_accesses_percentage = matrix_remote_accesses_different / total_accesses
-    print(tabulate(remote_accesses_percentage, tablefmt="grid", showindex=False))
-    print(f"Total: {Fore.YELLOW}{remote_accesses_percentage.sum().sum() * 100:.2f}%{Style.RESET_ALL}\n")
+    print(f"\n{Fore.BLUE}Remote Accesses (%): {Fore.YELLOW}{remote_accesses_percentage.sum().sum() * 100:.2f}%{Style.RESET_ALL}")
+    table_str = tabulate(remote_accesses_percentage, tablefmt="grid", showindex=False)
+    print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
+    # print(tabulate(remote_accesses_percentage, tablefmt="grid", showindex=False))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process NUMA access data.")
     parser.add_argument("input_file", help="Path to input YAML file")
     parser.add_argument("input_file_rel_lat", help="Path to input TXT file")
+    parser.add_argument("--time_unit", type=str, choices=['us', 'ms', 's', 'min'], default='us', help="Time unit for scaling.")
     args = parser.parse_args()
     
     with open(args.input_file, "r") as file:
@@ -185,4 +230,4 @@ if __name__ == "__main__":
         dimension = int(file.readline().strip())
         rel_lat_matrix = pd.DataFrame([list(map(float, file.readline().split())) for _ in range(dimension)])
 
-    print_profile(data, rel_lat_matrix)
+    print_profile(data, rel_lat_matrix, args.time_unit)
