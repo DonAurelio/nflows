@@ -131,4 +131,3 @@ if __name__ == "__main__":
 # Example usage
 data = load_yaml(args.yaml_file)
 plot_gantt(data, args.output_file, args.time_unit, args.payload_unit, args.use_numa, args.title, args.xlabel, args.ylabel, args.resource_label)
-
