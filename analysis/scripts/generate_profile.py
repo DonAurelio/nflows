@@ -216,11 +216,49 @@ def print_profile(data, matrix_relative_latencies, time_unit):
     print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
     # print(tabulate(remote_accesses_percentage, tablefmt="grid", showindex=False))
 
+def save_csv(data, matrix_relative_latencies, time_unit, output_csv):
+    checksum = data.get("checksum", None)
+    active_threads = data.get("active_threads", None)
+
+    numa_factor = machine_average_numa_factor(data)
+
+    df = process_accesses(data)
+    total_accesses = aggregation_matrix(df, equal=None).sum().sum()
+    local_accesses = aggregation_matrix(df, equal=True).sum().sum()
+    remote_accesses = aggregation_matrix(df, equal=False).sum().sum()
+
+    read_time, write_time, compute_time, comp_to_comm_ratio, comm_to_comp_ratio = compute_durations(data)
+    makespan = compute_makespan(data)
+
+    matrix_total_accesses_none = aggregation_matrix(df, equal=None)
+    access_pattern_performance = data_access_pattern_performance(
+        matrix_total_accesses_none, matrix_relative_latencies)
+
+    results = pd.Series({
+        "checksum": checksum,
+        "active_threads": active_threads,
+        "machine_numa_factor": numa_factor,
+        "local_accesses": local_accesses,
+        "remote_accesses": remote_accesses,
+        "total_accesses": total_accesses,
+        f"total_read_time_{time_unit}": read_time,
+        f"total_write_time_{time_unit}": write_time,
+        f"total_compute_time_{time_unit}": compute_time,
+        f"workflow_makespan_{time_unit}": makespan,
+        "comp_to_comm_ratio": comp_to_comm_ratio,
+        "comm_to_comp_ratio": comm_to_comp_ratio,
+        "access_pattern_performance": access_pattern_performance,
+    })
+
+    results.to_csv(output_csv, header=False)
+    print(f"Results exported to {output_csv}")
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process NUMA access data.")
     parser.add_argument("input_file", help="Path to input YAML file")
     parser.add_argument("input_file_rel_lat", help="Path to input TXT file")
     parser.add_argument("--time_unit", type=str, choices=['us', 'ms', 's', 'min'], default='us', help="Time unit for scaling.")
+    parser.add_argument("--export_csv", type=str, help="Path to export CSV file.", default=None)
     args = parser.parse_args()
     
     with open(args.input_file, "r") as file:
@@ -230,4 +268,7 @@ if __name__ == "__main__":
         dimension = int(file.readline().strip())
         rel_lat_matrix = pd.DataFrame([list(map(float, file.readline().split())) for _ in range(dimension)])
 
-    print_profile(data, rel_lat_matrix, args.time_unit)
+    if args.export_csv:
+        save_csv(data, rel_lat_matrix, args.time_unit, args.export_csv)
+    else:
+        print_profile(data, rel_lat_matrix, args.time_unit)
