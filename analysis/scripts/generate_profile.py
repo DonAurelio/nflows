@@ -260,7 +260,7 @@ if __name__ == "__main__":
     parser.add_argument("--time_unit", type=str, choices=['us', 'ms', 's', 'min'], default='us', help="Time unit for scaling.")
     parser.add_argument("--export_csv", type=str, help="Path to export CSV file.", default=None)
     args = parser.parse_args()
-    
+
     with open(args.input_file, "r") as file:
         data = yaml.load(file, Loader=yaml.FullLoader)
 
