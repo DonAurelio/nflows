@@ -35,7 +35,7 @@ TEST_CASES := \
 	min_min_bare_metal
 
 EVALUATION_CASES := min_min
-EVALUATION_REPEATS := 1
+EVALUATION_REPEATS := 2
 
 # Directories
 TEST_ROOT_DIR := ./tests
@@ -51,6 +51,14 @@ EVAL_GENERATOR_DIR := $(EVAL_ROOT_DIR)/generators
 EVAL_TEMPLATE_DIR := $(EVAL_ROOT_DIR)/templates
 EVAL_OUTPUT_DIR := $(EVAL_ROOT_DIR)/output
 EVAL_LOG_DIR := $(EVAL_ROOT_DIR)/logs
+
+ANAL_ROOT_DIR := ./analysis
+ANAL_OUTPUT_DIR := $(ANAL_ROOT_DIR)/output
+ANAL_LOG_DIR := $(ANAL_ROOT_DIR)/logs
+ANAL_SCRIPTS_DIR := $(ANAL_ROOT_DIR)/scripts
+ANAL_REL_LAT_FILE := $(ANAL_ROOT_DIR)/system/rel_lat.txt
+
+PYTHON_EXE := $(ANAL_ROOT_DIR)/scripts/.env/bin/python3
 
 # Paths to clean
 CLEAN_PATHS := $(OBJECTS) $(EXECUTABLE) \
@@ -78,7 +86,7 @@ clean:
 	@echo "Cleaning build and output files..."
 	@rm -f $(CLEAN_PATHS)
 	@for dir in $(TEST_OUTPUT_DIR) $(TEST_LOG_DIR) $(EVAL_OUTPUT_DIR) $(EVAL_LOG_DIR) $(EVAL_CONFIG_DIR); do \
-		[ -d $$dir ] && find $$dir -type d -empty -exec rmdir {} + || true; \
+		[ -d $$dir ] && rm -rf $$dir/* && find $$dir -type d -empty -exec rmdir {} + || true; \
 	done
 
 # Run test cases
@@ -100,25 +108,101 @@ $(TEST_CASES): %: $(EXECUTABLE)
 .PHONY: test
 test: $(TEST_CASES)
 
-# Run evaluation cases
 .PHONY: $(EVALUATION_CASES)
 $(EVALUATION_CASES): %: $(EXECUTABLE)
-	@echo "Generating output and log folders for evaluation: $@"
-	@mkdir -p "$(EVAL_OUTPUT_DIR)/$@" "$(EVAL_LOG_DIR)/$@" "$(EVAL_CONFIG_DIR)/$@"
-
 	@echo "Running evaluation case: $@"
-	@for template in $$(ls $(EVAL_TEMPLATE_DIR)/$@/*.json 2>/dev/null); do \
+	@for template in $(shell ls $(EVAL_TEMPLATE_DIR)/$@/*.json 2>/dev/null); do \
 		for i in $$(seq 1 $(EVALUATION_REPEATS)); do \
 			TEMPLATE_NAME=$$(basename $$template .json); \
-			ITERATION_SUFFIX="$${TEMPLATE_NAME}_iter_$${i}"; \
-			python3 $(EVAL_GENERATOR_DIR)/generate_config.py \
-				--params log_base_name="$(EVAL_OUTPUT_DIR)/$@/$$ITERATION_SUFFIX" \
-				--template $$template \
-				--output_file "$(EVAL_CONFIG_DIR)/$@/$${ITERATION_SUFFIX}.json" > "$(EVAL_LOG_DIR)/$@/$${ITERATION_SUFFIX}.log" 2>&1; \
-			./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$(EVAL_CONFIG_DIR)/$@/$${ITERATION_SUFFIX}.json" >> "$(EVAL_LOG_DIR)/$@/$${ITERATION_SUFFIX}.log" 2>&1; \
-			python3 $(TEST_VALIDATOR_DIR)/validate_offsets.py "$(EVAL_OUTPUT_DIR)/$@/$${ITERATION_SUFFIX}.yaml" >> "$(EVAL_LOG_DIR)/$@/$${ITERATION_SUFFIX}.log" 2>&1; \
+			ITERATION_SUFFIX=$${TEMPLATE_NAME}_iter_$${i}; \
+			CONFIG_DIR=$(EVAL_CONFIG_DIR)/$@/$${TEMPLATE_NAME}; \
+			CONFIG_FILE=$${CONFIG_DIR}/$${ITERATION_SUFFIX}; \
+			OUTPUT_DIR=$(EVAL_OUTPUT_DIR)/$@/$${TEMPLATE_NAME}; \
+			OUTPUT_FILE=$${OUTPUT_DIR}/$${ITERATION_SUFFIX}; \
+			LOG_DIR=$(EVAL_LOG_DIR)/$@/$${TEMPLATE_NAME}; \
+			LOG_FILE=$${LOG_DIR}/$${ITERATION_SUFFIX}.log; \
+			mkdir -p "$$CONFIG_DIR" "$$OUTPUT_DIR" "$$LOG_DIR"; \
+			$(PYTHON_EXE) $(EVAL_GENERATOR_DIR)/generate_config.py \
+				--params log_base_name="$${OUTPUT_FILE}" \
+				--template "$$template" \
+				--output_file "$${CONFIG_FILE}.json" > "$${LOG_FILE}" 2>&1; \
+			GEN_STATUS=$$?; \
+			./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$$CONFIG_FILE.json" >> "$$LOG_FILE" 2>&1; \
+			EXEC_STATUS=$$?; \
+			$(PYTHON_EXE) $(TEST_VALIDATOR_DIR)/validate_offsets.py "$${OUTPUT_FILE}.yaml"  >> "$$LOG_FILE" 2>&1; \
+			VAL_STATUS=$$?; \
+			if [ $$GEN_STATUS -eq 0 ] && [ $$EXEC_STATUS -eq 0 ] && [ $$VAL_STATUS -eq 0 ]; then \
+				echo "  [SUCCESS] $${ITERATION_SUFFIX}"; \
+			else \
+				echo "  [FAILED] $${ITERATION_SUFFIX} (Generate: $$GEN_STATUS, Execute: $$EXEC_STATUS, Validate: $$VAL_STATUS)"; \
+			fi; \
+			sleep 5; \
 		done \
 	done
 
+# ./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$$CONFIG_FILE.json" >> "$$LOG_FILE" 2>&1; \
+# $(PYTHON_EXE) $(TEST_VALIDATOR_DIR)/validate_offsets.py  >> "$$LOG_FILE" 2>&1; \
+
+# # Run evaluation cases
+# .PHONY: $(EVALUATION_CASES)
+# $(EVALUATION_CASES): %: $(EXECUTABLE)
+# 	@echo "Running evaluation case: $@"
+# 	@for template in $$(ls $(EVAL_TEMPLATE_DIR)/$@/*.json 2>/dev/null); do \
+# 		for i in $$(seq 1 $(EVALUATION_REPEATS)); do \
+# 			TEMPLATE_NAME=$$(basename $$template .json); \
+# 			ITERATION_SUFFIX="$${TEMPLATE_NAME}_iter_$${i}"; \
+# 			CONFIG_DIR="$(EVAL_CONFIG_DIR)/$@/$(TEMPLATE_NAME)"; \
+# 			CONFIG_FILE="$(CONFIG_DIR)/$$ITERATION_SUFFIX"; \
+# 			OUTPUT_DIR="$(EVAL_OUTPUT_DIR)/$@/$(TEMPLATE_NAME)"; \
+# 			OUTPUT_FILE="$(OUTPUT_DIR)/$${ITERATION_SUFFIX}"; \
+# 			LOG_DIR="$(EVAL_LOG_DIR)/$@/$(TEMPLATE_NAME)"; \
+# 			LOG_FILE="$(LOG_DIR)/$${ITERATION_SUFFIX}.log"; \
+# 			echo "$(CONFIG_DIR)"; \
+# 			mkdir -p "$(CONFIG_DIR)" "$(OUTPUT_DIR)" "$(LOG_DIR)"; \
+# 			$(PYTHON_EXE) $(EVAL_GENERATOR_DIR)/generate_config.py \
+# 				--params log_base_name="$(OUTPUT_FILE)" \
+# 				--template $$template \
+# 				--output_file "$(OUTPUT_FILE).json" > "$(LOG_FILE)" 2>&1; \
+# 			./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$(CONFIG_FILE).json" >> "$(LOG_FILE)" 2>&1; \
+# 			$(PYTHON_EXE) $(TEST_VALIDATOR_DIR)/validate_offsets.py  >> "$(LOG_FILE)" 2>&1; \
+# 			sleep 5; \
+# 		done \
+# 	done
+
 .PHONY: eval
 eval: $(EVALUATION_CASES)
+
+# Run analysis
+.PHONY: analysis
+analysis:
+	@echo "Running analysis..."
+	@for out_dir in $$(ls $(EVAL_OUTPUT_DIR) 2>/dev/null); do \
+		echo "Processing analysis for: $$out_dir"; \
+		mkdir -p "$(ANAL_OUTPUT_DIR)/$$out_dir" \
+				 "$(ANAL_OUTPUT_DIR)/$$out_dir/profile" \
+				 "$(ANAL_OUTPUT_DIR)/$$out_dir/gantt" \
+				 "$(ANAL_OUTPUT_DIR)/$$out_dir/summary" \
+			     "$(ANAL_LOG_DIR)"; \
+		for yaml_file in $$(ls $(EVAL_OUTPUT_DIR)/$$out_dir/*.yaml); do \
+			output_name=$$(basename $$yaml_file .yaml); \
+			echo "Generating profile: $$yaml_file"; \
+			$(ANAL_PYTHON) $(ANAL_SCRIPTS_DIR)/generate_profile.py \
+				"$$yaml_file" "$(ANAL_REL_LAT_FILE)" \
+				--export_csv "$(ANAL_OUTPUT_DIR)/$$out_dir/profile/$$output_name.csv" \
+				>> "$(ANAL_LOG_DIR)/$$out_dir.log" 2>&1; \
+			echo "Generating gantt: $$yaml_file"; \
+			$(ANAL_PYTHON) $(ANAL_SCRIPTS_DIR)/generate_gantt.py \
+				"$$yaml_file" "$(ANAL_OUTPUT_DIR)/$$out_dir/gantt/$$output_name.png" \
+				>> "$(ANAL_LOG_DIR)/$$out_dir.log" 2>&1; \
+			echo "Generating summary: $$yaml_file"; \
+			$(ANAL_PYTHON) $(ANAL_SCRIPTS_DIR)/generate_summary.py \
+				"$(ANAL_OUTPUT_DIR)/$$out_dir/profile" \
+				"$(ANAL_OUTPUT_DIR)/$$out_dir/summary" \
+				>> "$(ANAL_LOG_DIR)/$$out_dir.log" 2>&1; \
+			echo "Generating plot: $$yaml_file"; \
+			$(ANAL_PYTHON) $(ANAL_SCRIPTS_DIR)/generate_summary_plot.py \
+				"$(ANAL_OUTPUT_DIR)/$$out_dir/profile" \
+				"$(ANAL_OUTPUT_DIR)/$$out_dir/summary" \
+				>> "$(ANAL_LOG_DIR)/$$out_dir.log" 2>&1; \
+		done; \
+	done

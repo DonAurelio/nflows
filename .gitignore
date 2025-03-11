@@ -1,8 +1,9 @@
 .vscode
 *.yml
+.env
 logs
 output
-.env
+eval/config
 
 # Prerequisites
 *.d
