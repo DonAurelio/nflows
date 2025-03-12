@@ -194,7 +194,7 @@ analysis:
 		PLOT_NAME=$${AGGREG_DIR}/aggreg_$${out_dir}.png; \
 		LOG_DIR=$(ANAL_LOG_DIR)/$$out_dir/$$sub_dir; \
 		LOG_NAME=$${LOG_DIR}/summary.log; \
-		$(PYTHON_EXE) $(ANAL_SCRIPTS_DIR)/generate_summary_plot.py \
+		$(PYTHON_EXE) $(ANAL_SCRIPTS_DIR)/generate_summary_plot_v1.py \
 			"$$AGGREG_DIR" \
 			"$$PLOT_NAME" \
 			>> "$$LOG_NAME" 2>&1; \
