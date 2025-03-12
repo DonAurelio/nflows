@@ -140,69 +140,62 @@ $(EVALUATION_CASES): %: $(EXECUTABLE)
 		done \
 	done
 
-# ./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$$CONFIG_FILE.json" >> "$$LOG_FILE" 2>&1; \
-# $(PYTHON_EXE) $(TEST_VALIDATOR_DIR)/validate_offsets.py  >> "$$LOG_FILE" 2>&1; \
-
-# # Run evaluation cases
-# .PHONY: $(EVALUATION_CASES)
-# $(EVALUATION_CASES): %: $(EXECUTABLE)
-# 	@echo "Running evaluation case: $@"
-# 	@for template in $$(ls $(EVAL_TEMPLATE_DIR)/$@/*.json 2>/dev/null); do \
-# 		for i in $$(seq 1 $(EVALUATION_REPEATS)); do \
-# 			TEMPLATE_NAME=$$(basename $$template .json); \
-# 			ITERATION_SUFFIX="$${TEMPLATE_NAME}_iter_$${i}"; \
-# 			CONFIG_DIR="$(EVAL_CONFIG_DIR)/$@/$(TEMPLATE_NAME)"; \
-# 			CONFIG_FILE="$(CONFIG_DIR)/$$ITERATION_SUFFIX"; \
-# 			OUTPUT_DIR="$(EVAL_OUTPUT_DIR)/$@/$(TEMPLATE_NAME)"; \
-# 			OUTPUT_FILE="$(OUTPUT_DIR)/$${ITERATION_SUFFIX}"; \
-# 			LOG_DIR="$(EVAL_LOG_DIR)/$@/$(TEMPLATE_NAME)"; \
-# 			LOG_FILE="$(LOG_DIR)/$${ITERATION_SUFFIX}.log"; \
-# 			echo "$(CONFIG_DIR)"; \
-# 			mkdir -p "$(CONFIG_DIR)" "$(OUTPUT_DIR)" "$(LOG_DIR)"; \
-# 			$(PYTHON_EXE) $(EVAL_GENERATOR_DIR)/generate_config.py \
-# 				--params log_base_name="$(OUTPUT_FILE)" \
-# 				--template $$template \
-# 				--output_file "$(OUTPUT_FILE).json" > "$(LOG_FILE)" 2>&1; \
-# 			./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$(CONFIG_FILE).json" >> "$(LOG_FILE)" 2>&1; \
-# 			$(PYTHON_EXE) $(TEST_VALIDATOR_DIR)/validate_offsets.py  >> "$(LOG_FILE)" 2>&1; \
-# 			sleep 5; \
-# 		done \
-# 	done
-
-.PHONY: eval
-eval: $(EVALUATION_CASES)
-
 # Run analysis
 .PHONY: analysis
 analysis:
 	@echo "Running analysis..."
 	@for out_dir in $$(ls $(EVAL_OUTPUT_DIR) 2>/dev/null); do \
-		echo "Processing analysis for: $$out_dir"; \
-		mkdir -p "$(ANAL_OUTPUT_DIR)/$$out_dir" \
-				 "$(ANAL_OUTPUT_DIR)/$$out_dir/profile" \
-				 "$(ANAL_OUTPUT_DIR)/$$out_dir/gantt" \
-				 "$(ANAL_OUTPUT_DIR)/$$out_dir/summary" \
-			     "$(ANAL_LOG_DIR)"; \
-		for yaml_file in $$(ls $(EVAL_OUTPUT_DIR)/$$out_dir/*.yaml); do \
-			output_name=$$(basename $$yaml_file .yaml); \
-			echo "Generating profile: $$yaml_file"; \
-			$(ANAL_PYTHON) $(ANAL_SCRIPTS_DIR)/generate_profile.py \
-				"$$yaml_file" "$(ANAL_REL_LAT_FILE)" \
-				--export_csv "$(ANAL_OUTPUT_DIR)/$$out_dir/profile/$$output_name.csv" \
-				>> "$(ANAL_LOG_DIR)/$$out_dir.log" 2>&1; \
-			echo "Generating gantt: $$yaml_file"; \
-			$(ANAL_PYTHON) $(ANAL_SCRIPTS_DIR)/generate_gantt.py \
-				"$$yaml_file" "$(ANAL_OUTPUT_DIR)/$$out_dir/gantt/$$output_name.png" \
-				>> "$(ANAL_LOG_DIR)/$$out_dir.log" 2>&1; \
-			echo "Generating summary: $$yaml_file"; \
-			$(ANAL_PYTHON) $(ANAL_SCRIPTS_DIR)/generate_summary.py \
-				"$(ANAL_OUTPUT_DIR)/$$out_dir/profile" \
-				"$(ANAL_OUTPUT_DIR)/$$out_dir/summary" \
-				>> "$(ANAL_LOG_DIR)/$$out_dir.log" 2>&1; \
-			echo "Generating plot: $$yaml_file"; \
-			$(ANAL_PYTHON) $(ANAL_SCRIPTS_DIR)/generate_summary_plot.py \
-				"$(ANAL_OUTPUT_DIR)/$$out_dir/profile" \
-				"$(ANAL_OUTPUT_DIR)/$$out_dir/summary" \
-				>> "$(ANAL_LOG_DIR)/$$out_dir.log" 2>&1; \
+		for sub_dir in $$(ls $(EVAL_OUTPUT_DIR)/$$out_dir 2>/dev/null); do \
+			OUTPUT_DIR=$(ANAL_OUTPUT_DIR)/$$out_dir/$$sub_dir; \
+			mkdir -p "$$OUTPUT_DIR"; \
+			for yaml_file in $$(ls $(EVAL_OUTPUT_DIR)/$$out_dir/$$sub_dir/*.yaml); do \
+				echo "  Generate profile and gantt $$yaml_file"; \
+				BASE_NAME=$$(basename $$yaml_file .yaml); \
+				PROFILE_DIR=$${OUTPUT_DIR}/profile; \
+				PROFILE_NAME=$${PROFILE_DIR}/$${BASE_NAME}.csv; \
+				GANTT_DIR=$${OUTPUT_DIR}/gantt; \
+				GANTT_NAME=$${GANTT_DIR}/$${BASE_NAME}.png; \
+				LOG_DIR=$(ANAL_LOG_DIR)/$$out_dir/$$sub_dir; \
+				LOG_NAME=$${LOG_DIR}/$${BASE_NAME}.log; \
+				mkdir -p "$$PROFILE_DIR" "$$GANTT_DIR" "$$LOG_DIR"; \
+				$(PYTHON_EXE) $(ANAL_SCRIPTS_DIR)/generate_profile.py \
+					"$$yaml_file" "$(ANAL_REL_LAT_FILE)" \
+					--export_csv "$$PROFILE_NAME" \
+					>> "$$LOG_NAME" 2>&1; \
+				$(PYTHON_EXE) $(ANAL_SCRIPTS_DIR)/generate_gantt.py \
+					"$$yaml_file" "$$GANTT_NAME" \
+					>> "$$LOG_NAME" 2>&1; \
+			done; \
 		done; \
+	done
+
+	@for out_dir in $$(ls $(ANAL_OUTPUT_DIR) 2>/dev/null); do \
+		for sub_dir in $$(ls $(ANAL_OUTPUT_DIR)/$$out_dir 2>/dev/null); do \
+			echo "  Generate summary $$sub_dir"; \
+			OUTPUT_DIR=$(ANAL_OUTPUT_DIR)/$$out_dir/$$sub_dir; \
+			SUMMARY_DIR=$(ANAL_OUTPUT_DIR)/$$out_dir/$$sub_dir/summary; \
+			SUMMARY_NAME=$${SUMMARY_DIR}/summary_$${sub_dir}.csv; \
+			AGGREG_DIR=$(ANAL_OUTPUT_DIR)/$$out_dir; \
+			AGGREG_NAME=$${AGGREG_DIR}/aggreg_$${sub_dir}.csv; \
+			LOG_DIR=$(ANAL_LOG_DIR)/$$out_dir/$$sub_dir; \
+			LOG_NAME=$${LOG_DIR}/summary.log; \
+			mkdir -p "$$SUMMARY_DIR"; \
+			$(PYTHON_EXE) $(ANAL_SCRIPTS_DIR)/generate_summary.py \
+				"$$OUTPUT_DIR/profile" \
+				"$$SUMMARY_NAME" \
+				"$$AGGREG_NAME" \
+				>> "$$LOG_NAME" 2>&1; \
+		done; \
+	done
+
+	@for out_dir in $$(ls $(ANAL_OUTPUT_DIR) 2>/dev/null); do \
+		echo "  Generate plot $$out_dir"; \
+		AGGREG_DIR=$(ANAL_OUTPUT_DIR)/$$out_dir; \
+		PLOT_NAME=$${AGGREG_DIR}/aggreg_$${out_dir}.png; \
+		LOG_DIR=$(ANAL_LOG_DIR)/$$out_dir/$$sub_dir; \
+		LOG_NAME=$${LOG_DIR}/summary.log; \
+		$(PYTHON_EXE) $(ANAL_SCRIPTS_DIR)/generate_summary_plot.py \
+			"$$AGGREG_DIR" \
+			"$$PLOT_NAME" \
+			>> "$$LOG_NAME" 2>&1; \
 	done

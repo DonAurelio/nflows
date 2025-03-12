@@ -38,12 +38,11 @@ def aggregate_dataframe(df):
     
     return aggregated_series
 
-def main(input_folder, output_folder):
+def main(input_folder, output_summary_name, output_aggreg_name):
     """Main execution function."""
-    os.makedirs(output_folder, exist_ok=True)
     
-    summary_csv = os.path.join(output_folder, "summary.csv")
-    aggregated_csv = os.path.join(output_folder, "aggregated.csv")
+    summary_csv = output_summary_name
+    aggregated_csv = output_aggreg_name
     
     df = compile_series_to_dataframe(input_folder)
     df.to_csv(summary_csv, index=False)
@@ -57,7 +56,8 @@ def main(input_folder, output_folder):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process CSV files into a summary and aggregated data.")
     parser.add_argument("input_folder", type=str, help="Path to the folder containing CSV files")
-    parser.add_argument("output_folder", type=str, help="Path to the folder where results will be saved")
+    parser.add_argument("output_summary_name", type=str, help="Path to the folder where results will be saved")
+    parser.add_argument("output_aggreg_name", type=str, help="Path to the folder where results will be saved")
     args = parser.parse_args()
     
-    main(args.input_folder, args.output_folder)
+    main(args.input_folder, args.output_summary_name, args.output_aggreg_name)
