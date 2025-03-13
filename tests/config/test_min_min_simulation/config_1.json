@@ -1,0 +1,18 @@
+{
+    "dag_file": "./tests/workflows/test_min_min_simulation/config_1.dot",
+    "scheduler_type": "min_min",
+    "mapper_type": "simulation",
+
+    "core_avail_mask": "0x0F",
+    "flops_per_cycle": 1000000,
+    "clock_frequency_type": "array",
+    "clock_frequencies_hz": [1, 2, 4, 8],
+
+    "distance_matrices": {
+        "latency": "./tests/system/test_min_min_simulation/1_lat.txt",
+        "bandwidth": "./tests/system/test_min_min_simulation/1_bw.txt"
+    },
+
+    "log_base_name": "./tests/output/test_min_min_simulation/config_1",
+    "log_date_format": ""
+}

@@ -3,6 +3,7 @@
 .env
 logs
 output
+backups
 eval/config
 
 # Prerequisites

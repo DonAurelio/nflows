@@ -1,0 +1,18 @@
+{
+    "dag_file": "./tests/workflows/test_heft_bare_metal/config_3.dot",
+    "scheduler_type": "heft",
+    "mapper_type": "bare_metal",
+
+    "core_avail_mask": "0x03",
+    "flops_per_cycle": 32,
+    "clock_frequency_type": "static",
+    "clock_frequency_hz": 1000000000,
+
+    "distance_matrices": {
+        "latency": "./tests/system/test_heft_bare_metal/3_lat.txt",
+        "bandwidth": "./tests/system/test_heft_bare_metal/3_bw.txt"
+    },
+
+    "log_base_name": "./tests/output/test_heft_bare_metal/config_3",
+    "log_date_format": ""
+}
