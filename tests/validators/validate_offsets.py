@@ -29,7 +29,7 @@ def compute_max_offset_time(dependencies, target_key, position):
     for dep_key, dep in dependencies.items():
         left, right = dep_key.split("->")
         if (position == "right" and right == target_key) or (position == "left" and left == target_key):
-            max_time = max(max_time, dep["end"] - dep["start"])
+            max_time = max(max_time, float(dep["end"]) - float(dep["start"]))
     return max_time
 
 
@@ -44,13 +44,13 @@ def validate_offsets(data):
     left_hand_in_write = {key.split("->")[0] for key in comm_write_offsets.keys()}
 
     for key, total in exec_total_offsets.items():
-        start, end = total["start"], total["end"]
+        start, end = float(total["start"]), float(total["end"])
         key_type = determine_key_type(key, right_hand_in_read, left_hand_in_write)
 
         # Compute offsets
         max_read_time = compute_max_offset_time(comm_read_offsets, key, "right") if key_type in ["intermediate", "end"] else 0
         max_write_time = compute_max_offset_time(comm_write_offsets, key, "left") if key_type in ["root", "intermediate"] else 0
-        compute_time = exec_compute_offsets[key]["end"] - exec_compute_offsets[key]["start"]
+        compute_time = float(exec_compute_offsets[key]["end"]) - float(exec_compute_offsets[key]["start"])
 
         computed_sum = max_read_time + compute_time + max_write_time
 
