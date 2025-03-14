@@ -25,68 +25,24 @@ def get_unique_color(existing_colors):
             existing_colors.add(color)
             return color
 
-def compute_fig_size(yaml_data, time_unit, use_numa):
-    """Calcula dinámicamente el tamaño de la figura."""
-    
-    # Obtener el tiempo máximo de ejecución
-    max_time = max(
-        scale_time(times['end'], time_unit)
-        for times in yaml_data['exec_name_compute_offsets'].values()
-    )
-    
-    # Contar el número de recursos utilizados
-    resource_map = {}
-    for task, locality in yaml_data['name_to_thread_locality'].items():
-        resource_id = locality['numa_id'] if use_numa else locality['core_id']
-        if resource_id not in resource_map:
-            resource_map[resource_id] = len(resource_map)
-    num_resources = len(resource_map)
-
-    # Contar la cantidad de comunicaciones
-    num_comms = len(yaml_data['comm_name_write_offsets']) + len(yaml_data['comm_name_read_offsets'])
-
-    # Escalar dinámicamente el tamaño de la figura
-    fig_width = max(8, min(20, max_time / 1e6))  # Limita el ancho entre 8 y 20
-    fig_height = max(6, min(12, (num_resources + num_comms) / 4))  # Altura entre 6 y 12
-
-    return (fig_width, fig_height)
+def compute_figure_size(resource_count):
+    width = 12
+    height = max(6, resource_count * 0.5)
+    return (width, height)
 
 def plot_gantt(yaml_data, output_file, time_unit='us', payload_unit='B', use_numa=True, title=None, xlabel=None, ylabel=None, resource_label=None):
-    # Calcular dinámicamente el tamaño de la figura
-    fig_size = compute_fig_size(yaml_data, time_unit, use_numa)
-    fig, ax = plt.subplots(figsize=fig_size)
-    
-    resource_map = {}
+    resources = sorted(set(
+        locality['numa_id'] if use_numa else locality['core_id']
+        for locality in yaml_data['name_to_thread_locality'].values()
+    ))
+    resource_map = {r: i for i, r in enumerate(resources)}
+    fig, ax = plt.subplots(figsize=compute_figure_size(len(resources)))
     existing_colors = set()
-
-    comm_name_reads = {}
-    for comm, times in yaml_data['comm_name_read_offsets'].items():
-        _, task_dest = comm.split('->')
-        if task_dest not in comm_name_reads:
-            comm_name_reads[task_dest] = 1
-        else:
-            comm_name_reads[task_dest] += 1
-
-    _, max_read_value = max(comm_name_reads.items(), key=lambda item: item[1])
-
-    comm_name_writes = {}
-    for comm, times in yaml_data['comm_name_write_offsets'].items():
-        task_src, _ = comm.split('->')
-        if task_src not in comm_name_writes:
-            comm_name_writes[task_src] = 1
-        else:
-            comm_name_writes[task_src] += 1
-
-    _, max_write_value = max(comm_name_writes.items(), key=lambda item: item[1])
-
-    offset = max_read_value + max_write_value + 1
-
-    # Assigng a tick to every resource.
-    for task, locality in yaml_data['name_to_thread_locality'].items():
-        resource_id = locality['numa_id'] if use_numa else locality['core_id']
-        if resource_id not in resource_map:
-            resource_map[resource_id] = len(resource_map)
-
+    offset = 1  # Adjust offset to ensure one tick per resource
+    
+    for resource in resources:
+        ax.axhline(y=resource_map[resource] * offset, color='gray', linestyle='--', linewidth=0.5)
+    
     for task, times in yaml_data['exec_name_compute_offsets'].items():
         locality = yaml_data['name_to_thread_locality'][task]
         resource_id = locality['numa_id'] if use_numa else locality['core_id']
@@ -94,47 +50,32 @@ def plot_gantt(yaml_data, output_file, time_unit='us', payload_unit='B', use_num
         start = scale_time(times['start'], time_unit)
         end = scale_time(times['end'], time_unit)
         color = get_unique_color(existing_colors)
-        # payload = scale_payload(times['payload'], payload_unit)
         ax.barh(y_position, end - start, left=start, color=color, edgecolor='black', alpha=0.7)
         ax.text((start + end) / 2, y_position, f"{task}", ha='center', va='center', fontsize=8, color='black', weight='bold')
-
-    comm_name_offset = {}
-    for comm, times in yaml_data['comm_name_write_offsets'].items():
-        task_src, task_dest = comm.split('->')
-        resource_id = yaml_data['name_to_thread_locality'][task_src]['numa_id'] if use_numa else yaml_data['name_to_thread_locality'][task_src]['core_id']
-
-        if resource_id not in comm_name_offset:
-            comm_name_offset[resource_id] = 1
-
-        y_position = (resource_map[resource_id] * offset) + comm_name_offset[resource_id]
-        comm_name_offset[resource_id] += 1
-
-        start = scale_time(times['start'], time_unit)
-        end = scale_time(times['end'], time_unit)
-        color = get_unique_color(existing_colors)
-        # payload = scale_payload(times['payload'], payload_unit)
-        ax.barh(y_position, end - start, left=start, color=color, edgecolor='black', alpha=0.7, hatch='\\')
-        ax.text((start + end) / 2, y_position, f"{comm}", ha='center', va='center', fontsize=8, color='black', weight='bold')
-
-    for comm, times in yaml_data['comm_name_read_offsets'].items():
-        _, task_dest = comm.split('->')
-        resource_id = yaml_data['name_to_thread_locality'][task_dest]['numa_id'] if use_numa else yaml_data['name_to_thread_locality'][task_dest]['core_id']
-        
-        if resource_id not in comm_name_offset:
-            comm_name_offset[resource_id] = 1
-
-        y_position = (resource_map[resource_id] * offset) + comm_name_offset[resource_id]
-        comm_name_offset[resource_id] += 1
-
-        start = scale_time(times['start'], time_unit)
-        end = scale_time(times['end'], time_unit)
-        color = get_unique_color(existing_colors)
-        # payload = scale_payload(times['payload'], payload_unit)
-        ax.barh(y_position, end - start, left=start, color=color, edgecolor='black', alpha=0.7, hatch='//')
-        ax.text((start + end) / 2, y_position, f"{comm}", ha='center', va='center', fontsize=8, color='black', weight='bold')
     
-    ax.set_yticks(np.arange(len(resource_map)) * offset)
-    ax.set_yticklabels([f"{resource_label} {r}" for r in resource_map.keys()] if resource_label else [f"Resource {r}" for r in resource_map.keys()])
+    for task in yaml_data['exec_name_compute_offsets'].keys():
+        read_offsets = yaml_data['comm_name_read_offsets']
+        write_offsets = yaml_data['comm_name_write_offsets']
+        
+        largest_read = max((read_offsets[comm] for comm in read_offsets if comm.endswith(f"->{task}")), key=lambda x: scale_time(x['end'] - x['start'], time_unit), default=None)
+        largest_write = max((write_offsets[comm] for comm in write_offsets if comm.startswith(f"{task}->")), key=lambda x: scale_time(x['end'] - x['start'], time_unit), default=None)
+        
+        if largest_read:
+            resource_id = yaml_data['name_to_thread_locality'][task]['numa_id'] if use_numa else yaml_data['name_to_thread_locality'][task]['core_id']
+            y_position = resource_map[resource_id] * offset
+            start = scale_time(largest_read['start'], time_unit)
+            end = scale_time(largest_read['end'], time_unit)
+            ax.barh(y_position, end - start, left=start, color='blue', edgecolor='black', alpha=0.7, hatch='//')
+        
+        if largest_write:
+            resource_id = yaml_data['name_to_thread_locality'][task]['numa_id'] if use_numa else yaml_data['name_to_thread_locality'][task]['core_id']
+            y_position = resource_map[resource_id] * offset
+            start = scale_time(largest_write['start'], time_unit)
+            end = scale_time(largest_write['end'], time_unit)
+            ax.barh(y_position, end - start, left=start, color='red', edgecolor='black', alpha=0.7, hatch='\\')
+    
+    ax.set_yticks(np.arange(len(resources)) * offset)
+    ax.set_yticklabels([f"{resource_label} {r}" for r in resources] if resource_label else [f"Resource {r}" for r in resources])
     ax.set_xlabel(xlabel if xlabel else f"Time ({time_unit})")
     ax.set_ylabel(ylabel if ylabel else "Resources")
     ax.set_title(title if title else "Gantt Chart of Task Execution and Communication")
@@ -153,9 +94,8 @@ if __name__ == "__main__":
     parser.add_argument("--xlabel", type=str, help="Label for the x-axis.")
     parser.add_argument("--ylabel", type=str, help="Label for the y-axis.")
     parser.add_argument("--resource_label", type=str, help="Label for resource names.")
-
+    
     args = parser.parse_args()
-
-    # Example usage
+    
     data = load_yaml(args.yaml_file)
     plot_gantt(data, args.output_file, args.time_unit, args.payload_unit, args.use_numa, args.title, args.xlabel, args.ylabel, args.resource_label)

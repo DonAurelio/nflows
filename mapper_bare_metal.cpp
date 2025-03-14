@@ -300,6 +300,9 @@ void *mapper_bare_metal_thread_function(void *arg)
     // Mark the selected hwloc_core_id as available.
     common_set_core_id_as_avail(data->common, data->assigned_core_id);
 
+    // Update core availability
+    common_set_core_id_avail_unitl(data->common, data->assigned_core_id, actual_finish_time_us);
+
     // this pointer was created in the thread caller 'assign_exec'
     free(data);
 

@@ -49,8 +49,6 @@ void Mapper_Simulation::start()
         // Task execution must be performed first to ensure that earliest_start_time  
         // is calculated correctly. Then, core availability must be set. 
         this->thread_func_ptr(data);
-
-        common_set_core_id_avail_unitl(this->common, selected_core_id, estimated_completion_time);
     }
 
     // Workaround to properly finalize SimGrid resources.
@@ -193,6 +191,9 @@ void *mapper_simulation_thread_function(void *arg)
 
     // Mark the selected hwloc_core_id as available.
     common_set_core_id_as_avail(data->common, data->assigned_core_id);
+
+    // Update core availability
+    common_set_core_id_avail_unitl(data->common, data->assigned_core_id, max_end_write_timestamp_us);
 
     // this pointer was created in the thread caller 'assign_exec'
     free(data);
