@@ -25,8 +25,36 @@ def get_unique_color(existing_colors):
             existing_colors.add(color)
             return color
 
+def compute_fig_size(yaml_data, time_unit, use_numa):
+    """Calcula dinámicamente el tamaño de la figura."""
+    
+    # Obtener el tiempo máximo de ejecución
+    max_time = max(
+        scale_time(times['end'], time_unit)
+        for times in yaml_data['exec_name_compute_offsets'].values()
+    )
+    
+    # Contar el número de recursos utilizados
+    resource_map = {}
+    for task, locality in yaml_data['name_to_thread_locality'].items():
+        resource_id = locality['numa_id'] if use_numa else locality['core_id']
+        if resource_id not in resource_map:
+            resource_map[resource_id] = len(resource_map)
+    num_resources = len(resource_map)
+
+    # Contar la cantidad de comunicaciones
+    num_comms = len(yaml_data['comm_name_write_offsets']) + len(yaml_data['comm_name_read_offsets'])
+
+    # Escalar dinámicamente el tamaño de la figura
+    fig_width = max(8, min(20, max_time / 1e6))  # Limita el ancho entre 8 y 20
+    fig_height = max(6, min(12, (num_resources + num_comms) / 4))  # Altura entre 6 y 12
+
+    return (fig_width, fig_height)
+
 def plot_gantt(yaml_data, output_file, time_unit='us', payload_unit='B', use_numa=True, title=None, xlabel=None, ylabel=None, resource_label=None):
-    fig, ax = plt.subplots(figsize=(12, 6))
+    # Calcular dinámicamente el tamaño de la figura
+    fig_size = compute_fig_size(yaml_data, time_unit, use_numa)
+    fig, ax = plt.subplots(figsize=fig_size)
     
     resource_map = {}
     existing_colors = set()
