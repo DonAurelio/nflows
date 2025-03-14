@@ -9,8 +9,8 @@
     "clock_frequency_hz": 1000000000,
 
     "distance_matrices": {
-        "latency": "./eval/system/lat.txt",
-        "bandwidth": "./eval/system/bw.txt"
+        "latency": "./eval/system/min_min/1_lat.txt",
+        "bandwidth": "./eval/system/min_min/1_bw.txt"
     },
 
     "log_base_name": "",
