@@ -1,5 +1,7 @@
 #include "hardware.hpp"
 
+XBT_LOG_NEW_DEFAULT_CATEGORY(hardware, "Messages specific to this module.");
+
 int get_hwloc_core_id_by_pu_id(const common_t *common, int os_pu_id)
 {
     hwloc_topology_t topology = common->topology;
@@ -146,6 +148,49 @@ std::vector<int> get_hwloc_numa_ids_by_address(const common_t *common, char *add
     return numa_nodes;
 }
 
+void set_hwloc_thread_mem_policy(const common_t *common)
+{
+    if (common->mapper_mem_policy == HWLOC_MEMBIND_DEFAULT) return;
+
+    hwloc_bitmap_t current_nodeset = hwloc_bitmap_alloc();
+    hwloc_membind_policy_t current_mem_policy;
+
+    if (hwloc_get_membind(common->topology, current_nodeset, &current_mem_policy, HWLOC_MEMBIND_THREAD) != 0)
+    {
+        std::cerr << "Error in hwloc_get_membind: " << strerror(errno) << std::endl;
+        hwloc_bitmap_free(current_nodeset);
+        std::exit(EXIT_FAILURE);
+    }
+
+    hwloc_bitmap_t new_nodeset = hwloc_bitmap_dup(current_nodeset);
+
+    if (common->mapper_mem_policy == HWLOC_MEMBIND_BIND)
+    {
+        hwloc_bitmap_zero(new_nodeset);
+        hwloc_bitmap_set(new_nodeset, common->mapper_mem_bind_numa_node_id);
+    }
+
+    char *new_nodeset_str;
+    char *current_nodeset_str;
+
+    hwloc_bitmap_asprintf(&new_nodeset_str, new_nodeset);
+    hwloc_bitmap_asprintf(&current_nodeset_str, current_nodeset);
+
+    XBT_DEBUG("set_thread_membind_nodeset (current): %s, set_thread_membind_nodeset (new): %s.", current_nodeset_str, new_nodeset_str);
+
+    free(new_nodeset_str);
+    free(current_nodeset_str);
+
+    if (hwloc_set_membind(common->topology, new_nodeset, common->mapper_mem_policy, HWLOC_MEMBIND_THREAD) != 0)
+    {
+        std::cerr << "Error in hwloc_set_membind: " << strerror(errno) << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+
+    hwloc_bitmap_free(new_nodeset);
+    hwloc_bitmap_free(current_nodeset);
+}
+
 std::string get_hwloc_thread_mem_policy(const common_t *common)
 {
     hwloc_topology_t topology = common->topology;
@@ -158,6 +203,14 @@ std::string get_hwloc_thread_mem_policy(const common_t *common)
 
     // Get the NUMA memory binding for the current thread
     int ret = hwloc_get_membind(topology, nodeset, &policy, HWLOC_MEMBIND_THREAD);
+
+    char *nodeset_str;
+    hwloc_bitmap_asprintf(&nodeset_str, nodeset);
+
+    XBT_DEBUG("read_nodeset_from_thread: %s.", nodeset_str);
+
+    free(nodeset_str);
+
     if (ret == 0)
     {
         // Add memory policy to the output string
@@ -170,7 +223,7 @@ std::string get_hwloc_thread_mem_policy(const common_t *common)
             output << "FIRSTTOUCH ";
             break;
         case HWLOC_MEMBIND_BIND:
-            output << "BIND  ";
+            output << "BIND ";
             break;
         case HWLOC_MEMBIND_INTERLEAVE:
             output << "INTERLEAVE ";

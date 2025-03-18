@@ -81,6 +81,9 @@ void *mapper_bare_metal_thread_function(void *arg)
 {
     thread_data_t *data = (thread_data_t *)arg;
 
+    // Set the thread memory policy.
+    set_hwloc_thread_mem_policy(data->common);
+
     XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => message: started.", getpid(), gettid(),
              data->exec->get_cname(), get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()));
 
