@@ -8,6 +8,7 @@ HEADERS := $(wildcard *.hpp)
 SOURCES := $(wildcard *.cpp)
 OBJECTS := $(SOURCES:.cpp=.o)
 EXECUTABLE := scheduler
+# NUMACTL_EXE := numactl --membind=0
 
 RUNTIME_LOG_FLAGS := \
 	--log=fifo_scheduler.thres:debug \
@@ -33,7 +34,7 @@ EVAL_OUTPUT_DIR := $(EVAL_DIR)/output
 EVAL_LOG_DIR := $(EVAL_DIR)/logs
 
 EVALUATION_CASES := $(patsubst $(EVAL_TEMPLATE_DIR)/%,%,$(wildcard $(EVAL_TEMPLATE_DIR)/*))
-EVALUATION_REPEATS := 2
+EVALUATION_REPEATS := 10
 
 ANALYSIS_DIR := ./analysis
 ANALYSIS_OUTPUT_DIR := $(ANALYSIS_DIR)/output
@@ -172,7 +173,7 @@ $(EVALUATION_CASES): %: $(EXECUTABLE)
 				--template "$$template" \
 				--output_file "$${CONFIG_FILE}.json" > "$${LOG_FILE}" 2>&1; \
 			GEN_STATUS=$$?; \
-			./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$$CONFIG_FILE.json" >> "$$LOG_FILE" 2>&1; \
+			$(NUMACTL_EXE) ./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$$CONFIG_FILE.json" >> "$$LOG_FILE" 2>&1; \
 			EXEC_STATUS=$$?; \
 			$(PYTHON_EXEC) $(TEST_VALIDATOR_DIR)/validate_offsets.py "$${OUTPUT_FILE}.yaml"  >> "$$LOG_FILE" 2>&1; \
 			VAL_STATUS=$$?; \
