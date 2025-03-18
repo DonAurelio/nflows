@@ -1,7 +1,8 @@
 {
-    "dag_file": "./eval/workflows/redistribution_32.dot",
+    "dag_file": "",
     "scheduler_type": "min_min",
     "mapper_type": "bare_metal",
+    "mapper_mem_policy_type": "default",
 
     "core_avail_mask": "0xFF0000FF",
     "flops_per_cycle": 32,
@@ -9,8 +10,8 @@
     "clock_frequency_hz": 1000000000,
 
     "distance_matrices": {
-        "latency": "./eval/system/min_min/3_lat.txt",
-        "bandwidth": "./eval/system/min_min/3_bw.txt"
+        "latency": "./eval/system/min_min/2_lat.txt",
+        "bandwidth": "./eval/system/min_min/2_bw.txt"
     },
 
     "log_base_name": "",

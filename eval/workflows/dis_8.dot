@@ -1,14 +1,14 @@
 digraph Distribution {
     root    [size=2]; 
-    Task_0  [size=1000000000];
-    Task_1  [size=1000000000];
-    Task_2  [size=1000000000];
-    Task_3  [size=1000000000];
-    Task_4  [size=1000000000];
-    Task_5  [size=1000000000];
-    Task_6  [size=1000000000];
-    Task_7  [size=1000000000];
-    Task_8  [size=1000000000];
+    Task_0  [size=100000000];
+    Task_1  [size=100000000];
+    Task_2  [size=100000000];
+    Task_3  [size=100000000];
+    Task_4  [size=100000000];
+    Task_5  [size=100000000];
+    Task_6  [size=100000000];
+    Task_7  [size=100000000];
+    Task_8  [size=100000000];
     end     [size=2];
 
     // Not considered for execution but required.

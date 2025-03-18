@@ -34,7 +34,13 @@ EVAL_OUTPUT_DIR := $(EVAL_DIR)/output
 EVAL_LOG_DIR := $(EVAL_DIR)/logs
 
 EVALUATION_CASES := $(patsubst $(EVAL_TEMPLATE_DIR)/%,%,$(wildcard $(EVAL_TEMPLATE_DIR)/*))
-EVALUATION_REPEATS := 10
+EVALUATION_REPEATS := 2
+EVALUATION_WORKFLOWS := \
+	./eval/workflows/dis_4.dot
+
+# ./eval/workflows/dis_8.dot \
+# ./eval/workflows/dis_16.dot \
+# ./eval/workflows/dis_32.dot
 
 ANALYSIS_DIR := ./analysis
 ANALYSIS_OUTPUT_DIR := $(ANALYSIS_DIR)/output
@@ -158,31 +164,34 @@ test: $(TEST_CASES)
 $(EVALUATION_CASES): %: $(EXECUTABLE)
 	@echo "Running evaluation case: $@"
 	@for template in $(shell ls $(EVAL_TEMPLATE_DIR)/$@/*.json 2>/dev/null); do \
-		for i in $$(seq 1 $(EVALUATION_REPEATS)); do \
-			TEMPLATE_NAME=$$(basename $$template .json); \
-			ITERATION_SUFFIX=$${TEMPLATE_NAME}_iter_$${i}; \
-			CONFIG_DIR=$(EVAL_CONFIG_DIR)/$@/$${TEMPLATE_NAME}; \
-			CONFIG_FILE=$${CONFIG_DIR}/$${ITERATION_SUFFIX}; \
-			OUTPUT_DIR=$(EVAL_OUTPUT_DIR)/$@/$${TEMPLATE_NAME}; \
-			OUTPUT_FILE=$${OUTPUT_DIR}/$${ITERATION_SUFFIX}; \
-			LOG_DIR=$(EVAL_LOG_DIR)/$@/$${TEMPLATE_NAME}; \
-			LOG_FILE=$${LOG_DIR}/$${ITERATION_SUFFIX}.log; \
-			mkdir -p "$$CONFIG_DIR" "$$OUTPUT_DIR" "$$LOG_DIR"; \
-			$(PYTHON_EXEC) $(EVAL_GENERATOR_DIR)/generate_config.py \
-				--params log_base_name="$${OUTPUT_FILE}" \
-				--template "$$template" \
-				--output_file "$${CONFIG_FILE}.json" > "$${LOG_FILE}" 2>&1; \
-			GEN_STATUS=$$?; \
-			./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$$CONFIG_FILE.json" >> "$$LOG_FILE" 2>&1; \
-			EXEC_STATUS=$$?; \
-			$(PYTHON_EXEC) $(TEST_VALIDATOR_DIR)/validate_offsets.py "$${OUTPUT_FILE}.yaml"  >> "$$LOG_FILE" 2>&1; \
-			VAL_STATUS=$$?; \
-			if [ $$GEN_STATUS -eq 0 ] && [ $$EXEC_STATUS -eq 0 ] && [ $$VAL_STATUS -eq 0 ]; then \
-				echo "  [SUCCESS] $${ITERATION_SUFFIX}"; \
-			else \
-				echo "  [FAILED] $${ITERATION_SUFFIX} (Generate: $$GEN_STATUS, Execute: $$EXEC_STATUS, Validate: $$VAL_STATUS)"; \
-			fi; \
-			sleep 5; \
+		for workflow_path in $(EVALUATION_WORKFLOWS); do \
+			WORKFLOW_NAME=$$(basename $$workflow_path .dot); \
+			for i in $$(seq 1 $(EVALUATION_REPEATS)); do \
+				TEMPLATE_NAME=$$(basename $$template .json); \
+				ITERATION_SUFFIX=$${TEMPLATE_NAME}_$${WORKFLOW_NAME}_iter_$${i}; \
+				CONFIG_DIR=$(EVAL_CONFIG_DIR)/$@/$${TEMPLATE_NAME}; \
+				CONFIG_FILE=$${CONFIG_DIR}/$${ITERATION_SUFFIX}; \
+				OUTPUT_DIR=$(EVAL_OUTPUT_DIR)/$@/$${TEMPLATE_NAME}; \
+				OUTPUT_FILE=$${OUTPUT_DIR}/$${ITERATION_SUFFIX}; \
+				LOG_DIR=$(EVAL_LOG_DIR)/$@/$${TEMPLATE_NAME}; \
+				LOG_FILE=$${LOG_DIR}/$${ITERATION_SUFFIX}.log; \
+				mkdir -p "$$CONFIG_DIR" "$$OUTPUT_DIR" "$$LOG_DIR"; \
+				$(PYTHON_EXEC) $(EVAL_GENERATOR_DIR)/generate_config.py \
+					--params log_base_name="$${OUTPUT_FILE}" dag_file="$${workflow_path}" \
+					--template "$$template" \
+					--output_file "$${CONFIG_FILE}.json" > "$${LOG_FILE}" 2>&1; \
+				GEN_STATUS=$$?; \
+				./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$$CONFIG_FILE.json" >> "$$LOG_FILE" 2>&1; \
+				EXEC_STATUS=$$?; \
+				$(PYTHON_EXEC) $(TEST_VALIDATOR_DIR)/validate_offsets.py "$${OUTPUT_FILE}.yaml"  >> "$$LOG_FILE" 2>&1; \
+				VAL_STATUS=$$?; \
+				if [ $$GEN_STATUS -eq 0 ] && [ $$EXEC_STATUS -eq 0 ] && [ $$VAL_STATUS -eq 0 ]; then \
+					echo "  [SUCCESS] $${ITERATION_SUFFIX}"; \
+				else \
+					echo "  [FAILED] $${ITERATION_SUFFIX} (Generate: $$GEN_STATUS, Execute: $$EXEC_STATUS, Validate: $$VAL_STATUS)"; \
+				fi; \
+				sleep 5; \
+			done \
 		done \
 	done
 

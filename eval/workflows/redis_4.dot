@@ -2,17 +2,17 @@ digraph Redistribution {
     root    [size=2];
     end     [size=2];
 
-    Inter   [size=1000000000];
+    Inter   [size=100000000];
 
-    Task1   [size=1000000000];
-    Task2   [size=1000000000];
-    Task3   [size=1000000000];
-    Task4   [size=1000000000];
+    Task1   [size=100000000];
+    Task2   [size=100000000];
+    Task3   [size=100000000];
+    Task4   [size=100000000];
 
-    Task5   [size=1000000000];
-    Task6   [size=1000000000];
-    Task7   [size=1000000000];
-    Task8   [size=1000000000];
+    Task5   [size=100000000];
+    Task6   [size=100000000];
+    Task7   [size=100000000];
+    Task8   [size=100000000];
 
     root -> Task1 [size=2];
     root -> Task2 [size=2];
