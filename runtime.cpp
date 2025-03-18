@@ -83,6 +83,30 @@ void initialize_common(common_t *common, const nlohmann::json &data) {
         throw std::runtime_error("Unsupported clock frequency type: " + clock_frequency_type);
     }
 
+    std::string mapper_mem_policy_type = data["mapper_mem_policy_type"];
+
+    if (mapper_mem_policy_type == "default") {
+        common->mapper_mem_policy = HWLOC_MEMBIND_DEFAULT;
+        common->mapper_mem_bind_numa_node_id = 0; // Not used, but initialized.
+    } else if (mapper_mem_policy_type == "firsttouch") {
+        common->mapper_mem_policy = HWLOC_MEMBIND_FIRSTTOUCH;
+        common->mapper_mem_bind_numa_node_id = 0; // Not used, but initialized.
+    } else if (mapper_mem_policy_type == "bind") {
+        common->mapper_mem_policy = HWLOC_MEMBIND_BIND;
+        common->mapper_mem_bind_numa_node_id = data["mapper_mem_bind_numa_node_id"];
+    } else if (mapper_mem_policy_type == "interleave") {
+        common->mapper_mem_policy = HWLOC_MEMBIND_INTERLEAVE;
+        common->mapper_mem_bind_numa_node_id = 0; // Not used, but initialized.
+    } else if (mapper_mem_policy_type == "nexttouch") {
+        common->mapper_mem_policy = HWLOC_MEMBIND_NEXTTOUCH;
+        common->mapper_mem_bind_numa_node_id = 0; // Not used, but initialized.
+    } else if (mapper_mem_policy_type == "mixed") {
+        common->mapper_mem_policy = HWLOC_MEMBIND_MIXED;
+        common->mapper_mem_bind_numa_node_id = 0; // Not used, but initialized.
+    } else {
+        throw std::runtime_error("Unsupported memory policy type: " + mapper_mem_policy_type);
+    }
+
     common->log_base_name = data["log_base_name"];
     common->log_date_format = data["log_date_format"];
 

@@ -124,6 +124,10 @@ struct common_s
     scheduler_type_t scheduler_type;
     mapper_type_t mapper_type;
 
+    std::string mapper_mem_policy_type;
+    hwloc_membind_policy_t mapper_mem_policy;
+    unsigned mapper_mem_bind_numa_node_id;
+
     // Locality information collections.
     name_to_address_t comm_name_to_address;
     name_to_numa_ids_t comm_name_to_numa_ids_r;

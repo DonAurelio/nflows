@@ -8,12 +8,12 @@ HEADERS := $(wildcard *.hpp)
 SOURCES := $(wildcard *.cpp)
 OBJECTS := $(SOURCES:.cpp=.o)
 EXECUTABLE := scheduler
-# NUMACTL_EXE := numactl --membind=0
 
 RUNTIME_LOG_FLAGS := \
 	--log=fifo_scheduler.thres:debug \
 	--log=heft_scheduler.thres:debug \
-	--log=eft_scheduler.thres:debug
+	--log=eft_scheduler.thres:debug \
+	--log=hardware.thres:debug
 
 # Directories
 TEST_DIR := ./tests
@@ -173,7 +173,7 @@ $(EVALUATION_CASES): %: $(EXECUTABLE)
 				--template "$$template" \
 				--output_file "$${CONFIG_FILE}.json" > "$${LOG_FILE}" 2>&1; \
 			GEN_STATUS=$$?; \
-			$(NUMACTL_EXE) ./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$$CONFIG_FILE.json" >> "$$LOG_FILE" 2>&1; \
+			./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$$CONFIG_FILE.json" >> "$$LOG_FILE" 2>&1; \
 			EXEC_STATUS=$$?; \
 			$(PYTHON_EXEC) $(TEST_VALIDATOR_DIR)/validate_offsets.py "$${OUTPUT_FILE}.yaml"  >> "$$LOG_FILE" 2>&1; \
 			VAL_STATUS=$$?; \
