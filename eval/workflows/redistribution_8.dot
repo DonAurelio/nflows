@@ -1,0 +1,60 @@
+digraph Redistribution {
+    root    [size=2];
+    end     [size=2];
+
+    Inter   [size=1000000000];
+
+    Task1   [size=1000000000];
+    Task2   [size=1000000000];
+    Task3   [size=1000000000];
+    Task4   [size=1000000000];
+    Task5   [size=1000000000];
+    Task6   [size=1000000000];
+    Task7   [size=1000000000];
+    Task8   [size=1000000000];
+
+    Task9   [size=1000000000];
+    Task10  [size=1000000000];
+    Task11  [size=1000000000];
+    Task12  [size=1000000000];
+    Task13  [size=1000000000];
+    Task14  [size=1000000000];
+    Task15  [size=1000000000];
+    Task16  [size=1000000000];
+
+    root -> Task1 [size=2];
+    root -> Task2 [size=2];
+    root -> Task3 [size=2];
+    root -> Task4 [size=2];
+    root -> Task5 [size=2];
+    root -> Task6 [size=2];
+    root -> Task7 [size=2];
+    root -> Task8 [size=2];
+
+    Task1 -> Inter [size=2000000000];
+    Task2 -> Inter [size=2000000000];
+    Task3 -> Inter [size=2000000000];
+    Task4 -> Inter [size=2000000000];
+    Task5 -> Inter [size=2000000000];
+    Task6 -> Inter [size=2000000000];
+    Task7 -> Inter [size=2000000000];
+    Task8 -> Inter [size=2000000000];
+
+    Inter -> Task9  [size=2000000000];
+    Inter -> Task10 [size=2000000000];
+    Inter -> Task11 [size=2000000000];
+    Inter -> Task12 [size=2000000000];
+    Inter -> Task13 [size=2000000000];
+    Inter -> Task14 [size=2000000000];
+    Inter -> Task15 [size=2000000000];
+    Inter -> Task16 [size=2000000000];
+
+    Task9  -> end [size=2];
+    Task10 -> end [size=2];
+    Task11 -> end [size=2];
+    Task12 -> end [size=2];
+    Task13 -> end [size=2];
+    Task14 -> end [size=2];
+    Task15 -> end [size=2];
+    Task16 -> end [size=2];
+}

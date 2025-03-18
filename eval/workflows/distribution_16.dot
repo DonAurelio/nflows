@@ -22,22 +22,22 @@ digraph Distribution {
     // Not considered for execution but required.
     root -> Task_0   [size=2];
     
-    Task_0 -> Task_1  [size=4000000000];
-    Task_0 -> Task_2  [size=4000000000];
-    Task_0 -> Task_3  [size=4000000000];
-    Task_0 -> Task_4  [size=4000000000];
-    Task_0 -> Task_5  [size=4000000000];
-    Task_0 -> Task_6  [size=4000000000];
-    Task_0 -> Task_7  [size=4000000000];
-    Task_0 -> Task_8  [size=4000000000];
-    Task_0 -> Task_9  [size=4000000000];
-    Task_0 -> Task_10 [size=4000000000];
-    Task_0 -> Task_11 [size=4000000000];
-    Task_0 -> Task_12 [size=4000000000];
-    Task_0 -> Task_13 [size=4000000000];
-    Task_0 -> Task_14 [size=4000000000];
-    Task_0 -> Task_15 [size=4000000000];
-    Task_0 -> Task_16 [size=4000000000];
+    Task_0 -> Task_1  [size=2000000000];
+    Task_0 -> Task_2  [size=2000000000];
+    Task_0 -> Task_3  [size=2000000000];
+    Task_0 -> Task_4  [size=2000000000];
+    Task_0 -> Task_5  [size=2000000000];
+    Task_0 -> Task_6  [size=2000000000];
+    Task_0 -> Task_7  [size=2000000000];
+    Task_0 -> Task_8  [size=2000000000];
+    Task_0 -> Task_9  [size=2000000000];
+    Task_0 -> Task_10 [size=2000000000];
+    Task_0 -> Task_11 [size=2000000000];
+    Task_0 -> Task_12 [size=2000000000];
+    Task_0 -> Task_13 [size=2000000000];
+    Task_0 -> Task_14 [size=2000000000];
+    Task_0 -> Task_15 [size=2000000000];
+    Task_0 -> Task_16 [size=2000000000];
 
     // Not considered for execution but required.
     Task_1 -> end    [size=2];
