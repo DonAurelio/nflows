@@ -44,20 +44,12 @@ EVAL_OUTPUT_DIR := $(EVAL_DIR)/output
 EVAL_LOG_DIR := $(EVAL_DIR)/logs
 
 EVALUATION_CASES := $(patsubst $(EVAL_TEMPLATE_DIR)/%,%,$(wildcard $(EVAL_TEMPLATE_DIR)/*))
-<<<<<<< HEAD
-EVALUATION_REPEATS := 5
-EVALUATION_WORKFLOWS := \
-	./eval/workflows/dis_4.dot \
-	./eval/workflows/dis_8.dot \
-	./eval/workflows/dis_16.dot \
-	./eval/workflows/dis_32.dot
-=======
 EVALUATION_REPEATS := 3
 EVALUATION_WORKFLOWS := \
-	./eval/workflows/montage-chameleon-2mass-005d-001.dot \
-	./eval/workflows/montage-chameleon-2mass-01d-001.dot \
-	./eval/workflows/montage-chameleon-2mass-015d-001.dot \
-	./eval/workflows/montage-chameleon-2mass-025d-001.dot
+	./eval/workflows/montage-2mass-005d-001_58.dot \
+	./eval/workflows/montage-2mass-01d-001_103.dot \
+	./eval/workflows/montage-2mass-015d-001_310.dot \
+	./eval/workflows/montage-2mass-025d-001_619.dot
 
 # EVALUATION_WORKFLOWS := \
 # 	./eval/workflows/redis_4.dot \
@@ -70,7 +62,6 @@ EVALUATION_WORKFLOWS := \
 # 	./eval/workflows/dis_8.dot \
 # 	./eval/workflows/dis_16.dot \
 # 	./eval/workflows/dis_32.dot
->>>>>>> 5e81f6c (Fix issue-20, restructure scripts)
 
 ANALYSIS_DIR := ./analysis
 ANALYSIS_OUTPUT_DIR := $(ANALYSIS_DIR)/output
@@ -203,22 +194,14 @@ $(EVALUATION_CASES): %: $(EXECUTABLE)
 				LOG_DIR=$(EVAL_LOG_DIR)/$@/$${TEMPLATE_NAME}; \
 				LOG_FILE=$${LOG_DIR}/$${ITERATION_SUFFIX}.log; \
 				mkdir -p "$$CONFIG_DIR" "$$OUTPUT_DIR" "$$LOG_DIR"; \
-<<<<<<< HEAD
-				$(PYTHON_EXEC) $(EVAL_GENERATOR_DIR)/generate_config.py \
-=======
 				$(SCRIPTS_GENERATE_CONFIG) \
->>>>>>> 5e81f6c (Fix issue-20, restructure scripts)
 					--params log_base_name="$${OUTPUT_FILE}" dag_file="$${workflow_path}" \
 					--template "$$template" \
 					--output_file "$${CONFIG_FILE}.json" > "$${LOG_FILE}" 2>&1; \
 				GEN_STATUS=$$?; \
 				./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$$CONFIG_FILE.json" >> "$$LOG_FILE" 2>&1; \
 				EXEC_STATUS=$$?; \
-<<<<<<< HEAD
-				$(PYTHON_EXEC) $(TEST_VALIDATOR_DIR)/validate_offsets.py "$${OUTPUT_FILE}.yaml"  >> "$$LOG_FILE" 2>&1; \
-=======
 				$(SCRIPTS_VALIDATE_OFFSETS) "$${OUTPUT_FILE}.yaml"  >> "$$LOG_FILE" 2>&1; \
->>>>>>> 5e81f6c (Fix issue-20, restructure scripts)
 				VAL_STATUS=$$?; \
 				if [ $$GEN_STATUS -eq 0 ] && [ $$EXEC_STATUS -eq 0 ] && [ $$VAL_STATUS -eq 0 ]; then \
 					echo "  [SUCCESS] $${ITERATION_SUFFIX}"; \
@@ -250,20 +233,12 @@ analyze:
 					LOG_DIR=$(ANALYSIS_LOG_DIR)/$$out_dir/$$sub_dir; \
 					LOG_NAME=$${LOG_DIR}/$${BASE_NAME}.log; \
 					mkdir -p "$$PROFILE_DIR" "$$GANTT_DIR" "$$LOG_DIR"; \
-<<<<<<< HEAD
-					$(PYTHON_EXEC) $(ANALYSIS_SCRIPTS_DIR)/generate_profile.py \
-=======
 					$(SCRIPTS_GENERATE_PROFILE) \
->>>>>>> 5e81f6c (Fix issue-20, restructure scripts)
 						"$$yaml_file" "$(ANALYSIS_REL_LATENCY_FILE)" \
 						--export_csv "$$PROFILE_NAME" \
 						>> "$$LOG_NAME" 2>&1; \
 					PROFILE_STATUS=$$?; \
-<<<<<<< HEAD
-					$(PYTHON_EXEC) $(ANALYSIS_SCRIPTS_DIR)/generate_gantt.py \
-=======
 					$(SCRIPTS_GENERATE_GANTT) \
->>>>>>> 5e81f6c (Fix issue-20, restructure scripts)
 						"$$yaml_file" "$$GANTT_NAME" \
 						>> "$$LOG_NAME" 2>&1; \
 					GANTT_STATUS=$$?; \
@@ -288,11 +263,7 @@ analyze:
 				LOG_DIR=$(ANALYSIS_LOG_DIR)/$$out_dir/$$sub_dir; \
 				LOG_NAME=$${LOG_DIR}/summary.log; \
 				mkdir -p "$$SUMMARY_DIR"; \
-<<<<<<< HEAD
-				$(PYTHON_EXEC) $(ANALYSIS_SCRIPTS_DIR)/generate_summary.py \
-=======
 				$(SCRIPTS_GENERATE_SUMMARY) \
->>>>>>> 5e81f6c (Fix issue-20, restructure scripts)
 					"$$OUTPUT_DIR/profile" \
 					"$$SUMMARY_NAME" \
 					"$$AGGREG_NAME" \
