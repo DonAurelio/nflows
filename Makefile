@@ -34,13 +34,12 @@ EVAL_OUTPUT_DIR := $(EVAL_DIR)/output
 EVAL_LOG_DIR := $(EVAL_DIR)/logs
 
 EVALUATION_CASES := $(patsubst $(EVAL_TEMPLATE_DIR)/%,%,$(wildcard $(EVAL_TEMPLATE_DIR)/*))
-EVALUATION_REPEATS := 2
+EVALUATION_REPEATS := 5
 EVALUATION_WORKFLOWS := \
-	./eval/workflows/dis_4.dot
-
-# ./eval/workflows/dis_8.dot \
-# ./eval/workflows/dis_16.dot \
-# ./eval/workflows/dis_32.dot
+	./eval/workflows/dis_4.dot \
+	./eval/workflows/dis_8.dot \
+	./eval/workflows/dis_16.dot \
+	./eval/workflows/dis_32.dot
 
 ANALYSIS_DIR := ./analysis
 ANALYSIS_OUTPUT_DIR := $(ANALYSIS_DIR)/output
@@ -169,9 +168,9 @@ $(EVALUATION_CASES): %: $(EXECUTABLE)
 			for i in $$(seq 1 $(EVALUATION_REPEATS)); do \
 				TEMPLATE_NAME=$$(basename $$template .json); \
 				ITERATION_SUFFIX=$${TEMPLATE_NAME}_$${WORKFLOW_NAME}_iter_$${i}; \
-				CONFIG_DIR=$(EVAL_CONFIG_DIR)/$@/$${TEMPLATE_NAME}; \
+				CONFIG_DIR=$(EVAL_CONFIG_DIR)/$@/$${TEMPLATE_NAME}/$${WORKFLOW_NAME}; \
 				CONFIG_FILE=$${CONFIG_DIR}/$${ITERATION_SUFFIX}; \
-				OUTPUT_DIR=$(EVAL_OUTPUT_DIR)/$@/$${TEMPLATE_NAME}; \
+				OUTPUT_DIR=$(EVAL_OUTPUT_DIR)/$@/$${TEMPLATE_NAME}/$${WORKFLOW_NAME}; \
 				OUTPUT_FILE=$${OUTPUT_DIR}/$${ITERATION_SUFFIX}; \
 				LOG_DIR=$(EVAL_LOG_DIR)/$@/$${TEMPLATE_NAME}; \
 				LOG_FILE=$${LOG_DIR}/$${ITERATION_SUFFIX}.log; \
@@ -203,56 +202,60 @@ analyze:
 	@echo "Running analysis..."
 	@for out_dir in $$(ls $(EVAL_OUTPUT_DIR) 2>/dev/null); do \
 		for sub_dir in $$(ls $(EVAL_OUTPUT_DIR)/$$out_dir 2>/dev/null); do \
-			OUTPUT_DIR=$(ANALYSIS_OUTPUT_DIR)/$$out_dir/$$sub_dir; \
-			mkdir -p "$$OUTPUT_DIR"; \
-			for yaml_file in $$(ls $(EVAL_OUTPUT_DIR)/$$out_dir/$$sub_dir/*.yaml 2>/dev/null); do \
-				BASE_NAME=$$(basename $$yaml_file .yaml); \
-				PROFILE_DIR=$${OUTPUT_DIR}/profile; \
-				PROFILE_NAME=$${PROFILE_DIR}/$${BASE_NAME}.csv; \
-				GANTT_DIR=$${OUTPUT_DIR}/gantt; \
-				GANTT_NAME=$${GANTT_DIR}/$${BASE_NAME}.png; \
-				LOG_DIR=$(ANALYSIS_LOG_DIR)/$$out_dir/$$sub_dir; \
-				LOG_NAME=$${LOG_DIR}/$${BASE_NAME}.log; \
-				mkdir -p "$$PROFILE_DIR" "$$GANTT_DIR" "$$LOG_DIR"; \
-				$(PYTHON_EXEC) $(ANALYSIS_SCRIPTS_DIR)/generate_profile.py \
-					"$$yaml_file" "$(ANALYSIS_REL_LATENCY_FILE)" \
-					--export_csv "$$PROFILE_NAME" \
-					>> "$$LOG_NAME" 2>&1; \
-				PROFILE_STATUS=$$?; \
-				$(PYTHON_EXEC) $(ANALYSIS_SCRIPTS_DIR)/generate_gantt.py \
-					"$$yaml_file" "$$GANTT_NAME" \
-					>> "$$LOG_NAME" 2>&1; \
-				GANTT_STATUS=$$?; \
-				if [ $$PROFILE_STATUS -eq 0 ] && [ $$GANTT_STATUS -eq 0 ]; then \
-					echo "  [SUCCESS] Profile & Gantt: $$yaml_file"; \
-				else \
-					echo "  [FAILED] Profile & Gantt: $$yaml_file (Profile: $$PROFILE_STATUS, Gantt: $$GANTT_STATUS)"; \
-				fi; \
+			for workflow_dir in $$(ls $(EVAL_OUTPUT_DIR)/$$out_dir/$$sub_dir 2>/dev/null); do \
+				OUTPUT_DIR=$(ANALYSIS_OUTPUT_DIR)/$$out_dir/$$sub_dir/$$workflow_dir; \
+				mkdir -p "$$OUTPUT_DIR"; \
+				for yaml_file in $$(ls $(EVAL_OUTPUT_DIR)/$$out_dir/$$sub_dir/$$workflow_dir/*.yaml 2>/dev/null); do \
+					BASE_NAME=$$(basename $$yaml_file .yaml); \
+					PROFILE_DIR=$${OUTPUT_DIR}/profile; \
+					PROFILE_NAME=$${PROFILE_DIR}/$${BASE_NAME}.csv; \
+					GANTT_DIR=$${OUTPUT_DIR}/gantt; \
+					GANTT_NAME=$${GANTT_DIR}/$${BASE_NAME}.png; \
+					LOG_DIR=$(ANALYSIS_LOG_DIR)/$$out_dir/$$sub_dir; \
+					LOG_NAME=$${LOG_DIR}/$${BASE_NAME}.log; \
+					mkdir -p "$$PROFILE_DIR" "$$GANTT_DIR" "$$LOG_DIR"; \
+					$(PYTHON_EXEC) $(ANALYSIS_SCRIPTS_DIR)/generate_profile.py \
+						"$$yaml_file" "$(ANALYSIS_REL_LATENCY_FILE)" \
+						--export_csv "$$PROFILE_NAME" \
+						>> "$$LOG_NAME" 2>&1; \
+					PROFILE_STATUS=$$?; \
+					$(PYTHON_EXEC) $(ANALYSIS_SCRIPTS_DIR)/generate_gantt.py \
+						"$$yaml_file" "$$GANTT_NAME" \
+						>> "$$LOG_NAME" 2>&1; \
+					GANTT_STATUS=$$?; \
+					if [ $$PROFILE_STATUS -eq 0 ] && [ $$GANTT_STATUS -eq 0 ]; then \
+						echo "  [SUCCESS] Profile & Gantt: $$yaml_file"; \
+					else \
+						echo "  [FAILED] Profile & Gantt: $$yaml_file (Profile: $$PROFILE_STATUS, Gantt: $$GANTT_STATUS)"; \
+					fi; \
+				done; \
 			done; \
 		done; \
 	done
 
 	@for out_dir in $$(ls $(ANALYSIS_OUTPUT_DIR) 2>/dev/null); do \
 		for sub_dir in $$(ls $(ANALYSIS_OUTPUT_DIR)/$$out_dir 2>/dev/null); do \
-			OUTPUT_DIR=$(ANALYSIS_OUTPUT_DIR)/$$out_dir/$$sub_dir; \
-			SUMMARY_DIR=$${OUTPUT_DIR}/summary; \
-			SUMMARY_NAME=$${SUMMARY_DIR}/summary_$${sub_dir}.csv; \
-			AGGREG_DIR=$(ANALYSIS_OUTPUT_DIR)/$$out_dir; \
-			AGGREG_NAME=$${AGGREG_DIR}/aggreg_$${sub_dir}.csv; \
-			LOG_DIR=$(ANALYSIS_LOG_DIR)/$$out_dir/$$sub_dir; \
-			LOG_NAME=$${LOG_DIR}/summary.log; \
-			mkdir -p "$$SUMMARY_DIR"; \
-			$(PYTHON_EXEC) $(ANALYSIS_SCRIPTS_DIR)/generate_summary.py \
-				"$$OUTPUT_DIR/profile" \
-				"$$SUMMARY_NAME" \
-				"$$AGGREG_NAME" \
-				>> "$$LOG_NAME" 2>&1; \
-			SUMMARY_STATUS=$$?; \
-			if [ $$SUMMARY_STATUS -eq 0 ]; then \
-				echo "  [SUCCESS] Summary: $$sub_dir"; \
-			else \
-				echo "  [FAILED] Summary: $$sub_dir (Status: $$SUMMARY_STATUS)"; \
-			fi; \
+			for workflow_dir in $$(ls $(ANALYSIS_OUTPUT_DIR)/$$out_dir/$$sub_dir 2>/dev/null); do \
+				OUTPUT_DIR=$(ANALYSIS_OUTPUT_DIR)/$$out_dir/$$sub_dir/$$workflow_dir; \
+				SUMMARY_DIR=$${OUTPUT_DIR}/summary; \
+				SUMMARY_NAME=$${SUMMARY_DIR}/summary_$${sub_dir}.csv; \
+				AGGREG_DIR=$(ANALYSIS_OUTPUT_DIR)/$$out_dir; \
+				AGGREG_NAME=$${AGGREG_DIR}/aggreg_$${sub_dir}_$${workflow_dir}.csv; \
+				LOG_DIR=$(ANALYSIS_LOG_DIR)/$$out_dir/$$sub_dir; \
+				LOG_NAME=$${LOG_DIR}/summary.log; \
+				mkdir -p "$$SUMMARY_DIR"; \
+				$(PYTHON_EXEC) $(ANALYSIS_SCRIPTS_DIR)/generate_summary.py \
+					"$$OUTPUT_DIR/profile" \
+					"$$SUMMARY_NAME" \
+					"$$AGGREG_NAME" \
+					>> "$$LOG_NAME" 2>&1; \
+				SUMMARY_STATUS=$$?; \
+				if [ $$SUMMARY_STATUS -eq 0 ]; then \
+					echo "  [SUCCESS] Summary: $$sub_dir"; \
+				else \
+					echo "  [FAILED] Summary: $$sub_dir (Status: $$SUMMARY_STATUS)"; \
+				fi; \
+			done; \
 		done; \
 	done
 
