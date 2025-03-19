@@ -2,6 +2,7 @@
     "dag_file": "./tests/workflows/test_fifo_simulation/config_1.dot",
     "scheduler_type": "fifo",
     "mapper_type": "simulation",
+    "mapper_mem_policy_type": "default",
 
     "core_avail_mask": "0x1",
     "flops_per_cycle": 1000000,

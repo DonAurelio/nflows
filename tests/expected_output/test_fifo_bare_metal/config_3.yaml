@@ -1,6 +1,3 @@
-core_availability:
-  0: {avail_until: 0}
-
 exec_name_total_offsets:
   Task_3:
   Task_4:
