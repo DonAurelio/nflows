@@ -1,0 +1,36 @@
+digraph Redistribution {
+    root    [size=2];
+    end     [size=2];
+
+    Inter   [size=100000000];
+
+    Task1   [size=100000000];
+    Task2   [size=100000000];
+    Task3   [size=100000000];
+    Task4   [size=100000000];
+
+    Task5   [size=100000000];
+    Task6   [size=100000000];
+    Task7   [size=100000000];
+    Task8   [size=100000000];
+
+    root -> Task1 [size=2];
+    root -> Task2 [size=2];
+    root -> Task3 [size=2];
+    root -> Task4 [size=2];
+
+    Task1 -> Inter [size=2000000000];
+    Task2 -> Inter [size=2000000000];
+    Task3 -> Inter [size=2000000000];
+    Task4 -> Inter [size=2000000000];
+
+    Inter -> Task5 [size=2000000000];
+    Inter -> Task6 [size=2000000000];
+    Inter -> Task7 [size=2000000000];
+    Inter -> Task8 [size=2000000000];
+
+    Task5 -> end [size=2];
+    Task6 -> end [size=2];
+    Task7 -> end [size=2];
+    Task8 -> end [size=2];
+}
