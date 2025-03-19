@@ -193,7 +193,7 @@ void *mapper_simulation_thread_function(void *arg)
     common_set_core_id_as_avail(data->common, data->assigned_core_id);
 
     // Update core availability
-    common_set_core_id_avail_unitl(data->common, data->assigned_core_id, max_end_write_timestamp_us);
+    common_set_core_id_avail_unitl(data->common, data->assigned_core_id, std::max(exec_end_timestamp_us, max_end_write_timestamp_us));
 
     // this pointer was created in the thread caller 'assign_exec'
     free(data);

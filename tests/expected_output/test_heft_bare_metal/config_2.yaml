@@ -1,6 +1,6 @@
 core_availability:
-  0: {avail_until: 0}
-  24: {avail_until: 0}
+  0:
+  24:
 
 name_to_thread_locality:
   Task_3: {numa_id: 1, core_id: 24}
