@@ -40,28 +40,40 @@ EVAL_DIR := ./evaluation
 EVAL_CONFIG_DIR := $(EVAL_DIR)/config
 EVAL_GENERATOR_DIR := $(EVAL_DIR)/generators
 EVAL_TEMPLATE_DIR := $(EVAL_DIR)/templates
+EVAL_WORKFLOWS_DIR := $(EVAL_DIR)/workflows
 EVAL_OUTPUT_DIR := $(EVAL_DIR)/output
 EVAL_LOG_DIR := $(EVAL_DIR)/logs
 
-EVALUATION_CASES := $(patsubst $(EVAL_TEMPLATE_DIR)/%,%,$(wildcard $(EVAL_TEMPLATE_DIR)/*))
-EVALUATION_REPEATS := 3
-EVALUATION_WORKFLOWS := \
-	./eval/workflows/montage-2mass-005d-001_58.dot \
-	./eval/workflows/montage-2mass-01d-001_103.dot \
-	./eval/workflows/montage-2mass-015d-001_310.dot \
-	./eval/workflows/montage-2mass-025d-001_619.dot
+EVALUATION_WORKFLOWS_MONTAGE := \
+	$(EVAL_WORKFLOWS_DIR)/montage-2mass-005d-001_58.dot \
+	$(EVAL_WORKFLOWS_DIR)/montage-2mass-01d-001_103.dot \
+	$(EVAL_WORKFLOWS_DIR)/montage-2mass-015d-001_310.dot \
+	$(EVAL_WORKFLOWS_DIR)/montage-2mass-025d-001_619.dot
 
-# EVALUATION_WORKFLOWS := \
-# 	./eval/workflows/redis_4.dot \
-# 	./eval/workflows/redis_8.dot \
-# 	./eval/workflows/redis_16.dot \
-# 	./eval/workflows/redis_32.dot
+EVALUATION_WORKFLOWS_REDIS := \
+	$(EVAL_WORKFLOWS_DIR)/redis_4.dot \
+	$(EVAL_WORKFLOWS_DIR)/redis_8.dot \
+	$(EVAL_WORKFLOWS_DIR)/redis_16.dot \
+	$(EVAL_WORKFLOWS_DIR)/redis_32.dot
 
-# EVALUATION_WORKFLOWS := \
-# 	./eval/workflows/dis_4.dot \
-# 	./eval/workflows/dis_8.dot \
-# 	./eval/workflows/dis_16.dot \
-# 	./eval/workflows/dis_32.dot
+EVALUATION_WORKFLOWS_DIS := \
+	$(EVAL_WORKFLOWS_DIR)/dis_4.dot \
+	$(EVAL_WORKFLOWS_DIR)/dis_8.dot \
+	$(EVAL_WORKFLOWS_DIR)/dis_16.dot \
+	$(EVAL_WORKFLOWS_DIR)/dis_32.dot
+
+# Enable or disable specific workflow sets
+ENABLE_MONTAGE := true
+ENABLE_REDIS := true
+ENABLE_DIS := true
+EVALUATION_REPEATS := 10
+# EVALUATION_CASES := \
+	$(patsubst $(EVAL_TEMPLATE_DIR)/%,%,$(wildcard $(EVAL_TEMPLATE_DIR)/*))
+EVALUATION_CASES := heft
+
+EVALUATION_WORKFLOWS := $(if $(ENABLE_MONTAGE),$(EVALUATION_WORKFLOWS_MONTAGE)) \
+						$(if $(ENABLE_REDIS),$(EVALUATION_WORKFLOWS_REDIS)) \
+						$(if $(ENABLE_DIS),$(EVALUATION_WORKFLOWS_DIS))
 
 ANALYSIS_DIR := ./analysis
 ANALYSIS_OUTPUT_DIR := $(ANALYSIS_DIR)/output
@@ -208,7 +220,7 @@ $(EVALUATION_CASES): %: $(EXECUTABLE)
 				else \
 					echo "  [FAILED] $${ITERATION_SUFFIX} (Generate: $$GEN_STATUS, Execute: $$EXEC_STATUS, Validate: $$VAL_STATUS)"; \
 				fi; \
-				sleep 5; \
+				sleep 10; \
 			done \
 		done \
 	done
