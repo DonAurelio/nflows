@@ -1,17 +1,23 @@
 #!/usr/bin/env python3
 
+"""
+@authors: ChatGPT
+@edited_by: Aurelio Vivas
+@promt:
+"""
+
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import argparse
-
+import pprint
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate a plot with aggregated data.")
     parser.add_argument("input_folder", type=str, help="Path to the folder containing CSV files")
     parser.add_argument("output_file", type=str, help="Path to the folder where results will be saved")
-    parser.add_argument("--field_name", type=str, default="workflow_makespan_us", help="Time unit for scaling.")
+    parser.add_argument("--field_name", type=str, default="workflow_makespan_us", help="Field name to plot.")
     args = parser.parse_args()
     
     # Define the folder where the CSVs are stored
@@ -29,7 +35,7 @@ if __name__ == "__main__":
         if filename.endswith(".csv"):
             # Extract category and size from filename
             parts = filename.split("_")
-            category = "_".join(parts[1:-1])  # Extract base_line, one_node, two_nodes
+            category = "_".join(parts[1:-1])  # Extract base_line, one_node, two_nodes, etc.
             size = int(parts[-1].split(".")[0])  # Extract the numerical size
 
             # Read CSV as a pandas Series
@@ -52,9 +58,9 @@ if __name__ == "__main__":
                     data[size] = {}
                 data[size][category] = {"mean": float(mean_val), "std": float(std_val)}
 
-    # Plot the results
+    # Extract sorted sizes and unique categories
     sizes = sorted(data.keys())
-    categories = ["base_line", "one_node", "two_nodes"]
+    categories = sorted({cat for size in data for cat in data[size]})
 
     # Prepare bar chart data
     means = []
@@ -68,15 +74,26 @@ if __name__ == "__main__":
                 stds.append(data[size][category]["std"])
                 bar_labels.append(f"{category} ({size})")
             else:
-                means.append(0)  # Placeholder for missing data
-                stds.append(0)
+                # Skip missing data instead of appending 0
+                continue
 
     # Plot settings
     x = np.arange(len(bar_labels))  # X-axis positions
     width = 0.3  # Bar width
 
+    # Define a larger color palette
+    base_colors = [
+        "blue", "orange", "green", "red", "purple", "brown", "pink", "gray", "olive", "cyan"
+    ]  # At least 10 colors
+    num_colors_needed = min(len(categories), len(base_colors))
+    colors = base_colors[:num_colors_needed]  # Select only as many as needed
+
+    # Expand the colors to match the number of bars, keeping categories consistent
+    category_to_color = {cat: colors[i % num_colors_needed] for i, cat in enumerate(categories)}
+    bar_colors = [category_to_color[label.split(" (")[0]] for label in bar_labels]
+
     fig, ax = plt.subplots(figsize=(10, 6))
-    bars = ax.bar(x, means, yerr=stds, capsize=5, color=["blue", "orange", "green"] * len(sizes), alpha=0.7)
+    bars = ax.bar(x, means, yerr=stds, capsize=5, color=bar_colors, alpha=0.7)
 
     ax.set_xlabel("Configuration (Size)")
     ax.set_ylabel(f"{field_name} (Mean ± Std)")
@@ -86,6 +103,5 @@ if __name__ == "__main__":
 
     plt.grid(axis="y", linestyle="--", alpha=0.6)
     plt.tight_layout()
-    # plt.show()
     plt.savefig(output_file, format=output_file.split('.')[-1])
     plt.close()

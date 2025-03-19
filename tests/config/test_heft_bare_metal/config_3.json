@@ -2,6 +2,7 @@
     "dag_file": "./tests/workflows/test_heft_bare_metal/config_3.dot",
     "scheduler_type": "heft",
     "mapper_type": "bare_metal",
+    "mapper_mem_policy_type": "default",
 
     "core_avail_mask": "0x03",
     "flops_per_cycle": 32,

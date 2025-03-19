@@ -1,4 +1,10 @@
-#!/bin/python3
+#!/usr/bin/env python3
+
+"""
+@authors: ChatGPT
+@edited_by: Aurelio Vivas
+@promt: 
+"""
 
 import yaml
 import argparse
@@ -8,7 +14,6 @@ def load_yaml_data(file_path):
     with open(file_path, "r") as file:
         return yaml.safe_load(file)
 
-
 def determine_key_type(key, right_hand_in_read, left_hand_in_write):
     """Determines if a key is a root, intermediate, or end node."""
     if key not in right_hand_in_read:
@@ -16,7 +21,6 @@ def determine_key_type(key, right_hand_in_read, left_hand_in_write):
     elif key not in left_hand_in_write:
         return "end"
     return "intermediate"
-
 
 def compute_max_offset_time(dependencies, target_key, position):
     """
@@ -31,7 +35,6 @@ def compute_max_offset_time(dependencies, target_key, position):
         if (position == "right" and right == target_key) or (position == "left" and left == target_key):
             max_time = max(max_time, float(dep["end"]) - float(dep["start"]))
     return max_time
-
 
 def validate_offsets(data):
     """Validates execution offsets based on computed vs expected total times."""
@@ -55,8 +58,7 @@ def validate_offsets(data):
         computed_sum = max_read_time + compute_time + max_write_time
 
         if start + computed_sum != end:
-            print(f"Validation failed for {key}: expected {end}, got {start + computed_sum}")
-
+            print(f"Offsets validation failed for {key}: expected {end}, got {start + computed_sum}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Validate execution offsets from YAML file.")
@@ -64,5 +66,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     yaml_data = load_yaml_data(args.yaml_path)
-    print(f"validate_offsets => output: {args.yaml_path}")
     validate_offsets(yaml_data)

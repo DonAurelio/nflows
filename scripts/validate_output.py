@@ -1,8 +1,13 @@
-#!/bin/python3
+#!/usr/bin/env python3
+
+"""
+@authors: ChatGPT
+@edited_by: Aurelio Vivas
+@promt: 
+"""
 
 import yaml
 import sys
-
 
 def validate_yaml(output_path, expected_path, check_order_keys):
     with open(output_path, 'r') as output_file, open(expected_path, 'r') as expected_file:
@@ -40,7 +45,6 @@ def validate_yaml(output_path, expected_path, check_order_keys):
     
     return compare(expected_data, output_data)
 
-
 if __name__ == "__main__":
     if len(sys.argv) < 3:
         print("Usage: python validate_yaml.py [--check-order key1,key2,...] <output_yaml> <expected_yaml>")
@@ -59,6 +63,7 @@ if __name__ == "__main__":
         expected_file = sys.argv[2]
     
     if validate_yaml(output_file, expected_file, check_order_keys):
-        print("Validation successful.")
+        print(f"Ouptut validation successful: '{output_file}' matches '{expected_file}'.")
     else:
-        print("Validation failed.")
+        print(f"Output validation failed: '{output_file}' does not match '{expected_file}'.")
+        sys.exit(1)

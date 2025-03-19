@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 
+"""
+@authors: ChatGPT
+@edited_by: Aurelio Vivas
+@promt:
+"""
+
 import yaml
 import pandas as pd
 import numpy as np
@@ -7,7 +13,6 @@ import argparse
 
 from tabulate import tabulate
 from colorama import Fore, Style
-
 
 def scale_time(value, unit):
     scale_factors = {'us': 1, 'ms': 1e3, 's': 1e6, 'min': 6e7}
@@ -189,32 +194,26 @@ def print_profile(data, matrix_relative_latencies, time_unit):
     print(f"\n{Fore.CYAN}Data Access Pattern: {Fore.YELLOW}{total_accesses.sum():.2f}{Fore.CYAN} accesses.{Style.RESET_ALL}")
     table_str = tabulate(df[["task_name", "core_id", "cpu_node", "mem_node", "data_item", "access_type"]], headers="keys", tablefmt="grid", showindex=False)
     print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
-    # print(tabulate(df[["task_name", "core_id", "cpu_node", "mem_node", "data_item", "access_type"]], headers="keys", tablefmt="grid", showindex=False))
-    # print("")
 
     matrix_local_accesses_equal = aggregation_matrix(df, equal=True)
     print(f"\n{Fore.GREEN}Local Accesses: {Fore.YELLOW}{matrix_local_accesses_equal.sum().sum()}{Style.RESET_ALL}")
     table_str = tabulate(matrix_local_accesses_equal, tablefmt="grid", showindex=False)
     print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
-    # print(tabulate(matrix_local_accesses_equal, tablefmt="grid", showindex=False))
 
     local_accesses_percentage = matrix_local_accesses_equal / total_accesses
     print(f"\n{Fore.GREEN}Local Accesses (%): {Fore.YELLOW}{local_accesses_percentage.sum().sum() * 100:.2f}%{Style.RESET_ALL}")
     table_str = tabulate(local_accesses_percentage, tablefmt="grid", showindex=False)
     print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
-    # print(tabulate(local_accesses_percentage, tablefmt="grid", showindex=False))
 
     matrix_remote_accesses_different = aggregation_matrix(df, equal=False)
     print(f"\n{Fore.BLUE}Remote Accesses: {Fore.YELLOW}{matrix_remote_accesses_different.sum().sum()}{Style.RESET_ALL}")
     table_str = tabulate(matrix_remote_accesses_different, tablefmt="grid", showindex=False)
     print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
-    # print(tabulate(matrix_remote_accesses_different, tablefmt="grid", showindex=False))
 
     remote_accesses_percentage = matrix_remote_accesses_different / total_accesses
     print(f"\n{Fore.BLUE}Remote Accesses (%): {Fore.YELLOW}{remote_accesses_percentage.sum().sum() * 100:.2f}%{Style.RESET_ALL}")
     table_str = tabulate(remote_accesses_percentage, tablefmt="grid", showindex=False)
     print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
-    # print(tabulate(remote_accesses_percentage, tablefmt="grid", showindex=False))
 
 def save_csv(data, matrix_relative_latencies, time_unit, output_csv):
     checksum = data.get("checksum", None)
@@ -251,12 +250,12 @@ def save_csv(data, matrix_relative_latencies, time_unit, output_csv):
     })
 
     results.to_csv(output_csv, header=False)
-    print(f"Results exported to {output_csv}")
+    print(f"Profile exported: {output_csv}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process NUMA access data.")
-    parser.add_argument("input_file", help="Path to input YAML file")
-    parser.add_argument("input_file_rel_lat", help="Path to input TXT file")
+    parser.add_argument("input_file", help="Path to input YAML profile file")
+    parser.add_argument("input_file_rel_lat", help="Path to input TXT file with hwloc/numactl relative latencies")
     parser.add_argument("--time_unit", type=str, choices=['us', 'ms', 's', 'min'], default='us', help="Time unit for scaling.")
     parser.add_argument("--export_csv", type=str, help="Path to export CSV file.", default=None)
     args = parser.parse_args()

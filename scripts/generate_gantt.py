@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 
+"""
+@authors: ChatGPT
+@edited_by: Aurelio Vivas
+@promt:
+"""
+
 import yaml
 import random
 import numpy as np
@@ -82,6 +88,8 @@ def plot_gantt(yaml_data, output_file, time_unit='us', payload_unit='B', use_num
     plt.grid(axis='x', linestyle='--', alpha=0.6)
     plt.savefig(output_file, format=output_file.split('.')[-1])
     plt.close()
+
+    print(f"Gantt created: '{output_file}'.")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate a Gantt chart from a YAML file.")

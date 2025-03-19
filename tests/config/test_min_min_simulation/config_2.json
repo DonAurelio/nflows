@@ -2,6 +2,7 @@
     "dag_file": "./tests/workflows/test_min_min_simulation/config_2.dot",
     "scheduler_type": "min_min",
     "mapper_type": "simulation",
+    "mapper_mem_policy_type": "default",
 
     "core_avail_mask": "0x01000001",
     "flops_per_cycle": 1000000,

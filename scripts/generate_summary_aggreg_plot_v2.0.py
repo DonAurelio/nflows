@@ -1,17 +1,23 @@
 #!/usr/bin/env python3
 
+"""
+@authors: ChatGPT
+@edited_by: Aurelio Vivas
+@promt:
+"""
+
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import argparse
-
+import pprint
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate a plot with aggregated data.")
     parser.add_argument("input_folder", type=str, help="Path to the folder containing CSV files")
     parser.add_argument("output_file", type=str, help="Path to the folder where results will be saved")
-    parser.add_argument("--field_name", type=str, default="workflow_makespan_us", help="Time unit for scaling.")
+    parser.add_argument("--field_name", type=str, default="workflow_makespan_us", help="Field name to plot.")
     args = parser.parse_args()
     
     # Define the folder where the CSVs are stored
@@ -52,6 +58,8 @@ if __name__ == "__main__":
                     data[size] = {}
                 data[size][category] = {"mean": float(mean_val), "std": float(std_val)}
 
+    pprint.pprint(data)
+
     # Extract sorted sizes and unique categories
     sizes = sorted(data.keys())
     categories = sorted({cat for size in data for cat in data[size]})
@@ -70,6 +78,9 @@ if __name__ == "__main__":
             else:
                 means.append(0)  # Placeholder for missing data
                 stds.append(0)
+
+    pprint.pprint(means)
+    pprint.pprint(stds)
 
     # Plot settings
     x = np.arange(len(bar_labels))  # X-axis positions

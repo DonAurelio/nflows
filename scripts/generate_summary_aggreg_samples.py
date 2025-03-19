@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 
+"""
+@authors: ChatGPT
+@edited_by: Aurelio Vivas
+@promt:
+"""
+
 import os
 import pandas as pd
 import numpy as np
 import argparse
 
-
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Generates sample data for 'generate_aggreg_plot'.")
+    parser = argparse.ArgumentParser(description="Generates sample data for 'generate_summary_aggreg'.")
     parser.add_argument("output_folder", type=str, help="Path to the folder where files will be saved.")
     args = parser.parse_args()
 
