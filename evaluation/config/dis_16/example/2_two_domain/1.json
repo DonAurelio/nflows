@@ -1,19 +1,16 @@
 {
-    "dag_file": "",
+    "dag_file": "./evaluation/workflows/dis_16.dot",
     "scheduler_type": "min_min",
     "mapper_type": "bare_metal",
     "mapper_mem_policy_type": "default",
-
     "core_avail_mask": "0xFF0000FF",
     "flops_per_cycle": 32,
     "clock_frequency_type": "static",
     "clock_frequency_hz": 1000000000,
-
     "distance_matrices": {
-        "latency": "./eval/system/min_min/3_lat.txt",
-        "bandwidth": "./eval/system/min_min/3_bw.txt"
+        "latency": "./evaluation/system/uniform_lat.txt",
+        "bandwidth": "./evaluation/system/uniform_bw.txt"
     },
-
-    "log_base_name": "",
+    "log_base_name": "./evaluation/output/dis_16/example/2_two_domain/1",
     "log_date_format": ""
 }
