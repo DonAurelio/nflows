@@ -46,16 +46,21 @@ TEST_EXPECTED_DIR := $(TEST_DIR)/expected
 TEST_CASES := $(patsubst $(TEST_CONFIG_DIR)/%,%,$(wildcard $(TEST_CONFIG_DIR)/test_*))
 
 EVALUATION_DIR := ./evaluation
-EVALUATION_LOG_DIR := $(EVALUATION_DIR)/logs
-EVALUATION_OUTPUT_DIR := $(EVALUATION_DIR)/output
-EVALUATION_CONFIG_DIR := $(EVALUATION_DIR)/config
 EVALUATION_TEMPLATE_DIR := $(EVALUATION_DIR)/templates
 EVALUATION_WORKFLOW_DIR := $(EVALUATION_DIR)/workflows
+
+EVALUATION_RESULT_DIR := ./results
+EVALUATION_LOG_DIR := $(EVALUATION_RESULT_DIR)/log
+EVALUATION_OUTPUT_DIR := $(EVALUATION_RESULT_DIR)/output
+EVALUATION_CONFIG_DIR := $(EVALUATION_RESULT_DIR)/config
 
 EVALUATION_REPEATS := 1
 EVALUATION_WORKFLOWS := dis_16.dot
 EVALUATION_GROUPS := example
 EVALUATION_SLEEPTIME := 10
+
+ANALYSIS_WORKFLOWS := $(notdir $(shell find $(EVALUATION_OUTPUT_DIR) -mindepth 1 -maxdepth 1 -type d))
+ANALYSIS_REL_LATENCIES_FILE := $(EVALUATION_DIR)/system/non_uniform_lat_rel.txt
 
 # Default target
 all: $(EXECUTABLE)
@@ -102,4 +107,29 @@ $(EVALUATION_WORKFLOWS): %: $(EXECUTABLE)
 				sleep $(EVALUATION_SLEEPTIME); \
 			done; \
 		done; \
+	done
+
+.PHONY: $(ANALYSIS_WORKFLOWS)
+$(ANALYSIS_WORKFLOWS): %:
+	@echo "Analyzing workflow: $@"
+	@for output_yaml in $$(find $(EVALUATION_OUTPUT_DIR)/$@ -type f -name "*.yaml" 2>/dev/null); do \
+		PROFILE_DIR=$$(dirname $${output_yaml} | sed 's/output/profile/'); \
+		GANTT_DIR=$$(dirname $${output_yaml} | sed 's/output/gantt/'); \
+		LOG_DIR=$$(dirname $${output_yaml} | sed 's/output/log/'); \
+		LOG_FILE=$${LOG_DIR}/$$(basename $${output_yaml} .yaml).log; \
+		mkdir -p $${PROFILE_DIR} $${GANTT_DIR} $${LOG_DIR}; \
+		$(GENERATE_PROFILE) \
+			"$${output_yaml}" \
+			"$(ANALYSIS_REL_LATENCIES_FILE)" \
+			--export_csv "$${PROFILE_DIR}/$$(basename $${output_yaml} .yaml).csv" > "$${LOG_FILE}" 2>&1; \
+		PROFILE_STATUS=$$?; \
+		$(GENERATE_GANTT) \
+			"$${output_yaml}" \
+			"$${GANTT_DIR}/$$(basename $${output_yaml} .yaml).png" >> "$${LOG_FILE}" 2>&1; \
+		GANTT_STATUS=$$?; \
+		if [ $$PROFILE_STATUS -eq 0 ] && [ $$GANTT_STATUS -eq 0 ]; then \
+			echo "  [SUCCESS] Profile & Gantt: $$output_yaml"; \
+		else \
+			echo "  [FAILED] Profile & Gantt: $$output_yaml (Profile: $$PROFILE_STATUS, Gantt: $$GANTT_STATUS)"; \
+		fi; \
 	done
