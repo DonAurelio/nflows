@@ -61,6 +61,18 @@ EVALUATION_SLEEPTIME := 10
 
 ANALYSIS_WORKFLOWS := $(notdir $(shell find $(EVALUATION_OUTPUT_DIR) -mindepth 1 -maxdepth 1 -type d 2>/dev/null))
 ANALYSIS_REL_LATENCIES_FILE := $(EVALUATION_DIR)/system/non_uniform_lat_rel.txt
+ANALYSIS_FIELDS := \
+	workflow_makespan_us \
+	local_accesses \
+	remote_accesses \
+	access_pattern_performance \
+	checksum \
+	active_threads \
+	total_accesses \
+	total_write_time_us \
+	total_compute_time_us \
+	comp_to_comm_ratio \
+	comm_to_comp_ratio
 
 # Default target
 all: $(EXECUTABLE)
@@ -159,13 +171,16 @@ $(ANALYSIS_WORKFLOWS): %:
 		LOG_DIR=$$(dirname $${aggreg_dir} | sed 's/aggreg/log/'); \
 		LOG_FILE=$${LOG_DIR}/$$(basename $${aggreg_dir}).log; \
 		mkdir -p $${FIGURE_DIR} $${LOG_DIR}; \
-		$(GENERATE_AGGREG_PLOT) \
-			"$${aggreg_dir}" \
-			"$${FIGURE_DIR}/$$(basename $${aggreg_dir}).png" >> "$${LOG_FILE}" 2>&1; \
-		PLOT_STATUS=$$?; \
-		if [ $$PLOT_STATUS -eq 0 ]; then \
-			echo "  [SUCCESS] Plot: $$aggreg_dir"; \
-		else \
-			echo "  [FAILED] Plot: $$aggreg_dir (Plot: $$PLOT_STATUS)"; \
-		fi; \
+		for field in $(ANALYSIS_FIELDS); do \
+			$(GENERATE_AGGREG_PLOT) \
+				"$${aggreg_dir}" \
+				"$${FIGURE_DIR}/$$(basename $${aggreg_dir})_$${field}.png" \
+				--field_name=$${field} >> "$${LOG_FILE}" 2>&1; \
+			PLOT_STATUS=$$?; \
+			if [ $$PLOT_STATUS -eq 0 ]; then \
+				echo "  [SUCCESS] Plot: $$aggreg_dir ($${field})"; \
+			else \
+				echo "  [FAILED] Plot: $$aggreg_dir ($${field}) (Plot: $$PLOT_STATUS)"; \
+			fi; \
+		done; \
 	done
