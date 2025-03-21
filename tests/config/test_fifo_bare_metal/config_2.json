@@ -1,6 +1,10 @@
 {
     "dag_file": "./tests/workflows/test_fifo_bare_metal/config_2.dot",
     "scheduler_type": "fifo",
+    "scheduler_params": [
+        "fifo_prioritize_by_core_id=yes",
+        "fifo_prioritize_by_exec_order=yes"
+    ],
     "mapper_type": "bare_metal",
     "mapper_mem_policy_type": "default",
 

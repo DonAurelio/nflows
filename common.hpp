@@ -90,6 +90,7 @@ typedef simgrid::s4u::ActivityPtr simgrid_activity_ptr_t;
 typedef std::vector<simgrid_exec_t *> simgrid_execs_t;
 
 typedef std::vector<std::vector<double>> distance_matrix_t;
+typedef std::unordered_map<std::string, std::string> scheduler_params_t;
 
 struct common_s
 {
@@ -122,6 +123,7 @@ struct common_s
     std::vector<double> core_avail_until;
 
     scheduler_type_t scheduler_type;
+    scheduler_params_t scheduler_params;
     mapper_type_t mapper_type;
 
     std::string mapper_mem_policy_type;
@@ -175,6 +177,8 @@ std::pair<std::string, std::string> common_split(const std::string &input, std::
 
 void common_set_core_id_avail_unitl(common_t *common, unsigned int core_id, double duration);
 double common_get_core_id_avail_unitl(const common_t *common, unsigned int core_id);
+
+std::string common_get_scheduler_param(const common_t *common, const std::string &key);
 
 void common_set_core_id_as_avail(common_t *common, unsigned int core_id);
 void common_set_core_id_as_unavail(common_t *common, unsigned int core_id);

@@ -1,6 +1,7 @@
 {
     "dag_file": "",
     "scheduler_type": "min_min",
+    "scheduler_params": [],
     "mapper_type": "bare_metal",
     "mapper_mem_policy_type": "default",
 
