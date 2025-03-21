@@ -120,6 +120,31 @@ def machine_average_numa_factor(data):
 
     return average_numa_factor
 
+def analyze_memory_migrations(df, migrations=None):
+    # Step 1: Create the 'writings' dataframe
+    writings = df[df['access_type'] == 'write'][['data_item', 'mem_node']]
+    writings = writings.groupby('data_item')['mem_node'].apply(lambda x: ','.join(map(str, x))).reset_index()
+
+    # Step 2: Create the 'readings' dataframe
+    readings = df[df['access_type'] == 'read'][['data_item', 'mem_node']]
+    readings = readings.groupby('data_item')['mem_node'].apply(lambda x: ','.join(map(str, x))).reset_index()
+
+    # Step 3: Compare 'mem_node' in 'writings' and 'readings'
+    merged_df = pd.merge(writings, readings, on='data_item', how='outer', suffixes=('_write', '_read'))
+    merged_df['migration'] = merged_df.apply(
+        lambda row: 'no' if row['mem_node_write'] == row['mem_node_read'] else 'yes', axis=1
+    )
+
+    # Step 4: Apply filtering based on the parameter
+    if migrations is True:
+        return merged_df[merged_df['migration'] == 'yes']
+    elif migrations is False:
+        return merged_df[merged_df['migration'] == 'no']
+    else:  # migrations is None
+        pass
+
+    return merged_df
+
 def data_access_pattern_performance(t_accesses_matrix, d_relatve_latencies):
     """
     Computes the NUMA metric based on the provided matrices.
@@ -195,6 +220,11 @@ def print_profile(data, matrix_relative_latencies, time_unit):
     table_str = tabulate(df[["task_name", "core_id", "cpu_node", "mem_node", "data_item", "access_type"]], headers="keys", tablefmt="grid", showindex=False)
     print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
 
+    memory_migrations = analyze_memory_migrations(df, migrations=True)
+    print(f"\n{Fore.CYAN}Memory Migrations: {Fore.YELLOW}{len(memory_migrations)}{Fore.CYAN} migrations.{Style.RESET_ALL}")
+    table_str = tabulate(memory_migrations[["data_item", "mem_node_write", "mem_node_read"]], headers="keys", tablefmt="grid", showindex=False)
+    print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
+
     matrix_local_accesses_equal = aggregation_matrix(df, equal=True)
     print(f"\n{Fore.GREEN}Local Accesses: {Fore.YELLOW}{matrix_local_accesses_equal.sum().sum()}{Style.RESET_ALL}")
     table_str = tabulate(matrix_local_accesses_equal, tablefmt="grid", showindex=False)
@@ -232,6 +262,8 @@ def save_csv(data, matrix_relative_latencies, time_unit, output_csv):
     matrix_total_accesses_none = aggregation_matrix(df, equal=None)
     access_pattern_performance = data_access_pattern_performance(
         matrix_total_accesses_none, matrix_relative_latencies)
+    
+    memory_migrations = len(analyze_memory_migrations(df, migrations=True))
 
     results = pd.Series({
         "checksum": checksum,
@@ -247,6 +279,7 @@ def save_csv(data, matrix_relative_latencies, time_unit, output_csv):
         "comp_to_comm_ratio": comp_to_comm_ratio,
         "comm_to_comp_ratio": comm_to_comp_ratio,
         "access_pattern_performance": access_pattern_performance,
+        "memory_migrations": memory_migrations,
     })
 
     results.to_csv(output_csv, header=False)

@@ -62,7 +62,8 @@ ANALYSIS_FIELDS := \
 	total_write_time_us \
 	total_compute_time_us \
 	comp_to_comm_ratio \
-	comm_to_comp_ratio
+	comm_to_comp_ratio \
+	memory_migrations
 
 # Directories
 TEST_DIR := ./tests
