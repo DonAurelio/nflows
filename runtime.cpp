@@ -83,6 +83,13 @@ void initialize_common(common_t *common, const nlohmann::json &data) {
         throw std::runtime_error("Unsupported clock frequency type: " + clock_frequency_type);
     }
 
+    for (const auto& param : data["scheduler_params"].get<std::vector<std::string>>()) {
+        auto pos = param.find('=');
+        if (pos != std::string::npos) {
+            common->scheduler_params[param.substr(0, pos)] = param.substr(pos + 1);
+        }
+    }
+
     std::string mapper_mem_policy_type = data["mapper_mem_policy_type"];
 
     if (mapper_mem_policy_type == "default") {
@@ -132,19 +139,24 @@ std::vector<bool> parse_core_avail_mask(uint64_t mask, size_t &core_count) {
 }
 
 scheduler_t* create_scheduler(const std::string &type, common_t *common, simgrid_execs_t &dag) {
-    if (type == "min_min") {
-        common->scheduler_type = MIN_MIN;
-        return new min_min_scheduler_t(common, dag);
+    static const std::unordered_map<std::string, scheduler_type_t> scheduler_types = {
+        {"min_min", MIN_MIN},
+        {"heft", HEFT},
+        {"fifo", FIFO}
+    };
+
+    auto it = scheduler_types.find(type);
+    if (it == scheduler_types.end()) {
+        throw std::runtime_error("Unsupported scheduler: " + type);
     }
-    if (type == "heft") {
-        common->scheduler_type = HEFT;
-        return new heft_scheduler_t(common, dag);
-    }
-    if (type == "fifo") {
-        common->scheduler_type = FIFO;
-        return new fifo_scheduler_t(common, dag);
-    }
-    throw std::runtime_error("Unsupported scheduler: " + type);
+
+    common->scheduler_type = it->second;
+
+    if (type == "min_min") return new min_min_scheduler_t(common, dag);
+    if (type == "heft") return new heft_scheduler_t(common, dag);
+    if (type == "fifo") return new fifo_scheduler_t(common, dag);
+
+    return nullptr;  // Should never reach here due to earlier check
 }
 
 mapper_t* create_mapper(const std::string &type, common_t *common, scheduler_t &scheduler) {

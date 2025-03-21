@@ -1,6 +1,7 @@
 {
     "dag_file": "./tests/workflows/test_min_min_bare_metal/config_1.dot",
     "scheduler_type": "min_min",
+    "scheduler_params": [],
     "mapper_type": "bare_metal",
     "mapper_mem_policy_type": "default",
 

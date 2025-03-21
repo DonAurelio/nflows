@@ -1,6 +1,7 @@
 {
     "dag_file": "./tests/workflows/test_heft_simulation/config_2.dot",
     "scheduler_type": "heft",
+    "scheduler_params": [],
     "mapper_type": "simulation",
     "mapper_mem_policy_type": "default",
 

@@ -1,0 +1,20 @@
+{
+    "dag_file": "",
+    "scheduler_type": "heft",
+    "scheduler_params": [],
+    "mapper_type": "bare_metal",
+    "mapper_mem_policy_type": "default",
+
+    "core_avail_mask": "0xFF0000FF",
+    "flops_per_cycle": 32,
+    "clock_frequency_type": "static",
+    "clock_frequency_hz": 1000000000,
+
+    "distance_matrices": {
+        "latency": "./evaluation/system/non_uniform_lat.txt",
+        "bandwidth": "./evaluation/system/non_uniform_bw.txt"
+    },
+
+    "log_base_name": "",
+    "log_date_format": ""
+}

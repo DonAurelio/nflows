@@ -82,6 +82,14 @@ void common_set_core_id_as_unavail(common_t *common, unsigned int core_id)
     common->core_avail[core_id] = false;
 }
 
+std::string common_get_scheduler_param(const common_t *common, const std::string &key)
+{
+    auto it = common->scheduler_params.find(key);
+    if (it != common->scheduler_params.end())
+        return it->second;
+    return "";
+}
+
 void common_increment_active_threads_counter(common_t *common)
 {
     pthread_mutex_lock(&(common->mutex));

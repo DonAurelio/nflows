@@ -46,7 +46,7 @@ EVALUATION_CONFIG_DIR := $(EVALUATION_RESULT_DIR)/config
 
 EVALUATION_REPEATS := 5
 EVALUATION_WORKFLOWS := dis_16.dot mon_58.dot red_16.dot
-EVALUATION_GROUPS := example
+EVALUATION_GROUPS := min_min fifo heft
 EVALUATION_SLEEPTIME := 10
 
 ANALYSIS_WORKFLOWS := $(notdir $(shell find $(EVALUATION_OUTPUT_DIR) -mindepth 1 -maxdepth 1 -type d 2>/dev/null))

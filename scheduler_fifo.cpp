@@ -33,17 +33,24 @@ std::tuple<int, double> FIFO_Scheduler::get_best_core_id(const simgrid_exec_t *e
             numa_id_to_payload[numa_id] += std::get<2>(time_range_payload) / numa_ids.size();
     }
 
-    // Prioritize cores associated with NUMA nodes that have the most data to read.
-    std::sort(avail_core_ids.begin(), avail_core_ids.end(),
-              [&](int a, int b) {
-                int a_numa_id = get_hwloc_numa_id_by_core_id(this->common, a);
-                int b_numa_id = get_hwloc_numa_id_by_core_id(this->common, b);
+    std::string fifo_prioritize_by_core_id = common_get_scheduler_param(common, "fifo_prioritize_by_core_id");
+    XBT_DEBUG("fifo_prioritize_by_core_id: %s, enabled: %s", 
+        fifo_prioritize_by_core_id.c_str(), (fifo_prioritize_by_core_id == "yes") ? "true" : "false");
 
-                double a_score = (numa_id_to_payload.find(a_numa_id) != numa_id_to_payload.end()) ? numa_id_to_payload.at(a_numa_id) : 0.0;
-                double b_score = (numa_id_to_payload.find(b_numa_id) != numa_id_to_payload.end()) ? numa_id_to_payload.at(b_numa_id) : 0.0; 
+    if(fifo_prioritize_by_core_id == "yes")
+    {
+        // Prioritize cores associated with NUMA nodes that have the most data to read.
+        std::sort(avail_core_ids.begin(), avail_core_ids.end(),
+                [&](int a, int b) {
+                    int a_numa_id = get_hwloc_numa_id_by_core_id(this->common, a);
+                    int b_numa_id = get_hwloc_numa_id_by_core_id(this->common, b);
 
-                return a_score > b_score; 
-            });
+                    double a_score = (numa_id_to_payload.find(a_numa_id) != numa_id_to_payload.end()) ? numa_id_to_payload.at(a_numa_id) : 0.0;
+                    double b_score = (numa_id_to_payload.find(b_numa_id) != numa_id_to_payload.end()) ? numa_id_to_payload.at(b_numa_id) : 0.0; 
+
+                    return a_score > b_score; 
+                });
+    }
 
     for (int avail_core_id : avail_core_ids) {
         XBT_DEBUG("avail_core_id: %d, avail_core_until: %f", avail_core_id,
@@ -134,10 +141,17 @@ std::tuple<simgrid_exec_t *, int, double> FIFO_Scheduler::next()
 
     auto name_to_data_locality_score = this->get_data_locality_scores(ready_execs);
 
-    std::sort(ready_execs.begin(), ready_execs.end(), [&](simgrid_exec_t *a, simgrid_exec_t *b) {
-        return name_to_data_locality_score[a->get_name()] >
-               name_to_data_locality_score[b->get_name()]; // Higher score first
-    });
+    std::string fifo_prioritize_by_exec_order = common_get_scheduler_param(common, "fifo_prioritize_by_exec_order");
+    XBT_DEBUG("fifo_prioritize_by_exec_order: %s, enabled: %s", 
+        fifo_prioritize_by_exec_order.c_str(), (fifo_prioritize_by_exec_order == "yes") ? "true" : "false");
+
+    if(common_get_scheduler_param(common, "fifo_prioritize_by_exec_order") == "yes")
+    {
+        std::sort(ready_execs.begin(), ready_execs.end(), [&](simgrid_exec_t *a, simgrid_exec_t *b) {
+            return name_to_data_locality_score[a->get_name()] >
+                name_to_data_locality_score[b->get_name()]; // Higher score first
+        });
+    }
     
     // Append only new ready tasks to the queue
     std::unordered_set<simgrid_exec_t *> queue_set(this->queue.begin(), this->queue.end());
