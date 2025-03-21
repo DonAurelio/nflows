@@ -54,12 +54,12 @@ EVALUATION_LOG_DIR := $(EVALUATION_RESULT_DIR)/log
 EVALUATION_OUTPUT_DIR := $(EVALUATION_RESULT_DIR)/output
 EVALUATION_CONFIG_DIR := $(EVALUATION_RESULT_DIR)/config
 
-EVALUATION_REPEATS := 1
+EVALUATION_REPEATS := 2
 EVALUATION_WORKFLOWS := dis_16.dot
 EVALUATION_GROUPS := example
 EVALUATION_SLEEPTIME := 10
 
-ANALYSIS_WORKFLOWS := $(notdir $(shell find $(EVALUATION_OUTPUT_DIR) -mindepth 1 -maxdepth 1 -type d))
+ANALYSIS_WORKFLOWS := $(notdir $(shell find $(EVALUATION_OUTPUT_DIR) -mindepth 1 -maxdepth 1 -type d 2>/dev/null))
 ANALYSIS_REL_LATENCIES_FILE := $(EVALUATION_DIR)/system/non_uniform_lat_rel.txt
 
 # Default target
@@ -121,7 +121,7 @@ $(ANALYSIS_WORKFLOWS): %:
 		$(GENERATE_PROFILE) \
 			"$${output_yaml}" \
 			"$(ANALYSIS_REL_LATENCIES_FILE)" \
-			--export_csv "$${PROFILE_DIR}/$$(basename $${output_yaml} .yaml).csv" > "$${LOG_FILE}" 2>&1; \
+			--export_csv "$${PROFILE_DIR}/$$(basename $${output_yaml} .yaml).csv" >> "$${LOG_FILE}" 2>&1; \
 		PROFILE_STATUS=$$?; \
 		$(GENERATE_GANTT) \
 			"$${output_yaml}" \
@@ -131,5 +131,41 @@ $(ANALYSIS_WORKFLOWS): %:
 			echo "  [SUCCESS] Profile & Gantt: $$output_yaml"; \
 		else \
 			echo "  [FAILED] Profile & Gantt: $$output_yaml (Profile: $$PROFILE_STATUS, Gantt: $$GANTT_STATUS)"; \
+		fi; \
+	done
+
+	@for profiles_dir in $$(find $(EVALUATION_RESULT_DIR)/profile/$@/**/** -type d 2>/dev/null); do \
+		AGGREG_DIR=$$(dirname $${profiles_dir} | sed 's/profile/aggreg/'); \
+		AGGREG_FILE=$${AGGREG_DIR}/$$(basename $${profiles_dir}).csv; \
+		SUMMARY_DIR=$$(dirname $${profiles_dir} | sed 's/profile/summary/'); \
+		SUMMARY_FILE=$${SUMMARY_DIR}/$$(basename $${profiles_dir}).csv; \
+		LOG_DIR=$$(dirname $${profiles_dir} | sed 's/profile/log/'); \
+		LOG_FILE=$${LOG_DIR}/$$(basename $${profiles_dir}).log; \
+		mkdir -p $${AGGREG_DIR} $${SUMMARY_DIR} $${LOG_DIR}; \
+		$(GENERATE_AGGREG) \
+			"$${profiles_dir}" \
+			"$${SUMMARY_FILE}" \
+			"$${AGGREG_FILE}" >> "$${LOG_FILE}" 2>&1; \
+		AGGREG_STATUS=$$?; \
+		if [ $$AGGREG_STATUS -eq 0 ]; then \
+			echo "  [SUCCESS] Aggreg: $$profiles_dir"; \
+		else \
+			echo "  [FAILED] Aggreg: $$profiles_dir (Aggreg: $$AGGREG_STATUS)"; \
+		fi; \
+	done
+
+	@for aggreg_dir in $$(find $(EVALUATION_RESULT_DIR)/aggreg/$@/** -maxdepth 0 -type d 2>/dev/null); do \
+		FIGURE_DIR=$$(dirname $${aggreg_dir} | sed 's/aggreg/figure/'); \
+		LOG_DIR=$$(dirname $${aggreg_dir} | sed 's/aggreg/log/'); \
+		LOG_FILE=$${LOG_DIR}/$$(basename $${aggreg_dir}).log; \
+		mkdir -p $${FIGURE_DIR} $${LOG_DIR}; \
+		$(GENERATE_AGGREG_PLOT) \
+			"$${aggreg_dir}" \
+			"$${FIGURE_DIR}/$$(basename $${aggreg_dir}).png" >> "$${LOG_FILE}" 2>&1; \
+		PLOT_STATUS=$$?; \
+		if [ $$PLOT_STATUS -eq 0 ]; then \
+			echo "  [SUCCESS] Plot: $$aggreg_dir"; \
+		else \
+			echo "  [FAILED] Plot: $$aggreg_dir (Plot: $$PLOT_STATUS)"; \
 		fi; \
 	done
