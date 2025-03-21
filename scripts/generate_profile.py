@@ -13,10 +13,15 @@ import argparse
 
 from tabulate import tabulate
 from colorama import Fore, Style
+from functools import reduce
 
 def scale_time(value, unit):
     scale_factors = {'us': 1, 'ms': 1e3, 's': 1e6, 'min': 6e7}
     return float(value) / float(scale_factors[unit])
+
+def scale_payload(value, unit):
+    scale_factors = {'K': 1e3, 'M': 1e6, 'G': 1e9}
+    return float(value) / float(scale_factors.get(unit, 1))
 
 def process_accesses(data):
     # Extract relevant data
@@ -185,7 +190,18 @@ def compute_durations(data):
 def compute_makespan(data):
     return max(float(entry['end']) for entry in data['exec_name_total_offsets'].values())
 
-def print_profile(data, matrix_relative_latencies, time_unit):
+def compute_footprints(data):
+    read_payloads = [float(entry['payload']) for entry in data['comm_name_read_offsets'].values()]
+    write_payloads = [float(entry['payload']) for entry in data['comm_name_write_offsets'].values()]
+    compute_payloads = [float(entry['payload']) for entry in data['exec_name_compute_offsets'].values()]
+
+    read_footprint = reduce(lambda x, y: x + y, read_payloads)
+    write_footprint = reduce(lambda x, y: x + y, write_payloads)
+    compute_footprint = reduce(lambda x, y: x + y, compute_payloads)
+
+    return read_footprint, write_footprint, compute_footprint
+
+def print_profile(data, matrix_relative_latencies, time_unit, payload_unit=''):
     df = process_accesses(data)
 
     checksum = data.get("checksum", None)
@@ -205,12 +221,17 @@ def print_profile(data, matrix_relative_latencies, time_unit):
     read_time, write_time, compute_time, comp_to_comm_ratio, comm_to_comp_ratio = compute_durations(data)
     makespan = compute_makespan(data)
 
+    read_footprint, write_footprint, compute_footprint = compute_footprints(data)
+
     print(f"\n{Fore.CYAN}Workflow Execution Metrics:{Style.RESET_ALL}")
     print("")
     print(f"  {Fore.YELLOW}Total Read Time ({time_unit}):{Style.RESET_ALL} {scale_time(read_time, time_unit):.2f}")
     print(f"  {Fore.YELLOW}Total Write Time ({time_unit}):{Style.RESET_ALL} {scale_time(write_time, time_unit):.2f}")
     print(f"  {Fore.YELLOW}Total Compute Time ({time_unit}):{Style.RESET_ALL} {scale_time(compute_time, time_unit):.2f}")
-    print(f"  {Fore.YELLOW}Workflow Makespan ({time_unit}):{Style.RESET_ALL} {scale_time(makespan, time_unit):.2f}")
+    print(f"  {Fore.YELLOW}Workflow (makespan) ({time_unit}):{Style.RESET_ALL} {scale_time(makespan, time_unit):.2f}")
+    print(f"  {Fore.YELLOW}Workflow (read_footprint) ({payload_unit}Bytes):{Style.RESET_ALL} {scale_payload(read_footprint, payload_unit):.4f}")
+    print(f"  {Fore.YELLOW}Workflow (write_footprint) ({payload_unit}Bytes):{Style.RESET_ALL} {scale_payload(write_footprint, payload_unit):.4f}")
+    print(f"  {Fore.YELLOW}Workflow (compute_footprint) ({payload_unit}Flops):{Style.RESET_ALL} {scale_payload(compute_footprint, payload_unit):.4f}")
     print(f"  {Fore.YELLOW}Computation-to-Communication Ratio:{Style.RESET_ALL} {comp_to_comm_ratio:.2f}")
     print(f"  {Fore.YELLOW}Communication-to-Computation Ratio:{Style.RESET_ALL} {comm_to_comp_ratio:.2f}")
     print(f"  {Fore.YELLOW}Data Access Pattern Performance:{Style.RESET_ALL} {data_access_performance:.2f}")
@@ -245,7 +266,7 @@ def print_profile(data, matrix_relative_latencies, time_unit):
     table_str = tabulate(remote_accesses_percentage, tablefmt="grid", showindex=False)
     print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
 
-def save_csv(data, matrix_relative_latencies, time_unit, output_csv):
+def save_csv(data, matrix_relative_latencies, output_csv, time_unit, payload_unit=''):
     checksum = data.get("checksum", None)
     active_threads = data.get("active_threads", None)
 
@@ -258,6 +279,8 @@ def save_csv(data, matrix_relative_latencies, time_unit, output_csv):
 
     read_time, write_time, compute_time, comp_to_comm_ratio, comm_to_comp_ratio = compute_durations(data)
     makespan = compute_makespan(data)
+
+    read_footprint, write_footprint, compute_footprint = compute_footprints(data)
 
     matrix_total_accesses_none = aggregation_matrix(df, equal=None)
     access_pattern_performance = data_access_pattern_performance(
@@ -276,6 +299,9 @@ def save_csv(data, matrix_relative_latencies, time_unit, output_csv):
         f"total_write_time_{time_unit}": write_time,
         f"total_compute_time_{time_unit}": compute_time,
         f"workflow_makespan_{time_unit}": makespan,
+        f"read_footprint_{payload_unit.lower()}bytes": read_footprint,
+        f"write_footprint_{payload_unit.lower()}bytes": write_footprint,
+        f"compute_footprint_{payload_unit.lower()}flops": compute_footprint,
         "comp_to_comm_ratio": comp_to_comm_ratio,
         "comm_to_comp_ratio": comm_to_comp_ratio,
         "access_pattern_performance": access_pattern_performance,
@@ -290,6 +316,7 @@ if __name__ == "__main__":
     parser.add_argument("input_file", help="Path to input YAML profile file")
     parser.add_argument("input_file_rel_lat", help="Path to input TXT file with hwloc/numactl relative latencies")
     parser.add_argument("--time_unit", type=str, choices=['us', 'ms', 's', 'min'], default='us', help="Time unit for scaling.")
+    parser.add_argument("--payload_unit", type=str, choices=['K', 'M', 'G'], default='', help="Payload unit for scaling.")
     parser.add_argument("--export_csv", type=str, help="Path to export CSV file.", default=None)
     args = parser.parse_args()
 
@@ -301,6 +328,6 @@ if __name__ == "__main__":
         rel_lat_matrix = pd.DataFrame([list(map(float, file.readline().split())) for _ in range(dimension)])
 
     if args.export_csv:
-        save_csv(data, rel_lat_matrix, args.time_unit, args.export_csv)
+        save_csv(data, rel_lat_matrix, args.export_csv, args.time_unit, args.payload_unit)
     else:
-        print_profile(data, rel_lat_matrix, args.time_unit)
+        print_profile(data, rel_lat_matrix, args.time_unit, args.payload_unit)
