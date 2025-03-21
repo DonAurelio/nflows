@@ -1,6 +1,6 @@
 {
     "dag_file": "",
-    "scheduler_type": "heft",
+    "scheduler_type": "min_min",
     "mapper_type": "bare_metal",
     "mapper_mem_policy_type": "bind",
     "mapper_mem_bind_numa_node_id": 0,
@@ -11,8 +11,8 @@
     "clock_frequency_hz": 1000000000,
 
     "distance_matrices": {
-        "latency": "./eval/system/heft/1_lat.txt",
-        "bandwidth": "./eval/system/heft/1_bw.txt"
+        "latency": "./evaluation/system/uniform_lat.txt",
+        "bandwidth": "./evaluation/system/uniform_bw.txt"
     },
 
     "log_base_name": "",

@@ -1,10 +1,10 @@
 .vscode
-*.yml
 .env
-logs
+log
 output
 backups
-eval/config
+config
+results
 
 # Prerequisites
 *.d

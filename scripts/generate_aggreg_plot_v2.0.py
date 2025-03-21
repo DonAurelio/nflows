@@ -11,7 +11,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import argparse
-import pprint
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate a plot with aggregated data.")
@@ -58,8 +57,6 @@ if __name__ == "__main__":
                     data[size] = {}
                 data[size][category] = {"mean": float(mean_val), "std": float(std_val)}
 
-    pprint.pprint(data)
-
     # Extract sorted sizes and unique categories
     sizes = sorted(data.keys())
     categories = sorted({cat for size in data for cat in data[size]})
@@ -78,9 +75,6 @@ if __name__ == "__main__":
             else:
                 means.append(0)  # Placeholder for missing data
                 stds.append(0)
-
-    pprint.pprint(means)
-    pprint.pprint(stds)
 
     # Plot settings
     x = np.arange(len(bar_labels))  # X-axis positions
