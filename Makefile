@@ -44,8 +44,8 @@ EVALUATION_LOG_DIR := $(EVALUATION_RESULT_DIR)/log
 EVALUATION_OUTPUT_DIR := $(EVALUATION_RESULT_DIR)/output
 EVALUATION_CONFIG_DIR := $(EVALUATION_RESULT_DIR)/config
 
-EVALUATION_REPEATS := 2
-EVALUATION_WORKFLOWS := dis_16.dot
+EVALUATION_REPEATS := 5
+EVALUATION_WORKFLOWS := dis_16.dot mon_58.dot red_16.dot
 EVALUATION_GROUPS := example
 EVALUATION_SLEEPTIME := 10
 
@@ -60,6 +60,7 @@ ANALYSIS_FIELDS := \
 	active_threads \
 	total_accesses \
 	total_write_time_us \
+	total_read_time_us \
 	total_compute_time_us \
 	comp_to_comm_ratio \
 	comm_to_comp_ratio \
