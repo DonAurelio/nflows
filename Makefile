@@ -85,6 +85,10 @@ CLEAN_PATHS := \
 	$(TEST_OUTPUT_DIR) \
 	$(TEST_LOG_DIR)
 
+CLEAN_FILES := \
+	$(OBJECTS) \
+	$(EXECUTABLE)
+
 # Default target
 all: $(EXECUTABLE)
 
@@ -113,6 +117,7 @@ backup:
 
 .PHONY: clean
 clean: backup
+	@rm -f $(CLEAN_FILES)
 	@for dir in $(CLEAN_PATHS); do \
 		echo "Cleaning $$dir";\
 		[ -d $$dir ] && rm -rf $$dir/* && find $$dir -type d -empty -exec rmdir {} + || true; \
