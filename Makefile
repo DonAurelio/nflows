@@ -101,21 +101,20 @@ print-%:
 
 .PHONY: backup
 backup:
-	@echo "Creating backup..."
 	@mkdir -p $(BACKUP_DIR)
 	@BASE_NAME=$(shell date +"%Y%m%d_%H%M%S"); \
 	BACKUP_FILE=$(BACKUP_DIR)/$${BASE_NAME}.zip; \
 	LOG_FILE=$(BACKUP_DIR)/$${BASE_NAME}.log; \
 	if zip -r $$BACKUP_FILE $(BACKUP_DIRS) > $$LOG_FILE 2>&1; then \
-		echo "  [SUCCESS] Backup saved to $$BACKUP_FILE"; \
+		echo "Backup saved to $$BACKUP_FILE"; \
 	else \
-		echo "  [FAILED] Backup failed"; \
+		echo "Backup failed"; \
 	fi
 
 .PHONY: clean
 clean: backup
 	@for dir in $(CLEAN_PATHS); do \
-		echo "Cleaning $$dir..."
+		echo "Cleaning $$dir";\
 		[ -d $$dir ] && rm -rf $$dir/* && find $$dir -type d -empty -exec rmdir {} + || true; \
 	done
 
