@@ -150,7 +150,7 @@ def analyze_memory_migrations(df, migrations=None):
 
     return merged_df
 
-def data_access_pattern_performance(t_accesses_matrix, d_relatve_latencies):
+def data_access_pattern_performance(accesses_matrix, relatve_latencies):
     """
     Computes the NUMA metric based on the provided matrices.
     
@@ -162,12 +162,15 @@ def data_access_pattern_performance(t_accesses_matrix, d_relatve_latencies):
         float: The calculated NUMA metric.
     """
     # Step 2: Compute q_distance_matrix (d_distance_matrix with diagonal set to 0)
-    q_distance_matrix = d_relatve_latencies.copy()
+    q_distance_matrix = relatve_latencies.copy()
     np.fill_diagonal(q_distance_matrix.values, 0)
 
+    t_accesses_matrix = accesses_matrix.copy().reindex(index=q_distance_matrix.index, columns=q_distance_matrix.columns, fill_value=0)
+
     # Step 3: Compute T and Q
-    T = t_accesses_matrix.values.sum()  # Sum of elements in t_accesses_matrix
-    Q = q_distance_matrix.values.sum()  # Sum of elements in q_distance_matrix
+    # Ensure the matrices have the same shape
+    T = t_accesses_matrix.values.sum()
+    Q = q_distance_matrix.values.sum()
 
     # Step 4: Compute weighted_sum
     weighted_sum = (t_accesses_matrix * q_distance_matrix).values.sum()
