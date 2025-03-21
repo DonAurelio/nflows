@@ -1,7 +1,6 @@
 .vscode
-*.yml
 .env
-logs
+log
 output
 backups
 config

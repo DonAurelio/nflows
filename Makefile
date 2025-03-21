@@ -35,16 +35,6 @@ GENERATE_PROFILE := $(PYTHON_EXEC) $(SCRIPTS_DIR)/generate_profile.py
 GENERATE_AGGREG := $(PYTHON_EXEC) $(SCRIPTS_DIR)/generate_aggreg.py
 GENERATE_AGGREG_PLOT := $(PYTHON_EXEC) $(SCRIPTS_DIR)/generate_aggreg_plot_v3.0.py
 
-# Directories
-TEST_DIR := ./tests
-TEST_LOG_DIR := $(TEST_DIR)/logs
-TEST_CONFIG_DIR := $(TEST_DIR)/config
-TEST_OUTPUT_DIR := $(TEST_DIR)/output
-TEST_EXPECTED_DIR := $(TEST_DIR)/expected
-
-# Test Targets
-TEST_CASES := $(patsubst $(TEST_CONFIG_DIR)/%,%,$(wildcard $(TEST_CONFIG_DIR)/test_*))
-
 EVALUATION_DIR := ./evaluation
 EVALUATION_TEMPLATE_DIR := $(EVALUATION_DIR)/templates
 EVALUATION_WORKFLOW_DIR := $(EVALUATION_DIR)/workflows
@@ -74,6 +64,27 @@ ANALYSIS_FIELDS := \
 	comp_to_comm_ratio \
 	comm_to_comp_ratio
 
+# Directories
+TEST_DIR := ./tests
+TEST_CONFIG_DIR := $(TEST_DIR)/config
+TEST_EXPECTED_DIR := $(TEST_DIR)/expected
+
+TEST_LOG_DIR := $(TEST_DIR)/log
+TEST_OUTPUT_DIR := $(TEST_DIR)/output
+
+# Test Targets
+TEST_CASES := $(patsubst $(TEST_CONFIG_DIR)/%,%,$(wildcard $(TEST_CONFIG_DIR)/test_*))
+
+BACKUP_DIR := ./backups
+BACKUP_DIRS := \
+	$(EVALUATION_RESULT_DIR) \
+	$(EVALUATION_DIR)
+
+CLEAN_PATHS := \
+	$(EVALUATION_RESULT_DIR) \
+	$(TEST_OUTPUT_DIR) \
+	$(TEST_LOG_DIR)
+
 # Default target
 all: $(EXECUTABLE)
 
@@ -87,6 +98,46 @@ $(EXECUTABLE): $(OBJECTS)
 
 print-%:
 	@echo '$*=$($*)'
+
+.PHONY: backup
+backup:
+	@echo "Creating backup..."
+	@mkdir -p $(BACKUP_DIR)
+	@BASE_NAME=$(shell date +"%Y%m%d_%H%M%S"); \
+	BACKUP_FILE=$(BACKUP_DIR)/$${BASE_NAME}.zip; \
+	LOG_FILE=$(BACKUP_DIR)/$${BASE_NAME}.log; \
+	if zip -r $$BACKUP_FILE $(BACKUP_DIRS) > $$LOG_FILE 2>&1; then \
+		echo "  [SUCCESS] Backup saved to $$BACKUP_FILE"; \
+	else \
+		echo "  [FAILED] Backup failed"; \
+	fi
+
+.PHONY: clean
+clean: backup
+	@for dir in $(CLEAN_PATHS); do \
+		echo "Cleaning $$dir..."
+		[ -d $$dir ] && rm -rf $$dir/* && find $$dir -type d -empty -exec rmdir {} + || true; \
+	done
+
+# Run test cases
+.PHONY: $(TEST_CASES)
+$(TEST_CASES): %: $(EXECUTABLE)
+	@echo "Running test case: $@"
+	@mkdir -p "$(TEST_OUTPUT_DIR)/$@" "$(TEST_LOG_DIR)/$@"
+	@for config_file in $(wildcard $(TEST_CONFIG_DIR)/$@/*.json); do \
+		BASE_NAME=$$(basename $$config_file .json); \
+		LOG_FILE="$(TEST_LOG_DIR)/$@/$${BASE_NAME}.log"; \
+		OUTPUT_FILE="$(TEST_OUTPUT_DIR)/$@/$${BASE_NAME}.yaml"; \
+		EXPECTED_FILE="$(TEST_EXPECTED_DIR)/$@/$${BASE_NAME}.yaml"; \
+		./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) $$config_file > "$$LOG_FILE" 2>&1 && \
+		$(VALIDATE_OFFSETS) "$$OUTPUT_FILE" >> "$$LOG_FILE" 2>&1 && \
+		$(VALIDATE_OUTPUT) --check-order exec_name_total_offsets "$$OUTPUT_FILE" "$$EXPECTED_FILE" >> "$$LOG_FILE" 2>&1 && \
+		echo "  [SUCCESS] $$config_file" || \
+		echo "  [FAILED] $$config_file"; \
+	done
+
+.PHONY: test
+test: $(TEST_CASES)
 
 .PHONY: $(EVALUATION_WORKFLOWS)
 $(EVALUATION_WORKFLOWS): %: $(EXECUTABLE)
