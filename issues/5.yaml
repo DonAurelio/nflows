@@ -1,0 +1,233 @@
+checksum: 0
+active_threads: 0
+flops_per_cycle: 32
+clock_frequency_type: static
+clock_frequency_hz: 1e+09
+
+core_availability:
+  0: {avail_until: 2.95932e+06}
+  1: {avail_until: 2.95912e+06}
+  2: {avail_until: 2.95902e+06}
+  3: {avail_until: 2.95913e+06}
+  4: {avail_until: 2.9589e+06}
+  5: {avail_until: 2.96573e+06}
+  6: {avail_until: 2.95917e+06}
+  7: {avail_until: 2.95902e+06}
+  8: {avail_until: 2.95902e+06}
+  9: {avail_until: 2.95899e+06}
+  10: {avail_until: 2.96572e+06}
+  11: {avail_until: 2.9589e+06}
+  12: {avail_until: 2.95899e+06}
+  13: {avail_until: 2.95906e+06}
+  14: {avail_until: 2.95891e+06}
+  15: {avail_until: 2.96572e+06}
+
+distance_latency_ns:
+  - [67.9, 67.9]
+  - [67.9, 67.9]
+
+distance_bandwidth_gbs:
+  - [120875, 120875]
+  - [120875, 120875]
+
+numa_mappings_write:
+  Task_0->Task_16: {numa_ids: [0]}
+  Task_0->Task_2: {numa_ids: [0]}
+  Task_0->Task_3: {numa_ids: [0]}
+  Task_0->Task_5: {numa_ids: [0]}
+  Task_0->Task_14: {numa_ids: [0]}
+  Task_0->Task_8: {numa_ids: [0]}
+  Task_0->Task_4: {numa_ids: [0]}
+  Task_0->Task_7: {numa_ids: [0]}
+  Task_0->Task_6: {numa_ids: [0]}
+  Task_0->Task_10: {numa_ids: [0]}
+  Task_0->Task_15: {numa_ids: [0]}
+  Task_0->Task_9: {numa_ids: [0]}
+  Task_0->Task_11: {numa_ids: [0]}
+  Task_0->Task_1: {numa_ids: [0]}
+  Task_0->Task_12: {numa_ids: [0]}
+  Task_0->Task_13: {numa_ids: [0]}
+
+numa_mappings_read:
+  Task_0->Task_6: {numa_ids: [0]}
+  Task_0->Task_16: {numa_ids: [0]}
+  Task_0->Task_11: {numa_ids: [0]}
+  Task_0->Task_2: {numa_ids: [0]}
+  Task_0->Task_3: {numa_ids: [0]}
+  Task_0->Task_5: {numa_ids: [0]}
+  Task_0->Task_4: {numa_ids: [0]}
+  Task_0->Task_7: {numa_ids: [0]}
+  Task_0->Task_13: {numa_ids: [0]}
+  Task_0->Task_8: {numa_ids: [0]}
+  Task_0->Task_14: {numa_ids: [0]}
+  Task_0->Task_9: {numa_ids: [0]}
+  Task_0->Task_15: {numa_ids: [0]}
+  Task_0->Task_1: {numa_ids: [0]}
+  Task_0->Task_12: {numa_ids: [0]}
+  Task_0->Task_10: {numa_ids: [0]}
+
+name_to_thread_locality:
+  Task_16: {numa_id: 0, core_id: 15, voluntary_cs: 14, involuntary_cs: 3, core_migrations: 0}
+  Task_11: {numa_id: 0, core_id: 10, voluntary_cs: 39, involuntary_cs: 5, core_migrations: 0}
+  Task_0: {numa_id: 0, core_id: 0, voluntary_cs: 0, involuntary_cs: 39, core_migrations: 0}
+  Task_2: {numa_id: 0, core_id: 1, voluntary_cs: 76, involuntary_cs: 5, core_migrations: 0}
+  Task_10: {numa_id: 0, core_id: 9, voluntary_cs: 35, involuntary_cs: 5, core_migrations: 0}
+  Task_7: {numa_id: 0, core_id: 6, voluntary_cs: 52, involuntary_cs: 4, core_migrations: 0}
+  Task_14: {numa_id: 0, core_id: 13, voluntary_cs: 19, involuntary_cs: 6, core_migrations: 0}
+  Task_8: {numa_id: 0, core_id: 7, voluntary_cs: 42, involuntary_cs: 5, core_migrations: 0}
+  Task_3: {numa_id: 0, core_id: 2, voluntary_cs: 70, involuntary_cs: 7, core_migrations: 0}
+  Task_9: {numa_id: 0, core_id: 8, voluntary_cs: 39, involuntary_cs: 4, core_migrations: 0}
+  Task_1: {numa_id: 0, core_id: 0, voluntary_cs: 78, involuntary_cs: 4, core_migrations: 0}
+  Task_4: {numa_id: 0, core_id: 3, voluntary_cs: 63, involuntary_cs: 3, core_migrations: 0}
+  Task_12: {numa_id: 0, core_id: 11, voluntary_cs: 26, involuntary_cs: 4, core_migrations: 0}
+  Task_5: {numa_id: 0, core_id: 4, voluntary_cs: 72, involuntary_cs: 3, core_migrations: 0}
+  Task_6: {numa_id: 0, core_id: 5, voluntary_cs: 70, involuntary_cs: 4, core_migrations: 0}
+  Task_13: {numa_id: 0, core_id: 12, voluntary_cs: 25, involuntary_cs: 4, core_migrations: 0}
+  Task_15: {numa_id: 0, core_id: 14, voluntary_cs: 14, involuntary_cs: 4, core_migrations: 0}
+
+name_to_address:
+  Task_0->Task_16: {address: 0x7efe84a60010}
+  Task_0->Task_2: {address: 0x7f050994c010}
+  Task_0->Task_3: {address: 0x7f04925f2010}
+  Task_0->Task_5: {address: 0x7f03a3f3e010}
+  Task_0->Task_14: {address: 0x7eff73114010}
+  Task_0->Task_8: {address: 0x7f023e530010}
+  Task_0->Task_4: {address: 0x7f041b298010}
+  Task_0->Task_7: {address: 0x7f02b588a010}
+  Task_0->Task_6: {address: 0x7f032cbe4010}
+  Task_0->Task_10: {address: 0x7f014fe7c010}
+  Task_0->Task_15: {address: 0x7efefbdba010}
+  Task_0->Task_9: {address: 0x7f01c71d6010}
+  Task_0->Task_11: {address: 0x7f00d8b22010}
+  Task_0->Task_1: {address: 0x7f0580ca6010}
+  Task_0->Task_12: {address: 0x7f00617c8010}
+  Task_0->Task_13: {address: 0x7effea46e010}
+
+comm_name_read_timestamps:
+  Task_0->Task_6: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_16: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_11: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_2: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_3: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_5: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_4: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_7: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_13: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_8: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_14: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_9: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_15: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_1: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_12: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_10: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+
+comm_name_write_timestamps:
+  Task_0->Task_16: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_2: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_3: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_5: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_14: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_8: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_4: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_7: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_6: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_10: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_15: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_9: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_11: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_1: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_12: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+  Task_0->Task_13: {start: 1.74259e+15, end: 1.74259e+15, payload: 2e+09}
+
+exec_name_compute_timestamps:
+  Task_16: {start: 1.74259e+15, end: 1.74259e+15, payload: 1e+08}
+  Task_11: {start: 1.74259e+15, end: 1.74259e+15, payload: 1e+08}
+  Task_0: {start: 1.74259e+15, end: 1.74259e+15, payload: 1e+08}
+  Task_2: {start: 1.74259e+15, end: 1.74259e+15, payload: 1e+08}
+  Task_10: {start: 1.74259e+15, end: 1.74259e+15, payload: 1e+08}
+  Task_7: {start: 1.74259e+15, end: 1.74259e+15, payload: 1e+08}
+  Task_14: {start: 1.74259e+15, end: 1.74259e+15, payload: 1e+08}
+  Task_8: {start: 1.74259e+15, end: 1.74259e+15, payload: 1e+08}
+  Task_3: {start: 1.74259e+15, end: 1.74259e+15, payload: 1e+08}
+  Task_9: {start: 1.74259e+15, end: 1.74259e+15, payload: 1e+08}
+  Task_1: {start: 1.74259e+15, end: 1.74259e+15, payload: 1e+08}
+  Task_4: {start: 1.74259e+15, end: 1.74259e+15, payload: 1e+08}
+  Task_12: {start: 1.74259e+15, end: 1.74259e+15, payload: 1e+08}
+  Task_5: {start: 1.74259e+15, end: 1.74259e+15, payload: 1e+08}
+  Task_6: {start: 1.74259e+15, end: 1.74259e+15, payload: 1e+08}
+  Task_13: {start: 1.74259e+15, end: 1.74259e+15, payload: 1e+08}
+  Task_15: {start: 1.74259e+15, end: 1.74259e+15, payload: 1e+08}
+
+comm_name_read_offsets:
+  Task_0->Task_16: {start: 1.19024e+06, end: 2.68363e+06, payload: 2e+09}
+  Task_0->Task_11: {start: 1.19024e+06, end: 2.68358e+06, payload: 2e+09}
+  Task_0->Task_2: {start: 1.19024e+06, end: 2.67684e+06, payload: 2e+09}
+  Task_0->Task_1: {start: 1.19024e+06, end: 2.67707e+06, payload: 2e+09}
+  Task_0->Task_3: {start: 1.19024e+06, end: 2.67678e+06, payload: 2e+09}
+  Task_0->Task_5: {start: 1.19024e+06, end: 2.67668e+06, payload: 2e+09}
+  Task_0->Task_4: {start: 1.19024e+06, end: 2.67688e+06, payload: 2e+09}
+  Task_0->Task_7: {start: 1.19024e+06, end: 2.67697e+06, payload: 2e+09}
+  Task_0->Task_13: {start: 1.19024e+06, end: 2.6768e+06, payload: 2e+09}
+  Task_0->Task_8: {start: 1.19024e+06, end: 2.67678e+06, payload: 2e+09}
+  Task_0->Task_14: {start: 1.19024e+06, end: 2.67685e+06, payload: 2e+09}
+  Task_0->Task_10: {start: 1.19024e+06, end: 2.6768e+06, payload: 2e+09}
+  Task_0->Task_6: {start: 1.19024e+06, end: 2.68369e+06, payload: 2e+09}
+  Task_0->Task_9: {start: 1.19024e+06, end: 2.67682e+06, payload: 2e+09}
+  Task_0->Task_15: {start: 1.19024e+06, end: 2.6767e+06, payload: 2e+09}
+
+comm_name_write_offsets:
+  Task_0->Task_16: {start: 286534, end: 1.18676e+06, payload: 2e+09}
+  Task_0->Task_2: {start: 286534, end: 1.18672e+06, payload: 2e+09}
+  Task_0->Task_3: {start: 286534, end: 1.18718e+06, payload: 2e+09}
+  Task_0->Task_5: {start: 286534, end: 1.1863e+06, payload: 2e+09}
+  Task_0->Task_14: {start: 286534, end: 1.18681e+06, payload: 2e+09}
+  Task_0->Task_8: {start: 286534, end: 1.18684e+06, payload: 2e+09}
+  Task_0->Task_4: {start: 286534, end: 1.18631e+06, payload: 2e+09}
+  Task_0->Task_7: {start: 286534, end: 1.18752e+06, payload: 2e+09}
+  Task_0->Task_6: {start: 286534, end: 1.18715e+06, payload: 2e+09}
+  Task_0->Task_10: {start: 286534, end: 1.1881e+06, payload: 2e+09}
+  Task_0->Task_15: {start: 286534, end: 1.18619e+06, payload: 2e+09}
+  Task_0->Task_9: {start: 286534, end: 1.18725e+06, payload: 2e+09}
+  Task_0->Task_11: {start: 286534, end: 1.18788e+06, payload: 2e+09}
+  Task_0->Task_1: {start: 286534, end: 1.19024e+06, payload: 2e+09}
+  Task_0->Task_12: {start: 286534, end: 1.18786e+06, payload: 2e+09}
+  Task_0->Task_13: {start: 286534, end: 1.18765e+06, payload: 2e+09}
+
+exec_name_compute_offsets:
+  Task_16: {start: 2.68363e+06, end: 2.96572e+06, payload: 1e+08}
+  Task_11: {start: 2.68358e+06, end: 2.96572e+06, payload: 1e+08}
+  Task_0: {start: 0, end: 286534, payload: 1e+08}
+  Task_2: {start: 2.67684e+06, end: 2.95912e+06, payload: 1e+08}
+  Task_10: {start: 2.6768e+06, end: 2.95899e+06, payload: 1e+08}
+  Task_7: {start: 2.67697e+06, end: 2.95917e+06, payload: 1e+08}
+  Task_14: {start: 2.67685e+06, end: 2.95906e+06, payload: 1e+08}
+  Task_8: {start: 2.67678e+06, end: 2.95902e+06, payload: 1e+08}
+  Task_3: {start: 2.67678e+06, end: 2.95902e+06, payload: 1e+08}
+  Task_9: {start: 2.67682e+06, end: 2.95902e+06, payload: 1e+08}
+  Task_1: {start: 2.67707e+06, end: 2.95932e+06, payload: 1e+08}
+  Task_4: {start: 2.67688e+06, end: 2.95913e+06, payload: 1e+08}
+  Task_12: {start: 2.6767e+06, end: 2.9589e+06, payload: 1e+08}
+  Task_5: {start: 2.67668e+06, end: 2.9589e+06, payload: 1e+08}
+  Task_6: {start: 2.68369e+06, end: 2.96573e+06, payload: 1e+08}
+  Task_13: {start: 2.6768e+06, end: 2.95899e+06, payload: 1e+08}
+  Task_15: {start: 2.6767e+06, end: 2.95891e+06, payload: 1e+08}
+
+exec_name_total_offsets:
+  Task_16: {start: 1.19024e+06, end: 2.96572e+06, payload: 1e+08}
+  Task_11: {start: 1.19024e+06, end: 2.96572e+06, payload: 1e+08}
+  Task_0: {start: 0, end: 1.19024e+06, payload: 1e+08}
+  Task_2: {start: 1.19024e+06, end: 2.95912e+06, payload: 1e+08}
+  Task_10: {start: 1.19024e+06, end: 2.95899e+06, payload: 1e+08}
+  Task_7: {start: 1.19024e+06, end: 2.95917e+06, payload: 1e+08}
+  Task_14: {start: 1.19024e+06, end: 2.95906e+06, payload: 1e+08}
+  Task_8: {start: 1.19024e+06, end: 2.95902e+06, payload: 1e+08}
+  Task_3: {start: 1.19024e+06, end: 2.95902e+06, payload: 1e+08}
+  Task_9: {start: 1.19024e+06, end: 2.95902e+06, payload: 1e+08}
+  Task_1: {start: 1.19024e+06, end: 2.95932e+06, payload: 1e+08}
+  Task_4: {start: 1.19024e+06, end: 2.95913e+06, payload: 1e+08}
+  Task_12: {start: 1.19024e+06, end: 2.9589e+06, payload: 1e+08}
+  Task_5: {start: 1.19024e+06, end: 2.9589e+06, payload: 1e+08}
+  Task_6: {start: 1.19024e+06, end: 2.96573e+06, payload: 1e+08}
+  Task_13: {start: 1.19024e+06, end: 2.95899e+06, payload: 1e+08}
+  Task_15: {start: 1.19024e+06, end: 2.95891e+06, payload: 1e+08}
+
