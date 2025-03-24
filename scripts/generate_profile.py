@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-@authors: ChatGPT
+@authors: ChatGPT, DeepSeek
 @edited_by: Aurelio Vivas
 @promt:
 """
@@ -13,7 +13,6 @@ import argparse
 
 from tabulate import tabulate
 from colorama import Fore, Style
-from functools import reduce
 
 def scale_time(value, unit):
     scale_factors = {'us': 1, 'ms': 1e3, 's': 1e6, 'min': 6e7}
@@ -23,81 +22,7 @@ def scale_payload(value, unit):
     scale_factors = {'K': 1e3, 'M': 1e6, 'G': 1e9}
     return float(value) / float(scale_factors.get(unit, 1))
 
-def process_accesses(data):
-    # Extract relevant data
-    name_to_thread_locality = data["name_to_thread_locality"]
-    numa_mappings_write = data["numa_mappings_write"]
-    numa_mappings_read = data["numa_mappings_read"]
-
-    # Initialize an empty list to store rows for the DataFrame
-    rows = []
-
-    # Helper function to process operations
-    def process_access(data_item, task_name, cpu_node, mem_nodes, core_id, access_type):
-        for mem_node in mem_nodes:
-            rows.append([data_item, task_name, cpu_node, mem_node, core_id, access_type])
-
-    # Process write access operations from numa_mappings_write
-    for comm_name, mapping in numa_mappings_write.items():
-        mem_nodes = mapping["numa_ids"]
-        for task_name, locality in name_to_thread_locality.items():
-            cpu_node = locality["numa_id"]
-            core_id = locality["core_id"]
-            if task_name in comm_name:
-                if comm_name.split("->")[0] == task_name:  # Write access (task_name on the left)
-                    process_access(comm_name, task_name, cpu_node, mem_nodes, core_id, "write")
-
-    # Process read access operations from numa_mappings_read
-    for comm_name, mapping in numa_mappings_read.items():
-        mem_nodes = mapping["numa_ids"]
-        for task_name, locality in name_to_thread_locality.items():
-            cpu_node = locality["numa_id"]
-            core_id = locality["core_id"]
-            if task_name in comm_name:
-                if comm_name.split("->")[1] == task_name:  # Read access (task_name on the right)
-                    process_access(comm_name, task_name, cpu_node, mem_nodes, core_id, "read")
-
-    # Create a DataFrame
-    return pd.DataFrame(rows, columns=["data_item", "task_name", "cpu_node", "mem_node", "core_id", "access_type"])
-
-def aggregation_matrix(df, equal=None):
-    """
-    Creates a matrix aggregating counts based on cpu_node vs mem_node.
-    
-    Parameters:
-        df (pd.DataFrame): The input DataFrame containing 'cpu_node' and 'mem_node' columns.
-        equal (bool or None): 
-            - If True, aggregate where cpu_node == mem_node.
-            - If False, aggregate where cpu_node != mem_node.
-            - If None, aggregate all rows regardless of equality.
-    
-    Returns:
-        pd.DataFrame: A matrix with aggregated counts (cpu_node vs mem_node).
-    """
-    # Ensure cpu_node and mem_node are treated as integers for matrix aggregation
-    df['cpu_node'] = df['cpu_node'].astype(int)
-    df['mem_node'] = df['mem_node'].astype(int)
-    
-    # Apply filtering based on the equality parameter
-    if equal is True:
-        filtered_df = df[df['cpu_node'] == df['mem_node']]
-    elif equal is False:
-        filtered_df = df[df['cpu_node'] != df['mem_node']]
-    else:  # equal is None
-        filtered_df = df
-    
-    # Create a pivot table for the matrix (cpu_node vs mem_node)
-    matrix = filtered_df.pivot_table(
-        index='cpu_node',
-        columns='mem_node',
-        values='task_name',
-        aggfunc='count',
-        fill_value=0
-    )
-    
-    return matrix
-
-def machine_average_numa_factor(data):
+def get_machine_average_numa_factor(data):
     """
     Computes the average NUMA factor (ratio of remote to local memory access latency)
     for matrices of size n x n.
@@ -125,13 +50,85 @@ def machine_average_numa_factor(data):
 
     return average_numa_factor
 
-def analyze_memory_migrations(df, migrations=None):
+def get_data_access_profile(data):
+    name_to_thread_locality = data["name_to_thread_locality"]
+    numa_mappings_write = data["numa_mappings_write"]
+    numa_mappings_read = data["numa_mappings_read"]
+
+    rows = []
+
+    # Helper function to process data spred across multiple NUMA nodes.
+    def process_access(data_item, task_name, cpu_node, mem_nodes, core_id, access_type):
+        for mem_node in mem_nodes:
+            rows.append([data_item, task_name, cpu_node, mem_node, core_id, access_type])
+
+    # Process write access operations from numa_mappings_write
+    for comm_name, mapping in numa_mappings_write.items():
+        mem_nodes = mapping["numa_ids"]
+        for task_name, locality in name_to_thread_locality.items():
+            cpu_node = locality["numa_id"]
+            core_id = locality["core_id"]
+            if task_name in comm_name:
+                if comm_name.split("->")[0] == task_name:  # Write access (task_name on the left)
+                    process_access(comm_name, task_name, cpu_node, mem_nodes, core_id, "write")
+
+    # Process read access operations from numa_mappings_read
+    for comm_name, mapping in numa_mappings_read.items():
+        mem_nodes = mapping["numa_ids"]
+        for task_name, locality in name_to_thread_locality.items():
+            cpu_node = locality["numa_id"]
+            core_id = locality["core_id"]
+            if task_name in comm_name:
+                if comm_name.split("->")[1] == task_name:  # Read access (task_name on the right)
+                    process_access(comm_name, task_name, cpu_node, mem_nodes, core_id, "read")
+
+    # Create a DataFrame
+    return pd.DataFrame(rows, columns=["data_item", "task_name", "cpu_node", "mem_node", "core_id", "access_type"])
+
+def get_aggregation_matrix(df_profile, equal=None):
+    """
+    Creates a matrix aggregating counts based on cpu_node vs mem_node.
+    
+    Parameters:
+        df_profile (pd.DataFrame): The input DataFrame containing 'cpu_node' and 'mem_node' columns.
+        equal (bool or None): 
+            - If True, aggregate where cpu_node == mem_node.
+            - If False, aggregate where cpu_node != mem_node.
+            - If None, aggregate all rows regardless of equality.
+    
+    Returns:
+        pd.DataFrame: A matrix with aggregated counts (cpu_node vs mem_node).
+    """
+    # Ensure cpu_node and mem_node are treated as integers for matrix aggregation
+    df_profile['cpu_node'] = df_profile['cpu_node'].astype(int)
+    df_profile['mem_node'] = df_profile['mem_node'].astype(int)
+    
+    # Apply filtering based on the equality parameter
+    if equal is True:
+        filtered_df = df_profile[df_profile['cpu_node'] == df_profile['mem_node']]
+    elif equal is False:
+        filtered_df = df_profile[df_profile['cpu_node'] != df_profile['mem_node']]
+    else:  # equal is None
+        filtered_df = df_profile
+    
+    # Create a pivot table for the matrix (cpu_node vs mem_node)
+    matrix = filtered_df.pivot_table(
+        index='cpu_node',
+        columns='mem_node',
+        values='task_name',
+        aggfunc='count',
+        fill_value=0
+    )
+    
+    return matrix
+
+def get_memory_migrations_profile(df_profile, migrations=None):
     # Step 1: Create the 'writings' dataframe
-    writings = df[df['access_type'] == 'write'][['data_item', 'mem_node']]
+    writings = df_profile[df_profile['access_type'] == 'write'][['data_item', 'mem_node']]
     writings = writings.groupby('data_item')['mem_node'].apply(lambda x: ','.join(map(str, x))).reset_index()
 
     # Step 2: Create the 'readings' dataframe
-    readings = df[df['access_type'] == 'read'][['data_item', 'mem_node']]
+    readings = df_profile[df_profile['access_type'] == 'read'][['data_item', 'mem_node']]
     readings = readings.groupby('data_item')['mem_node'].apply(lambda x: ','.join(map(str, x))).reset_index()
 
     # Step 3: Compare 'mem_node' in 'writings' and 'readings'
@@ -150,7 +147,7 @@ def analyze_memory_migrations(df, migrations=None):
 
     return merged_df
 
-def data_access_pattern_performance(accesses_matrix, relatve_latencies):
+def compute_data_access_pattern_performance(accesses_matrix, relatve_latencies):
     """
     Computes the NUMA metric based on the provided matrices.
     
@@ -180,144 +177,282 @@ def data_access_pattern_performance(accesses_matrix, relatve_latencies):
 
     return numa_metric
 
-def compute_durations(data):
-    read_time = sum(float(entry['end']) - float(entry['start']) for entry in data['comm_name_read_offsets'].values())
-    write_time = sum(float(entry['end']) - float(entry['start']) for entry in data['comm_name_write_offsets'].values())
-    compute_time = sum(float(entry['end']) - float(entry['start']) for entry in data['exec_name_compute_offsets'].values())
+def compute_durations(data, df_profile, time_unit):
+    """
+    Computes local and remote read/write times based on the access patterns.
     
-    comp_to_comm_ratio = compute_time / (read_time + write_time) if (read_time + write_time) > 0 else float('inf')
-    comm_to_comp_ratio = (read_time + write_time) / compute_time if compute_time > 0 else float('inf')
+    Parameters:
+        data (dict): The input data containing the access offsets.
+        df_profile (pd.DataFrame): The DataFrame containing the access patterns.
+        
+    Returns:
+        dict: .
+    """
+    # Initialize local and remote times
+    read_time_local = 0.0
+    read_time_remote = 0.0
+    read_time_total = 0.0
+    write_time_local = 0.0
+    write_time_remote = 0.0
+    write_time_total = 0.0
+    compute_time_total = 0.0
+
+    # Filter local and remote accesses
+    local_accesses = df_profile[df_profile['cpu_node'] == df_profile['mem_node']]
+    remote_accesses = df_profile[df_profile['cpu_node'] != df_profile['mem_node']]
+
+    # Compute local and remote read times
+    read_time_local = sum(
+        float(data['comm_name_read_offsets'][f"{row['data_item']}"]['end']) -
+        float(data['comm_name_read_offsets'][f"{row['data_item']}"]['start'])
+        for _, row in local_accesses[local_accesses['access_type'] == 'read'].iterrows()
+    )
+
+    read_time_remote = sum(
+        float(data['comm_name_read_offsets'][f"{row['data_item']}"]['end']) -
+        float(data['comm_name_read_offsets'][f"{row['data_item']}"]['start'])
+        for _, row in remote_accesses[remote_accesses['access_type'] == 'read'].iterrows()
+    )
+
+    read_time_total = sum(float(entry['end']) - float(entry['start']) for entry in data['comm_name_read_offsets'].values())
+
+    # Compute local and remote write times
+    write_time_local = sum(
+        float(data['comm_name_write_offsets'][f"{row['data_item']}"]['end']) -
+        float(data['comm_name_write_offsets'][f"{row['data_item']}"]['start'])
+        for _, row in local_accesses[local_accesses['access_type'] == 'write'].iterrows()
+    )
+
+    write_time_remote = sum(
+        float(data['comm_name_write_offsets'][f"{row['data_item']}"]['end']) -
+        float(data['comm_name_write_offsets'][f"{row['data_item']}"]['start'])
+        for _, row in remote_accesses[remote_accesses['access_type'] == 'write'].iterrows()
+    )
+
+    write_time_total = sum(float(entry['end']) - float(entry['start']) for entry in data['comm_name_write_offsets'].values())
+
+    # Compute total compute time
+    compute_time_total = sum(float(entry['end']) - float(entry['start']) for entry in data['exec_name_compute_offsets'].values())
+
+    makespan = max(float(entry['end']) for entry in data['exec_name_total_offsets'].values())
+
+    return {
+        "makespan": scale_time(makespan, time_unit),
+        "read_time_local": scale_time(read_time_local, time_unit),
+        "read_time_remote": scale_time(read_time_remote, time_unit),
+        "read_time_total": scale_time(read_time_total, time_unit),
+        "write_time_local": scale_time(write_time_local, time_unit),
+        "write_time_remote": scale_time(write_time_remote, time_unit),
+        "write_time_total": scale_time(write_time_total, time_unit),
+        "compute_time_total": scale_time(compute_time_total, time_unit),
+    }
+
+def compute_payloads(data, df_profile, payload_unit):
+    """
+    Computes local and remote read/write times based on the access patterns.
     
-    return read_time, write_time, compute_time, comp_to_comm_ratio, comm_to_comp_ratio
+    Parameters:
+        data (dict): The input data containing the access offsets.
+        df_profile (pd.DataFrame): The DataFrame containing the access patterns.
+        
+    Returns:
+        dict: .
+    """
+    # Initialize local and remote times
+    read_payload_local = 0.0
+    read_payload_remote = 0.0
+    read_payload_total = 0.0
+    write_payload_local = 0.0
+    write_payload_remote = 0.0
+    write_payload_total = 0.0
+    accesses_payload_total = 0.0
+    compute_payload_total = 0.0
 
-def compute_makespan(data):
-    return max(float(entry['end']) for entry in data['exec_name_total_offsets'].values())
+    # Filter local and remote accesses
+    local_accesses = df_profile[df_profile['cpu_node'] == df_profile['mem_node']]
+    remote_accesses = df_profile[df_profile['cpu_node'] != df_profile['mem_node']]
 
-def compute_footprints(data):
-    read_payloads = [float(entry['payload']) for entry in data['comm_name_read_offsets'].values()]
-    write_payloads = [float(entry['payload']) for entry in data['comm_name_write_offsets'].values()]
-    compute_payloads = [float(entry['payload']) for entry in data['exec_name_compute_offsets'].values()]
+    # Compute local and remote read times
+    read_payload_local = sum(
+        float(data['comm_name_read_offsets'][f"{row['data_item']}"]['payload'])
+        for _, row in local_accesses[local_accesses['access_type'] == 'read'].iterrows()
+    )
 
-    read_footprint = reduce(lambda x, y: x + y, read_payloads)
-    write_footprint = reduce(lambda x, y: x + y, write_payloads)
-    compute_footprint = reduce(lambda x, y: x + y, compute_payloads)
+    read_payload_remote = sum(
+        float(data['comm_name_read_offsets'][f"{row['data_item']}"]['payload'])
+        for _, row in remote_accesses[remote_accesses['access_type'] == 'read'].iterrows()
+    )
 
-    return read_footprint, write_footprint, compute_footprint
+    read_payload_total = sum(float(entry['payload']) for entry in data['comm_name_read_offsets'].values())
 
-def print_profile(data, matrix_relative_latencies, time_unit, payload_unit=''):
-    df = process_accesses(data)
+    # Compute local and remote write times
+    write_payload_local = sum(
+        float(data['comm_name_write_offsets'][f"{row['data_item']}"]['payload'])
+        for _, row in local_accesses[local_accesses['access_type'] == 'write'].iterrows()
+    )
 
-    checksum = data.get("checksum", None)
-    active_threads = data.get("active_threads", None)
+    write_payload_remote = sum(
+        float(data['comm_name_write_offsets'][f"{row['data_item']}"]['payload'])
+        for _, row in remote_accesses[remote_accesses['access_type'] == 'write'].iterrows()
+    )
 
-    print(f"{Fore.CYAN}System Validation Flags:{Style.RESET_ALL}")
+    write_payload_total = sum(float(entry['payload']) for entry in data['comm_name_write_offsets'].values())
+
+    # Access payload total
+    accesses_payload_total = read_payload_total + write_payload_total
+
+    # Compute total compute time
+    compute_payload_total = sum(float(entry['payload']) for entry in data['exec_name_compute_offsets'].values())
+
+    return {
+        "read_payload_local": scale_payload(read_payload_local, payload_unit),
+        "read_payload_remote": scale_payload(read_payload_remote, payload_unit),
+        "read_payload_total": scale_payload(read_payload_total, payload_unit),
+        "write_payload_local": scale_payload(write_payload_local, payload_unit),
+        "write_payload_remote": scale_payload(write_payload_remote, payload_unit),
+        "write_payload_total": scale_payload(write_payload_total, payload_unit),
+        "accesses_payload_total": scale_payload(accesses_payload_total, payload_unit),
+        "compute_payload_total": scale_payload(compute_payload_total, payload_unit),
+    }
+
+def compute_accesses(df_profile):
+    # Initialize local and remote times
+    read_accesses_local = 0.0
+    read_accesses_remote = 0.0
+    read_accesses_total = 0.0
+    write_accesses_local = 0.0
+    write_accesses_remote = 0.0
+    write_accesses_total = 0.0
+    accesses_total = 0.0
+
+    # Filter local and remote accesses
+    local_accesses = df_profile[df_profile['cpu_node'] == df_profile['mem_node']]
+    remote_accesses = df_profile[df_profile['cpu_node'] != df_profile['mem_node']]
+
+    # Compute local and remote read times
+    read_accesses_local = len(local_accesses[local_accesses['access_type'] == 'read'])
+    read_accesses_remote = len(remote_accesses[remote_accesses['access_type'] == 'read'])
+    read_accesses_total = len(df_profile[df_profile['access_type'] == 'read'])
+
+    write_accesses_local= len(local_accesses[local_accesses['access_type'] == 'write'])
+    write_accesses_remote = len(remote_accesses[remote_accesses['access_type'] == 'write'])
+    write_accesses_total = len(df_profile[df_profile['access_type'] == 'write'])
+
+    accesses_total = len(df_profile)
+
+    return {
+        "read_accesses_local": read_accesses_local,
+        "read_accesses_remote": read_accesses_remote,
+        "read_accesses_total": read_accesses_total,
+        "write_accesses_local": write_accesses_local,
+        "write_accesses_remote": write_accesses_remote,
+        "write_accesses_total": write_accesses_total,
+        "accesses_total": accesses_total,
+    }
+
+def print_dict(data, title):
+    print(f"\n{Fore.CYAN}{title.replace('_', ' ').title()}{Style.RESET_ALL}")
+    for key, value in data.items():
+        if isinstance(value, str):
+            print(f"  {Fore.YELLOW}{key}:{Style.RESET_ALL} {value}")
+        else:
+            print(f"  {Fore.YELLOW}{key}:{Style.RESET_ALL} {value:.4f}")
+
+def print_df(data, title):
+    print(f"\n{Fore.CYAN}{title.replace('_', ' ').title()}:{Fore.YELLOW} {eval(data[2])}{Style.RESET_ALL}")
+    table_str = tabulate(data[0], headers=data[1], tablefmt="grid", showindex=True)
+    print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
+
+def print_profile(data, matrix_relative_latencies, time_unit, payload_unit, export_csv):
+    df_profile = get_data_access_profile(data)
+    durations = compute_durations(data, df_profile, time_unit)
+    payloads = compute_payloads(data, df_profile, payload_unit)
+    accesses = compute_accesses(df_profile)
+
+    matrix_accesses_total = get_aggregation_matrix(df_profile, equal=None)
+
+    matrix_memory_pages_migrations = get_memory_migrations_profile(df_profile, migrations=True)
+    
+    data_access_pattern_performance = compute_data_access_pattern_performance(
+        matrix_accesses_total, matrix_relative_latencies) if not matrix_relative_latencies.empty else -1
+
+    df_output_profile = df_profile[["task_name", "core_id", "cpu_node", "mem_node", "data_item", "access_type"]]
+
+    system = {
+        "pages_migrations": len(matrix_memory_pages_migrations)
+    }
+
+    runtime = {
+        "checksum": data.get("checksum", None),
+        "threads": data.get("active_threads", None),
+    }
+
+    profile = {
+        "time_unit": time_unit,
+        "data_payload_unit": f"{payload_unit}bytes",
+        "compute_payload_unit": f"{payload_unit}flops",
+    }
+
+    machine = {
+        "numa_factor": get_machine_average_numa_factor(data),
+    }
+
+    ratios = {
+        "comp_to_comm": durations["compute_time_total"] / (durations["read_time_total"] + durations["write_time_total"]),
+        "comm_to_comp": (durations["read_time_total"] + durations["write_time_total"]) / durations["compute_time_total"],
+    }
+
+    metrics = {
+        "numa_awareness": data_access_pattern_performance
+    }
+
+    output_scalars = {
+        "system": system,
+        "runtime": runtime,
+        "machine": machine,
+        "profile": profile,
+        "metrics": metrics,
+        "durations": durations,
+        "payloads": payloads,
+        "accesses": accesses,
+        "ratios": ratios,
+    }
+
+    # Ensure the total matrix is square by reindexing
+    matrix_accesses_total = matrix_accesses_total.reindex(index=matrix_accesses_total.index, columns=matrix_accesses_total.index, fill_value=0)
+    matrix_accesses_total_percent = matrix_accesses_total / matrix_accesses_total.values.sum()
+
+    # Prepare output matrices for printing
+    output_matrices = {
+        "accesses_compact_profile": (df_output_profile, df_output_profile.columns, 'data[0].shape[0]'),
+        "matrix_memory_pages_migrations": (matrix_memory_pages_migrations, matrix_memory_pages_migrations.columns, 'data[0].shape[0]'),
+        "matrix_accesses_total": (matrix_accesses_total, matrix_accesses_total.columns, 'data[0].sum().sum()'),
+        "matrix_accesses_total_percent": (matrix_accesses_total_percent, matrix_accesses_total_percent.columns, 'data[0].sum().sum()'),
+    }
+
+    if export_csv:
+        output_data = {
+            **system, **runtime, **machine, **ratios, 
+            **metrics, **durations, **payloads, **accesses
+        }
+
+        output_series = pd.Series(output_data)
+        output_series.to_csv(export_csv, header=False)
+        print(f"Profile exported: {export_csv}")
+
+        return
+
+    for key, value in output_scalars.items():
+        print_dict(value, key)
+
+    for key, value in output_matrices.items():
+        print_df(value, key)
     print("")
-    print(f"  {Fore.YELLOW}Checksum:{Style.RESET_ALL} {checksum}")
-    print(f"  {Fore.YELLOW}Active Threads:{Style.RESET_ALL} {active_threads}")
-
-    average_numa_factor = machine_average_numa_factor(data)
-    print(f"\n{Fore.CYAN}Machine AVG NUMA Factor: {Fore.YELLOW}{average_numa_factor:.2f}{Style.RESET_ALL}")
-
-    matrix_total_accesses_none = aggregation_matrix(df, equal=None)
-    data_access_performance = data_access_pattern_performance(matrix_total_accesses_none, matrix_relative_latencies)
-
-    read_time, write_time, compute_time, comp_to_comm_ratio, comm_to_comp_ratio = compute_durations(data)
-    makespan = compute_makespan(data)
-
-    read_footprint, write_footprint, compute_footprint = compute_footprints(data)
-
-    print(f"\n{Fore.CYAN}Workflow Execution Metrics:{Style.RESET_ALL}")
-    print("")
-    print(f"  {Fore.YELLOW}Total Read Time ({time_unit}):{Style.RESET_ALL} {scale_time(read_time, time_unit):.2f}")
-    print(f"  {Fore.YELLOW}Total Write Time ({time_unit}):{Style.RESET_ALL} {scale_time(write_time, time_unit):.2f}")
-    print(f"  {Fore.YELLOW}Total Compute Time ({time_unit}):{Style.RESET_ALL} {scale_time(compute_time, time_unit):.2f}")
-    print(f"  {Fore.YELLOW}Workflow (makespan) ({time_unit}):{Style.RESET_ALL} {scale_time(makespan, time_unit):.2f}")
-    print(f"  {Fore.YELLOW}Workflow (read_footprint) ({payload_unit}Bytes):{Style.RESET_ALL} {scale_payload(read_footprint, payload_unit):.4f}")
-    print(f"  {Fore.YELLOW}Workflow (write_footprint) ({payload_unit}Bytes):{Style.RESET_ALL} {scale_payload(write_footprint, payload_unit):.4f}")
-    print(f"  {Fore.YELLOW}Workflow (compute_footprint) ({payload_unit}Flops):{Style.RESET_ALL} {scale_payload(compute_footprint, payload_unit):.4f}")
-    print(f"  {Fore.YELLOW}Computation-to-Communication Ratio:{Style.RESET_ALL} {comp_to_comm_ratio:.2f}")
-    print(f"  {Fore.YELLOW}Communication-to-Computation Ratio:{Style.RESET_ALL} {comm_to_comp_ratio:.2f}")
-    print(f"  {Fore.YELLOW}Data Access Pattern Performance:{Style.RESET_ALL} {data_access_performance:.2f}")
-
-    total_accesses = matrix_total_accesses_none.values.sum()
-    print(f"\n{Fore.CYAN}Data Access Pattern: {Fore.YELLOW}{total_accesses.sum():.2f}{Fore.CYAN} accesses.{Style.RESET_ALL}")
-    table_str = tabulate(df[["task_name", "core_id", "cpu_node", "mem_node", "data_item", "access_type"]], headers="keys", tablefmt="grid", showindex=False)
-    print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
-
-    memory_migrations = analyze_memory_migrations(df, migrations=True)
-    print(f"\n{Fore.CYAN}Memory Migrations: {Fore.YELLOW}{len(memory_migrations)}{Fore.CYAN} migrations.{Style.RESET_ALL}")
-    table_str = tabulate(memory_migrations[["data_item", "mem_node_write", "mem_node_read"]], headers="keys", tablefmt="grid", showindex=False)
-    print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
-
-    matrix_local_accesses_equal = aggregation_matrix(df, equal=True)
-    print(f"\n{Fore.GREEN}Local Accesses: {Fore.YELLOW}{matrix_local_accesses_equal.sum().sum()}{Style.RESET_ALL}")
-    table_str = tabulate(matrix_local_accesses_equal, tablefmt="grid", showindex=False)
-    print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
-
-    local_accesses_percentage = matrix_local_accesses_equal / total_accesses
-    print(f"\n{Fore.GREEN}Local Accesses (%): {Fore.YELLOW}{local_accesses_percentage.sum().sum() * 100:.2f}%{Style.RESET_ALL}")
-    table_str = tabulate(local_accesses_percentage, tablefmt="grid", showindex=False)
-    print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
-
-    matrix_remote_accesses_different = aggregation_matrix(df, equal=False)
-    print(f"\n{Fore.BLUE}Remote Accesses: {Fore.YELLOW}{matrix_remote_accesses_different.sum().sum()}{Style.RESET_ALL}")
-    table_str = tabulate(matrix_remote_accesses_different, tablefmt="grid", showindex=False)
-    print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
-
-    remote_accesses_percentage = matrix_remote_accesses_different / total_accesses
-    print(f"\n{Fore.BLUE}Remote Accesses (%): {Fore.YELLOW}{remote_accesses_percentage.sum().sum() * 100:.2f}%{Style.RESET_ALL}")
-    table_str = tabulate(remote_accesses_percentage, tablefmt="grid", showindex=False)
-    print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
-
-def save_csv(data, matrix_relative_latencies, output_csv, time_unit, payload_unit=''):
-    checksum = data.get("checksum", None)
-    active_threads = data.get("active_threads", None)
-
-    numa_factor = machine_average_numa_factor(data)
-
-    df = process_accesses(data)
-    total_accesses = aggregation_matrix(df, equal=None).sum().sum()
-    local_accesses = aggregation_matrix(df, equal=True).sum().sum()
-    remote_accesses = aggregation_matrix(df, equal=False).sum().sum()
-
-    read_time, write_time, compute_time, comp_to_comm_ratio, comm_to_comp_ratio = compute_durations(data)
-    makespan = compute_makespan(data)
-
-    read_footprint, write_footprint, compute_footprint = compute_footprints(data)
-
-    matrix_total_accesses_none = aggregation_matrix(df, equal=None)
-    access_pattern_performance = data_access_pattern_performance(
-        matrix_total_accesses_none, matrix_relative_latencies)
-    
-    memory_migrations = len(analyze_memory_migrations(df, migrations=True))
-
-    results = pd.Series({
-        "checksum": checksum,
-        "active_threads": active_threads,
-        "machine_numa_factor": numa_factor,
-        "local_accesses": local_accesses,
-        "remote_accesses": remote_accesses,
-        "total_accesses": total_accesses,
-        f"total_read_time_{time_unit}": read_time,
-        f"total_write_time_{time_unit}": write_time,
-        f"total_compute_time_{time_unit}": compute_time,
-        f"workflow_makespan_{time_unit}": makespan,
-        f"read_footprint_{payload_unit.lower()}bytes": read_footprint,
-        f"write_footprint_{payload_unit.lower()}bytes": write_footprint,
-        f"compute_footprint_{payload_unit.lower()}flops": compute_footprint,
-        "comp_to_comm_ratio": comp_to_comm_ratio,
-        "comm_to_comp_ratio": comm_to_comp_ratio,
-        "access_pattern_performance": access_pattern_performance,
-        "memory_migrations": memory_migrations,
-    })
-
-    results.to_csv(output_csv, header=False)
-    print(f"Profile exported: {output_csv}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process NUMA access data.")
     parser.add_argument("input_file", help="Path to input YAML profile file")
-    parser.add_argument("input_file_rel_lat", help="Path to input TXT file with hwloc/numactl relative latencies")
+    parser.add_argument("--input_file_rel_lat", default=None, help="Path to input TXT file with hwloc/numactl relative latencies")
     parser.add_argument("--time_unit", type=str, choices=['us', 'ms', 's', 'min'], default='us', help="Time unit for scaling.")
     parser.add_argument("--payload_unit", type=str, choices=['K', 'M', 'G'], default='', help="Payload unit for scaling.")
     parser.add_argument("--export_csv", type=str, help="Path to export CSV file.", default=None)
@@ -326,11 +461,11 @@ if __name__ == "__main__":
     with open(args.input_file, "r") as file:
         data = yaml.load(file, Loader=yaml.FullLoader)
 
-    with open(args.input_file_rel_lat, 'r') as file:
-        dimension = int(file.readline().strip())
-        rel_lat_matrix = pd.DataFrame([list(map(float, file.readline().split())) for _ in range(dimension)])
-
-    if args.export_csv:
-        save_csv(data, rel_lat_matrix, args.export_csv, args.time_unit, args.payload_unit)
+    if args.input_file_rel_lat:
+        with open(args.input_file_rel_lat, 'r') as file:
+            dimension = int(file.readline().strip())
+            rel_lat_matrix = pd.DataFrame([list(map(float, file.readline().split())) for _ in range(dimension)])
     else:
-        print_profile(data, rel_lat_matrix, args.time_unit, args.payload_unit)
+        rel_lat_matrix = pd.DataFrame()
+
+    print_profile(data, rel_lat_matrix, args.time_unit, args.payload_unit, args.export_csv)

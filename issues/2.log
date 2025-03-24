@@ -1,0 +1,486 @@
+Config file created: ./results/config/dis_16/fifo/3_two_domain_aware_1/2.json
+[0.000000] scheduler_fifo.cpp:145: [fifo_scheduler/DEBUG] fifo_prioritize_by_exec_order: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_0, score: 0.000000
+[0.000000] scheduler_fifo.cpp:37: [fifo_scheduler/DEBUG] fifo_prioritize_by_core_id: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 0, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 1, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 2, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 3, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 4, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 5, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 6, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 7, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 24, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 25, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 26, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 27, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 28, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 29, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 30, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 31, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:81: [fifo_scheduler/DEBUG] best_core_id: 0, best_numa_id: 0
+[0.000000] scheduler_fifo.cpp:175: [fifo_scheduler/DEBUG] selected_task: Task_0, selected_core_id: 0, estimated_finish_time: 3141.613878
+[0.000000] [mapper_bare_metal/INFO] There are not ready tasks, waiting 5 seconds.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179345, Task ID: Task_0, Core ID: 0 => message: started.
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0xffffffff,0xffffffff,0xffffffff.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179345, Task ID: Task_0, Core ID: 0 => message: FIRSTTOUCH memory policy - thread is bound to NUMA nodes 0 1.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179345, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_1, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179345, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_2, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179345, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_3, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179345, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_4, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179345, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_5, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] There are not ready tasks, waiting 5 seconds.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179345, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_6, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179345, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_7, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179345, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_8, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179345, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_9, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179345, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_10, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] There are not ready tasks, waiting 5 seconds.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179345, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_11, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179345, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_12, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179345, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_13, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179345, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_14, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179345, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_15, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] There are not ready tasks, waiting 5 seconds.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179345, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_16, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179345, Task ID: Task_0, Core ID: 0 => message: finished.
+[0.000000] scheduler_fifo.cpp:145: [fifo_scheduler/DEBUG] fifo_prioritize_by_exec_order: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_1, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_2, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_3, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_4, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_5, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_6, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_7, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_8, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_9, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_10, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_11, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_12, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_13, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_14, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_15, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_16, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:37: [fifo_scheduler/DEBUG] fifo_prioritize_by_core_id: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 0, avail_core_until: 1232098.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 1, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 2, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 3, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 4, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 5, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 6, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 7, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 24, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 25, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 26, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 27, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 28, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 29, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 30, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 31, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:81: [fifo_scheduler/DEBUG] best_core_id: 0, best_numa_id: 0
+[0.000000] scheduler_fifo.cpp:175: [fifo_scheduler/DEBUG] selected_task: Task_1, selected_core_id: 0, estimated_finish_time: 1235239.613878
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179346, Task ID: Task_1, Core ID: 0 => message: started.
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0xffffffff,0xffffffff,0xffffffff.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179346, Task ID: Task_1, Core ID: 0 => message: FIRSTTOUCH memory policy - thread is bound to NUMA nodes 0 1.
+[0.000000] scheduler_fifo.cpp:145: [fifo_scheduler/DEBUG] fifo_prioritize_by_exec_order: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_2, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_3, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_4, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_5, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_6, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_7, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_8, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_9, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_10, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_11, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_12, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_13, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_14, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_15, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_16, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:37: [fifo_scheduler/DEBUG] fifo_prioritize_by_core_id: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 1, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 2, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 3, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 4, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 5, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 6, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 7, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 24, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 25, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 26, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 27, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 28, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 29, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 30, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 31, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:81: [fifo_scheduler/DEBUG] best_core_id: 1, best_numa_id: 0
+[0.000000] scheduler_fifo.cpp:175: [fifo_scheduler/DEBUG] selected_task: Task_2, selected_core_id: 1, estimated_finish_time: 1235239.613878
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179347, Task ID: Task_2, Core ID: 1 => message: started.
+[0.000000] scheduler_fifo.cpp:145: [fifo_scheduler/DEBUG] fifo_prioritize_by_exec_order: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_3, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_4, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_5, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_6, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_7, score: 2000000000.000000
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0xffffffff,0xffffffff,0xffffffff.
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_8, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_9, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_10, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_11, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_12, score: 2000000000.000000
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179347, Task ID: Task_2, Core ID: 1 => message: FIRSTTOUCH memory policy - thread is bound to NUMA nodes 0 1.
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_13, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_14, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_15, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_16, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:37: [fifo_scheduler/DEBUG] fifo_prioritize_by_core_id: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 2, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 3, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 4, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 5, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 6, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 7, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 24, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 25, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 26, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 27, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 28, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 29, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 30, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 31, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:81: [fifo_scheduler/DEBUG] best_core_id: 2, best_numa_id: 0
+[0.000000] scheduler_fifo.cpp:175: [fifo_scheduler/DEBUG] selected_task: Task_3, selected_core_id: 2, estimated_finish_time: 1235239.613878
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179348, Task ID: Task_3, Core ID: 2 => message: started.
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0xffffffff,0xffffffff,0xffffffff.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179348, Task ID: Task_3, Core ID: 2 => message: FIRSTTOUCH memory policy - thread is bound to NUMA nodes 0 1.
+[0.000000] scheduler_fifo.cpp:145: [fifo_scheduler/DEBUG] fifo_prioritize_by_exec_order: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_4, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_5, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_6, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_7, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_8, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_9, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_10, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_11, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_12, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_13, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_14, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_15, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_16, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:37: [fifo_scheduler/DEBUG] fifo_prioritize_by_core_id: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 3, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 4, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 5, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 6, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 7, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 24, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 25, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 26, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 27, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 28, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 29, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 30, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 31, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:81: [fifo_scheduler/DEBUG] best_core_id: 3, best_numa_id: 0
+[0.000000] scheduler_fifo.cpp:175: [fifo_scheduler/DEBUG] selected_task: Task_4, selected_core_id: 3, estimated_finish_time: 1235239.613878
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179349, Task ID: Task_4, Core ID: 3 => message: started.
+[0.000000] scheduler_fifo.cpp:145: [fifo_scheduler/DEBUG] fifo_prioritize_by_exec_order: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_5, score: 2000000000.000000
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0xffffffff,0xffffffff,0xffffffff.
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_6, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_7, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_8, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_9, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_10, score: 2000000000.000000
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179349, Task ID: Task_4, Core ID: 3 => message: FIRSTTOUCH memory policy - thread is bound to NUMA nodes 0 1.
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_11, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_12, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_13, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_14, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_15, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_16, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:37: [fifo_scheduler/DEBUG] fifo_prioritize_by_core_id: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 4, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 5, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 6, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 7, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 24, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 25, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 26, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 27, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 28, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 29, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 30, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 31, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:81: [fifo_scheduler/DEBUG] best_core_id: 4, best_numa_id: 0
+[0.000000] scheduler_fifo.cpp:175: [fifo_scheduler/DEBUG] selected_task: Task_5, selected_core_id: 4, estimated_finish_time: 1235239.613878
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179350, Task ID: Task_5, Core ID: 4 => message: started.
+[0.000000] scheduler_fifo.cpp:145: [fifo_scheduler/DEBUG] fifo_prioritize_by_exec_order: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_6, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_7, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_8, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_9, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_10, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_11, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_12, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_13, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_14, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_15, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_16, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:37: [fifo_scheduler/DEBUG] fifo_prioritize_by_core_id: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 5, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 6, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 7, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 24, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 25, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 26, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 27, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 28, avail_core_until: 0.000000
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0xffffffff,0xffffffff,0xffffffff.
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 29, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 30, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 31, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:81: [fifo_scheduler/DEBUG] best_core_id: 5, best_numa_id: 0
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179350, Task ID: Task_5, Core ID: 4 => message: FIRSTTOUCH memory policy - thread is bound to NUMA nodes 0 1.
+[0.000000] scheduler_fifo.cpp:175: [fifo_scheduler/DEBUG] selected_task: Task_6, selected_core_id: 5, estimated_finish_time: 1235239.613878
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179351, Task ID: Task_6, Core ID: 5 => message: started.
+[0.000000] scheduler_fifo.cpp:145: [fifo_scheduler/DEBUG] fifo_prioritize_by_exec_order: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_7, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_8, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_9, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_10, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_11, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_12, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_13, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_14, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_15, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_16, score: 2000000000.000000
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0xffffffff,0xffffffff,0xffffffff.
+[0.000000] scheduler_fifo.cpp:37: [fifo_scheduler/DEBUG] fifo_prioritize_by_core_id: yes, enabled: true
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179351, Task ID: Task_6, Core ID: 5 => message: FIRSTTOUCH memory policy - thread is bound to NUMA nodes 0 1.
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 6, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 7, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 24, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 25, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 26, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 27, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 28, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 29, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 30, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 31, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:81: [fifo_scheduler/DEBUG] best_core_id: 6, best_numa_id: 0
+[0.000000] scheduler_fifo.cpp:175: [fifo_scheduler/DEBUG] selected_task: Task_7, selected_core_id: 6, estimated_finish_time: 1235239.613878
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179352, Task ID: Task_7, Core ID: 6 => message: started.
+[0.000000] scheduler_fifo.cpp:145: [fifo_scheduler/DEBUG] fifo_prioritize_by_exec_order: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_8, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_9, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_10, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_11, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_12, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_13, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_14, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_15, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_16, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:37: [fifo_scheduler/DEBUG] fifo_prioritize_by_core_id: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 7, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 24, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 25, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 26, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 27, avail_core_until: 0.000000
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0xffffffff,0xffffffff,0xffffffff.
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 28, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 29, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 30, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 31, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:81: [fifo_scheduler/DEBUG] best_core_id: 7, best_numa_id: 0
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179352, Task ID: Task_7, Core ID: 6 => message: FIRSTTOUCH memory policy - thread is bound to NUMA nodes 0 1.
+[0.000000] scheduler_fifo.cpp:175: [fifo_scheduler/DEBUG] selected_task: Task_8, selected_core_id: 7, estimated_finish_time: 1235239.613878
+[0.000000] scheduler_fifo.cpp:145: [fifo_scheduler/DEBUG] fifo_prioritize_by_exec_order: yes, enabled: true
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179353, Task ID: Task_8, Core ID: 7 => message: started.
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_9, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_10, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_11, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_12, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_13, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_14, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_15, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_16, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:37: [fifo_scheduler/DEBUG] fifo_prioritize_by_core_id: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 24, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 25, avail_core_until: 0.000000
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0xffffffff,0xffffffff,0xffffffff.
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 26, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 27, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 28, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 29, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 30, avail_core_until: 0.000000
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179353, Task ID: Task_8, Core ID: 7 => message: FIRSTTOUCH memory policy - thread is bound to NUMA nodes 0 1.
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 31, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:81: [fifo_scheduler/DEBUG] best_core_id: 24, best_numa_id: 1
+[0.000000] scheduler_fifo.cpp:175: [fifo_scheduler/DEBUG] selected_task: Task_9, selected_core_id: 24, estimated_finish_time: 1235281.154502
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179354, Task ID: Task_9, Core ID: 24 => message: started.
+[0.000000] scheduler_fifo.cpp:145: [fifo_scheduler/DEBUG] fifo_prioritize_by_exec_order: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_10, score: 2000000000.000000
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0xffffffff,0xffffffff,0xffffffff.
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_11, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_12, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_13, score: 2000000000.000000
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179354, Task ID: Task_9, Core ID: 24 => message: FIRSTTOUCH memory policy - thread is bound to NUMA nodes 0 1.
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_14, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_15, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_16, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:37: [fifo_scheduler/DEBUG] fifo_prioritize_by_core_id: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 25, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 26, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 27, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 28, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 29, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 30, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 31, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:81: [fifo_scheduler/DEBUG] best_core_id: 25, best_numa_id: 1
+[0.000000] scheduler_fifo.cpp:175: [fifo_scheduler/DEBUG] selected_task: Task_10, selected_core_id: 25, estimated_finish_time: 1235281.154502
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179355, Task ID: Task_10, Core ID: 25 => message: started.
+[0.000000] scheduler_fifo.cpp:145: [fifo_scheduler/DEBUG] fifo_prioritize_by_exec_order: yes, enabled: true
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0xffffffff,0xffffffff,0xffffffff.
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_11, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_12, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_13, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_14, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_15, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_16, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:37: [fifo_scheduler/DEBUG] fifo_prioritize_by_core_id: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 26, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 27, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 28, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 29, avail_core_until: 0.000000
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179355, Task ID: Task_10, Core ID: 25 => message: FIRSTTOUCH memory policy - thread is bound to NUMA nodes 0 1.
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 30, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 31, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:81: [fifo_scheduler/DEBUG] best_core_id: 26, best_numa_id: 1
+[0.000000] scheduler_fifo.cpp:175: [fifo_scheduler/DEBUG] selected_task: Task_11, selected_core_id: 26, estimated_finish_time: 1235281.154502
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179356, Task ID: Task_11, Core ID: 26 => message: started.
+[0.000000] scheduler_fifo.cpp:145: [fifo_scheduler/DEBUG] fifo_prioritize_by_exec_order: yes, enabled: true
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0xffffffff,0xffffffff,0xffffffff.
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_12, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_13, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_14, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_15, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_16, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:37: [fifo_scheduler/DEBUG] fifo_prioritize_by_core_id: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 27, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 28, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 29, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 30, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 31, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:81: [fifo_scheduler/DEBUG] best_core_id: 27, best_numa_id: 1
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179356, Task ID: Task_11, Core ID: 26 => message: FIRSTTOUCH memory policy - thread is bound to NUMA nodes 0 1.
+[0.000000] scheduler_fifo.cpp:175: [fifo_scheduler/DEBUG] selected_task: Task_12, selected_core_id: 27, estimated_finish_time: 1235281.154502
+[0.000000] scheduler_fifo.cpp:145: [fifo_scheduler/DEBUG] fifo_prioritize_by_exec_order: yes, enabled: true
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179357, Task ID: Task_12, Core ID: 27 => message: started.
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_13, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_14, score: 2000000000.000000
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0xffffffff,0xffffffff,0xffffffff.
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_15, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_16, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:37: [fifo_scheduler/DEBUG] fifo_prioritize_by_core_id: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 28, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 29, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 30, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 31, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:81: [fifo_scheduler/DEBUG] best_core_id: 28, best_numa_id: 1
+[0.000000] scheduler_fifo.cpp:175: [fifo_scheduler/DEBUG] selected_task: Task_13, selected_core_id: 28, estimated_finish_time: 1235281.154502
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179357, Task ID: Task_12, Core ID: 27 => message: FIRSTTOUCH memory policy - thread is bound to NUMA nodes 0 1.
+[0.000000] scheduler_fifo.cpp:145: [fifo_scheduler/DEBUG] fifo_prioritize_by_exec_order: yes, enabled: true
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179358, Task ID: Task_13, Core ID: 28 => message: started.
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_14, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_15, score: 2000000000.000000
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0xffffffff,0xffffffff,0xffffffff.
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_16, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:37: [fifo_scheduler/DEBUG] fifo_prioritize_by_core_id: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 29, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 30, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 31, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:81: [fifo_scheduler/DEBUG] best_core_id: 29, best_numa_id: 1
+[0.000000] scheduler_fifo.cpp:175: [fifo_scheduler/DEBUG] selected_task: Task_14, selected_core_id: 29, estimated_finish_time: 1235281.154502
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179358, Task ID: Task_13, Core ID: 28 => message: FIRSTTOUCH memory policy - thread is bound to NUMA nodes 0 1.
+[0.000000] scheduler_fifo.cpp:145: [fifo_scheduler/DEBUG] fifo_prioritize_by_exec_order: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_15, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_16, score: 2000000000.000000
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179359, Task ID: Task_14, Core ID: 29 => message: started.
+[0.000000] scheduler_fifo.cpp:37: [fifo_scheduler/DEBUG] fifo_prioritize_by_core_id: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 30, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 31, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:81: [fifo_scheduler/DEBUG] best_core_id: 30, best_numa_id: 1
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0xffffffff,0xffffffff,0xffffffff.
+[0.000000] scheduler_fifo.cpp:175: [fifo_scheduler/DEBUG] selected_task: Task_15, selected_core_id: 30, estimated_finish_time: 1235281.154502
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179359, Task ID: Task_14, Core ID: 29 => message: FIRSTTOUCH memory policy - thread is bound to NUMA nodes 0 1.
+[0.000000] scheduler_fifo.cpp:145: [fifo_scheduler/DEBUG] fifo_prioritize_by_exec_order: yes, enabled: true
+[0.000000] scheduler_fifo.cpp:166: [fifo_scheduler/DEBUG] priority_queued_task: Task_16, score: 2000000000.000000
+[0.000000] scheduler_fifo.cpp:37: [fifo_scheduler/DEBUG] fifo_prioritize_by_core_id: yes, enabled: true
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179360, Task ID: Task_15, Core ID: 30 => message: started.
+[0.000000] scheduler_fifo.cpp:56: [fifo_scheduler/DEBUG] avail_core_id: 31, avail_core_until: 0.000000
+[0.000000] scheduler_fifo.cpp:81: [fifo_scheduler/DEBUG] best_core_id: 31, best_numa_id: 1
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0xffffffff,0xffffffff,0xffffffff.
+[0.000000] scheduler_fifo.cpp:175: [fifo_scheduler/DEBUG] selected_task: Task_16, selected_core_id: 31, estimated_finish_time: 1235281.154502
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179360, Task ID: Task_15, Core ID: 30 => message: FIRSTTOUCH memory policy - thread is bound to NUMA nodes 0 1.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179361, Task ID: Task_16, Core ID: 31 => message: started.
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0xffffffff,0xffffffff,0xffffffff.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179361, Task ID: Task_16, Core ID: 31 => message: FIRSTTOUCH memory policy - thread is bound to NUMA nodes 0 1.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179346, Task ID: Task_1, Core ID: 0 => read: Task_0->Task_1, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179348, Task ID: Task_3, Core ID: 2 => read: Task_0->Task_3, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179350, Task ID: Task_5, Core ID: 4 => read: Task_0->Task_5, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179347, Task ID: Task_2, Core ID: 1 => read: Task_0->Task_2, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179349, Task ID: Task_4, Core ID: 3 => read: Task_0->Task_4, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179352, Task ID: Task_7, Core ID: 6 => read: Task_0->Task_7, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179346, Task ID: Task_1, Core ID: 0 => write: Task_1->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179346, Task ID: Task_1, Core ID: 0 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179353, Task ID: Task_8, Core ID: 7 => read: Task_0->Task_8, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179351, Task ID: Task_6, Core ID: 5 => read: Task_0->Task_6, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179348, Task ID: Task_3, Core ID: 2 => write: Task_3->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179348, Task ID: Task_3, Core ID: 2 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179350, Task ID: Task_5, Core ID: 4 => write: Task_5->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179350, Task ID: Task_5, Core ID: 4 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179358, Task ID: Task_13, Core ID: 28 => read: Task_0->Task_13, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179356, Task ID: Task_11, Core ID: 26 => read: Task_0->Task_11, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179354, Task ID: Task_9, Core ID: 24 => read: Task_0->Task_9, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179347, Task ID: Task_2, Core ID: 1 => write: Task_2->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179347, Task ID: Task_2, Core ID: 1 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179349, Task ID: Task_4, Core ID: 3 => write: Task_4->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179349, Task ID: Task_4, Core ID: 3 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179352, Task ID: Task_7, Core ID: 6 => write: Task_7->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179352, Task ID: Task_7, Core ID: 6 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179353, Task ID: Task_8, Core ID: 7 => write: Task_8->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179353, Task ID: Task_8, Core ID: 7 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179351, Task ID: Task_6, Core ID: 5 => write: Task_6->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179351, Task ID: Task_6, Core ID: 5 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179361, Task ID: Task_16, Core ID: 31 => read: Task_0->Task_16, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179355, Task ID: Task_10, Core ID: 25 => read: Task_0->Task_10, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179360, Task ID: Task_15, Core ID: 30 => read: Task_0->Task_15, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179357, Task ID: Task_12, Core ID: 27 => read: Task_0->Task_12, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179359, Task ID: Task_14, Core ID: 29 => read: Task_0->Task_14, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179358, Task ID: Task_13, Core ID: 28 => write: Task_13->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179358, Task ID: Task_13, Core ID: 28 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179356, Task ID: Task_11, Core ID: 26 => write: Task_11->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179356, Task ID: Task_11, Core ID: 26 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179354, Task ID: Task_9, Core ID: 24 => write: Task_9->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179354, Task ID: Task_9, Core ID: 24 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179361, Task ID: Task_16, Core ID: 31 => write: Task_16->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179361, Task ID: Task_16, Core ID: 31 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179355, Task ID: Task_10, Core ID: 25 => write: Task_10->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179355, Task ID: Task_10, Core ID: 25 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179360, Task ID: Task_15, Core ID: 30 => write: Task_15->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179360, Task ID: Task_15, Core ID: 30 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179357, Task ID: Task_12, Core ID: 27 => write: Task_12->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179357, Task ID: Task_12, Core ID: 27 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179359, Task ID: Task_14, Core ID: 29 => write: Task_14->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179344, Thread ID: 179359, Task ID: Task_14, Core ID: 29 => message: finished.
+Profile exported: ./results/profile/dis_16/fifo/3_two_domain_aware_1/2.csv
+Gantt created: './results/gantt/dis_16/fifo/3_two_domain_aware_1/2.png'.
+Profile exported: ./results/profile/dis_16/fifo/3_two_domain_aware_1/2.csv
+Gantt created: './results/gantt/dis_16/fifo/3_two_domain_aware_1/2.png'.
+Profile exported: ./results/profile/dis_16/fifo/3_two_domain_aware_1/2.csv
+Gantt created: './results/gantt/dis_16/fifo/3_two_domain_aware_1/2.png'.
+Profile exported: ./results/profile/dis_16/fifo/3_two_domain_aware_1/2.csv
+Gantt created: './results/gantt/dis_16/fifo/3_two_domain_aware_1/2.png'.

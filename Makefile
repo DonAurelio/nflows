@@ -51,23 +51,40 @@ EVALUATION_SLEEPTIME := 10
 
 ANALYSIS_WORKFLOWS := $(notdir $(shell find $(EVALUATION_OUTPUT_DIR) -mindepth 1 -maxdepth 1 -type d 2>/dev/null))
 ANALYSIS_REL_LATENCIES_FILE := $(EVALUATION_DIR)/system/non_uniform_lat_rel.txt
+ANALYSIS_PROFILE_TIME_UNIT := s
+ANALYSIS_PROFILE_PAYLOAD_UNIT := M
 ANALYSIS_FIELDS := \
-	workflow_makespan_us \
-	local_accesses \
-	remote_accesses \
-	access_pattern_performance \
+	pages_migrations \
 	checksum \
-	active_threads \
-	total_accesses \
-	total_write_time_us \
-	total_read_time_us \
-	total_compute_time_us \
-	comp_to_comm_ratio \
-	comm_to_comp_ratio \
-	memory_migrations \
-	read_footprint_bytes \
-	write_footprint_bytes \
-	compute_footprint_flops
+	threads \
+	numa_factor \
+	comp_to_comm \
+	comm_to_comp \
+	numa_awareness \
+	makespan \
+	read_time_local \
+	read_time_remote \
+	read_time_total \
+	write_time_local \
+	write_time_remote \
+	write_time_total \
+	compute_time_total \
+	read_payload_local \
+	read_payload_remote \
+	read_payload_total \
+	write_payload_local \
+	write_payload_remote \
+	write_payload_total \
+	accesses_payload_total \
+	compute_payload_total \
+	read_accesses_local \
+	read_accesses_remote \
+	read_accesses_total \
+	write_accesses_local \
+	write_accesses_remote \
+	write_accesses_total \
+	accesses_total
+
 
 # Directories
 TEST_DIR := ./tests
@@ -192,8 +209,10 @@ $(ANALYSIS_WORKFLOWS): %:
 		mkdir -p $${PROFILE_DIR} $${GANTT_DIR} $${LOG_DIR}; \
 		$(GENERATE_PROFILE) \
 			"$${output_yaml}" \
-			"$(ANALYSIS_REL_LATENCIES_FILE)" \
-			--export_csv "$${PROFILE_DIR}/$$(basename $${output_yaml} .yaml).csv" >> "$${LOG_FILE}" 2>&1; \
+			--input_file_rel_lat="$(ANALYSIS_REL_LATENCIES_FILE)" \
+			--time_unit=$(ANALYSIS_PROFILE_TIME_UNIT) \
+			--payload_unit=$(ANALYSIS_PROFILE_PAYLOAD_UNIT) \
+			--export_csv="$${PROFILE_DIR}/$$(basename $${output_yaml} .yaml).csv" >> "$${LOG_FILE}" 2>&1; \
 		PROFILE_STATUS=$$?; \
 		$(GENERATE_GANTT) \
 			"$${output_yaml}" \

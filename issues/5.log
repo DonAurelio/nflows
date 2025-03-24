@@ -1,0 +1,1175 @@
+Config file created: ./results/config/dis_16/heft/1_one_domain_1/5.json
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_0, upward_rank: 1034.129848
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_0, core_id: 0, earliest_start_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_0, core_id: 0, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 0, comm_name: Task_0->Task_1, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 0, comm_name: Task_0->Task_2, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 0, comm_name: Task_0->Task_3, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 0, comm_name: Task_0->Task_4, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 0, comm_name: Task_0->Task_5, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 0, comm_name: Task_0->Task_6, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 0, comm_name: Task_0->Task_7, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 0, comm_name: Task_0->Task_8, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 0, comm_name: Task_0->Task_9, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 0, comm_name: Task_0->Task_10, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 0, comm_name: Task_0->Task_11, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 0, comm_name: Task_0->Task_12, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 0, comm_name: Task_0->Task_13, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 0, comm_name: Task_0->Task_14, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 0, comm_name: Task_0->Task_15, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 0, comm_name: Task_0->Task_16, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_0, core_id: 0, finish_time_us: 3141.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_0, core_id: 1, earliest_start_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_0, core_id: 1, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 1, comm_name: Task_0->Task_1, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 1, comm_name: Task_0->Task_2, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 1, comm_name: Task_0->Task_3, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 1, comm_name: Task_0->Task_4, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 1, comm_name: Task_0->Task_5, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 1, comm_name: Task_0->Task_6, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 1, comm_name: Task_0->Task_7, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 1, comm_name: Task_0->Task_8, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 1, comm_name: Task_0->Task_9, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 1, comm_name: Task_0->Task_10, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 1, comm_name: Task_0->Task_11, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 1, comm_name: Task_0->Task_12, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 1, comm_name: Task_0->Task_13, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 1, comm_name: Task_0->Task_14, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 1, comm_name: Task_0->Task_15, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 1, comm_name: Task_0->Task_16, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_0, core_id: 1, finish_time_us: 3141.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_0, core_id: 2, earliest_start_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_0, core_id: 2, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 2, comm_name: Task_0->Task_1, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 2, comm_name: Task_0->Task_2, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 2, comm_name: Task_0->Task_3, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 2, comm_name: Task_0->Task_4, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 2, comm_name: Task_0->Task_5, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 2, comm_name: Task_0->Task_6, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 2, comm_name: Task_0->Task_7, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 2, comm_name: Task_0->Task_8, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 2, comm_name: Task_0->Task_9, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 2, comm_name: Task_0->Task_10, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 2, comm_name: Task_0->Task_11, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 2, comm_name: Task_0->Task_12, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 2, comm_name: Task_0->Task_13, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 2, comm_name: Task_0->Task_14, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 2, comm_name: Task_0->Task_15, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 2, comm_name: Task_0->Task_16, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_0, core_id: 2, finish_time_us: 3141.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_0, core_id: 3, earliest_start_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_0, core_id: 3, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 3, comm_name: Task_0->Task_1, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 3, comm_name: Task_0->Task_2, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 3, comm_name: Task_0->Task_3, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 3, comm_name: Task_0->Task_4, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 3, comm_name: Task_0->Task_5, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 3, comm_name: Task_0->Task_6, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 3, comm_name: Task_0->Task_7, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 3, comm_name: Task_0->Task_8, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 3, comm_name: Task_0->Task_9, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 3, comm_name: Task_0->Task_10, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 3, comm_name: Task_0->Task_11, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 3, comm_name: Task_0->Task_12, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 3, comm_name: Task_0->Task_13, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 3, comm_name: Task_0->Task_14, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 3, comm_name: Task_0->Task_15, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 3, comm_name: Task_0->Task_16, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_0, core_id: 3, finish_time_us: 3141.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_0, core_id: 4, earliest_start_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_0, core_id: 4, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 4, comm_name: Task_0->Task_1, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 4, comm_name: Task_0->Task_2, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 4, comm_name: Task_0->Task_3, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 4, comm_name: Task_0->Task_4, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 4, comm_name: Task_0->Task_5, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 4, comm_name: Task_0->Task_6, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 4, comm_name: Task_0->Task_7, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 4, comm_name: Task_0->Task_8, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 4, comm_name: Task_0->Task_9, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 4, comm_name: Task_0->Task_10, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 4, comm_name: Task_0->Task_11, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 4, comm_name: Task_0->Task_12, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 4, comm_name: Task_0->Task_13, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 4, comm_name: Task_0->Task_14, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 4, comm_name: Task_0->Task_15, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 4, comm_name: Task_0->Task_16, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_0, core_id: 4, finish_time_us: 3141.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_0, core_id: 5, earliest_start_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_0, core_id: 5, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 5, comm_name: Task_0->Task_1, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 5, comm_name: Task_0->Task_2, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 5, comm_name: Task_0->Task_3, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 5, comm_name: Task_0->Task_4, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 5, comm_name: Task_0->Task_5, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 5, comm_name: Task_0->Task_6, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 5, comm_name: Task_0->Task_7, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 5, comm_name: Task_0->Task_8, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 5, comm_name: Task_0->Task_9, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 5, comm_name: Task_0->Task_10, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 5, comm_name: Task_0->Task_11, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 5, comm_name: Task_0->Task_12, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 5, comm_name: Task_0->Task_13, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 5, comm_name: Task_0->Task_14, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 5, comm_name: Task_0->Task_15, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 5, comm_name: Task_0->Task_16, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_0, core_id: 5, finish_time_us: 3141.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_0, core_id: 6, earliest_start_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_0, core_id: 6, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 6, comm_name: Task_0->Task_1, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 6, comm_name: Task_0->Task_2, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 6, comm_name: Task_0->Task_3, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 6, comm_name: Task_0->Task_4, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 6, comm_name: Task_0->Task_5, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 6, comm_name: Task_0->Task_6, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 6, comm_name: Task_0->Task_7, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 6, comm_name: Task_0->Task_8, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 6, comm_name: Task_0->Task_9, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 6, comm_name: Task_0->Task_10, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 6, comm_name: Task_0->Task_11, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 6, comm_name: Task_0->Task_12, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 6, comm_name: Task_0->Task_13, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 6, comm_name: Task_0->Task_14, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 6, comm_name: Task_0->Task_15, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 6, comm_name: Task_0->Task_16, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_0, core_id: 6, finish_time_us: 3141.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_0, core_id: 7, earliest_start_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_0, core_id: 7, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 7, comm_name: Task_0->Task_1, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 7, comm_name: Task_0->Task_2, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 7, comm_name: Task_0->Task_3, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 7, comm_name: Task_0->Task_4, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 7, comm_name: Task_0->Task_5, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 7, comm_name: Task_0->Task_6, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 7, comm_name: Task_0->Task_7, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 7, comm_name: Task_0->Task_8, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 7, comm_name: Task_0->Task_9, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 7, comm_name: Task_0->Task_10, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 7, comm_name: Task_0->Task_11, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 7, comm_name: Task_0->Task_12, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 7, comm_name: Task_0->Task_13, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 7, comm_name: Task_0->Task_14, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 7, comm_name: Task_0->Task_15, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 7, comm_name: Task_0->Task_16, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_0, core_id: 7, finish_time_us: 3141.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_0, core_id: 8, earliest_start_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_0, core_id: 8, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 8, comm_name: Task_0->Task_1, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 8, comm_name: Task_0->Task_2, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 8, comm_name: Task_0->Task_3, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 8, comm_name: Task_0->Task_4, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 8, comm_name: Task_0->Task_5, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 8, comm_name: Task_0->Task_6, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 8, comm_name: Task_0->Task_7, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 8, comm_name: Task_0->Task_8, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 8, comm_name: Task_0->Task_9, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 8, comm_name: Task_0->Task_10, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 8, comm_name: Task_0->Task_11, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 8, comm_name: Task_0->Task_12, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 8, comm_name: Task_0->Task_13, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 8, comm_name: Task_0->Task_14, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 8, comm_name: Task_0->Task_15, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 8, comm_name: Task_0->Task_16, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_0, core_id: 8, finish_time_us: 3141.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_0, core_id: 9, earliest_start_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_0, core_id: 9, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 9, comm_name: Task_0->Task_1, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 9, comm_name: Task_0->Task_2, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 9, comm_name: Task_0->Task_3, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 9, comm_name: Task_0->Task_4, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 9, comm_name: Task_0->Task_5, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 9, comm_name: Task_0->Task_6, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 9, comm_name: Task_0->Task_7, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 9, comm_name: Task_0->Task_8, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 9, comm_name: Task_0->Task_9, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 9, comm_name: Task_0->Task_10, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 9, comm_name: Task_0->Task_11, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 9, comm_name: Task_0->Task_12, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 9, comm_name: Task_0->Task_13, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 9, comm_name: Task_0->Task_14, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 9, comm_name: Task_0->Task_15, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 9, comm_name: Task_0->Task_16, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_0, core_id: 9, finish_time_us: 3141.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_0, core_id: 10, earliest_start_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_0, core_id: 10, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 10, comm_name: Task_0->Task_1, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 10, comm_name: Task_0->Task_2, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 10, comm_name: Task_0->Task_3, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 10, comm_name: Task_0->Task_4, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 10, comm_name: Task_0->Task_5, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 10, comm_name: Task_0->Task_6, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 10, comm_name: Task_0->Task_7, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 10, comm_name: Task_0->Task_8, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 10, comm_name: Task_0->Task_9, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 10, comm_name: Task_0->Task_10, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 10, comm_name: Task_0->Task_11, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 10, comm_name: Task_0->Task_12, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 10, comm_name: Task_0->Task_13, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 10, comm_name: Task_0->Task_14, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 10, comm_name: Task_0->Task_15, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 10, comm_name: Task_0->Task_16, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_0, core_id: 10, finish_time_us: 3141.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_0, core_id: 11, earliest_start_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_0, core_id: 11, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 11, comm_name: Task_0->Task_1, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 11, comm_name: Task_0->Task_2, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 11, comm_name: Task_0->Task_3, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 11, comm_name: Task_0->Task_4, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 11, comm_name: Task_0->Task_5, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 11, comm_name: Task_0->Task_6, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 11, comm_name: Task_0->Task_7, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 11, comm_name: Task_0->Task_8, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 11, comm_name: Task_0->Task_9, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 11, comm_name: Task_0->Task_10, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 11, comm_name: Task_0->Task_11, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 11, comm_name: Task_0->Task_12, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 11, comm_name: Task_0->Task_13, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 11, comm_name: Task_0->Task_14, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 11, comm_name: Task_0->Task_15, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 11, comm_name: Task_0->Task_16, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_0, core_id: 11, finish_time_us: 3141.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_0, core_id: 12, earliest_start_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_0, core_id: 12, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 12, comm_name: Task_0->Task_1, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 12, comm_name: Task_0->Task_2, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 12, comm_name: Task_0->Task_3, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 12, comm_name: Task_0->Task_4, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 12, comm_name: Task_0->Task_5, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 12, comm_name: Task_0->Task_6, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 12, comm_name: Task_0->Task_7, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 12, comm_name: Task_0->Task_8, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 12, comm_name: Task_0->Task_9, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 12, comm_name: Task_0->Task_10, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 12, comm_name: Task_0->Task_11, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 12, comm_name: Task_0->Task_12, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 12, comm_name: Task_0->Task_13, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 12, comm_name: Task_0->Task_14, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 12, comm_name: Task_0->Task_15, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 12, comm_name: Task_0->Task_16, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_0, core_id: 12, finish_time_us: 3141.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_0, core_id: 13, earliest_start_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_0, core_id: 13, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 13, comm_name: Task_0->Task_1, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 13, comm_name: Task_0->Task_2, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 13, comm_name: Task_0->Task_3, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 13, comm_name: Task_0->Task_4, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 13, comm_name: Task_0->Task_5, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 13, comm_name: Task_0->Task_6, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 13, comm_name: Task_0->Task_7, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 13, comm_name: Task_0->Task_8, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 13, comm_name: Task_0->Task_9, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 13, comm_name: Task_0->Task_10, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 13, comm_name: Task_0->Task_11, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 13, comm_name: Task_0->Task_12, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 13, comm_name: Task_0->Task_13, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 13, comm_name: Task_0->Task_14, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 13, comm_name: Task_0->Task_15, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 13, comm_name: Task_0->Task_16, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_0, core_id: 13, finish_time_us: 3141.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_0, core_id: 14, earliest_start_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_0, core_id: 14, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 14, comm_name: Task_0->Task_1, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 14, comm_name: Task_0->Task_2, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 14, comm_name: Task_0->Task_3, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 14, comm_name: Task_0->Task_4, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 14, comm_name: Task_0->Task_5, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 14, comm_name: Task_0->Task_6, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 14, comm_name: Task_0->Task_7, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 14, comm_name: Task_0->Task_8, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 14, comm_name: Task_0->Task_9, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 14, comm_name: Task_0->Task_10, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 14, comm_name: Task_0->Task_11, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 14, comm_name: Task_0->Task_12, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 14, comm_name: Task_0->Task_13, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 14, comm_name: Task_0->Task_14, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 14, comm_name: Task_0->Task_15, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 14, comm_name: Task_0->Task_16, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_0, core_id: 14, finish_time_us: 3141.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_0, core_id: 15, earliest_start_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_0, core_id: 15, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 15, comm_name: Task_0->Task_1, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 15, comm_name: Task_0->Task_2, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 15, comm_name: Task_0->Task_3, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 15, comm_name: Task_0->Task_4, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 15, comm_name: Task_0->Task_5, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 15, comm_name: Task_0->Task_6, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 15, comm_name: Task_0->Task_7, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 15, comm_name: Task_0->Task_8, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 15, comm_name: Task_0->Task_9, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 15, comm_name: Task_0->Task_10, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 15, comm_name: Task_0->Task_11, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 15, comm_name: Task_0->Task_12, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 15, comm_name: Task_0->Task_13, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 15, comm_name: Task_0->Task_14, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 15, comm_name: Task_0->Task_15, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:83: [eft_scheduler/DEBUG] task: Task_0, core_id: 15, comm_name: Task_0->Task_16, write_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 0.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_0, core_id: 15, finish_time_us: 3141.613878
+[0.000000] scheduler_eft.cpp:98: [eft_scheduler/DEBUG] task: Task_0, best_core_id: 0, earliest_finish_time_us: 3141.613878
+[0.000000] scheduler_heft.cpp:151: [heft_scheduler/DEBUG] selected_task: Task_0, selected_core_id: 0, estimated_finish_time: 3141.613878
+[0.000000] [mapper_bare_metal/INFO] There are not ready tasks, waiting 5 seconds.
+[0.000000] hardware.cpp:179: [hardware/DEBUG] set_thread_membind_nodeset (current): 0xffffffff,0xffffffff,0xffffffff, set_thread_membind_nodeset (new): 0x00000001.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179691, Task ID: Task_0, Core ID: 0 => message: started.
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0x55555555,0x55555555,0x55555555.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179691, Task ID: Task_0, Core ID: 0 => message: BIND memory policy - thread is bound to NUMA nodes 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179691, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_1, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179691, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_2, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179691, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_3, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179691, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_4, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179691, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_5, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] There are not ready tasks, waiting 5 seconds.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179691, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_6, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179691, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_7, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179691, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_8, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179691, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_9, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179691, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_10, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] There are not ready tasks, waiting 5 seconds.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179691, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_11, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179691, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_12, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179691, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_13, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179691, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_14, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179691, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_15, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] There are not ready tasks, waiting 5 seconds.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179691, Task ID: Task_0, Core ID: 0 => write: Task_0->Task_16, payload (bytes): 2000000000.000000, numa_locality_after_write: 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179691, Task ID: Task_0, Core ID: 0 => message: finished.
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_1, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_2, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_3, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_4, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_5, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_6, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_7, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_8, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_9, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_10, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_11, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_12, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_13, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_14, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_15, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_16, upward_rank: 0.003125
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_1, core_id: 0, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_1, core_id: 0, comm_name: Task_0->Task_1, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_1, core_id: 0, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_1, core_id: 0, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_1, core_id: 1, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_1, core_id: 1, comm_name: Task_0->Task_1, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_1, core_id: 1, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_1, core_id: 1, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_1, core_id: 2, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_1, core_id: 2, comm_name: Task_0->Task_1, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_1, core_id: 2, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_1, core_id: 2, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_1, core_id: 3, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_1, core_id: 3, comm_name: Task_0->Task_1, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_1, core_id: 3, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_1, core_id: 3, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_1, core_id: 4, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_1, core_id: 4, comm_name: Task_0->Task_1, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_1, core_id: 4, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_1, core_id: 4, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_1, core_id: 5, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_1, core_id: 5, comm_name: Task_0->Task_1, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_1, core_id: 5, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_1, core_id: 5, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_1, core_id: 6, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_1, core_id: 6, comm_name: Task_0->Task_1, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_1, core_id: 6, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_1, core_id: 6, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_1, core_id: 7, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_1, core_id: 7, comm_name: Task_0->Task_1, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_1, core_id: 7, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_1, core_id: 7, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_1, core_id: 8, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_1, core_id: 8, comm_name: Task_0->Task_1, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_1, core_id: 8, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_1, core_id: 8, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_1, core_id: 9, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_1, core_id: 9, comm_name: Task_0->Task_1, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_1, core_id: 9, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_1, core_id: 9, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_1, core_id: 10, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_1, core_id: 10, comm_name: Task_0->Task_1, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_1, core_id: 10, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_1, core_id: 10, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_1, core_id: 11, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_1, core_id: 11, comm_name: Task_0->Task_1, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_1, core_id: 11, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_1, core_id: 11, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_1, core_id: 12, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_1, core_id: 12, comm_name: Task_0->Task_1, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_1, core_id: 12, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_1, core_id: 12, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_1, core_id: 13, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_1, core_id: 13, comm_name: Task_0->Task_1, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_1, core_id: 13, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_1, core_id: 13, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_1, core_id: 14, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_1, core_id: 14, comm_name: Task_0->Task_1, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_1, core_id: 14, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_1, core_id: 14, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_1, core_id: 15, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_1, core_id: 15, comm_name: Task_0->Task_1, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_1, core_id: 15, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_1, core_id: 15, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:98: [eft_scheduler/DEBUG] task: Task_1, best_core_id: 0, earliest_finish_time_us: 1193378.613878
+[0.000000] scheduler_heft.cpp:151: [heft_scheduler/DEBUG] selected_task: Task_1, selected_core_id: 0, estimated_finish_time: 1193378.613878
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_2, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_3, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_4, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_5, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_6, upward_rank: 0.003125
+[0.000000] hardware.cpp:179: [hardware/DEBUG] set_thread_membind_nodeset (current): 0xffffffff,0xffffffff,0xffffffff, set_thread_membind_nodeset (new): 0x00000001.
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_7, upward_rank: 0.003125
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179692, Task ID: Task_1, Core ID: 0 => message: started.
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_8, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_9, upward_rank: 0.003125
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0x55555555,0x55555555,0x55555555.
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_10, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_11, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_12, upward_rank: 0.003125
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179692, Task ID: Task_1, Core ID: 0 => message: BIND memory policy - thread is bound to NUMA nodes 0.
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_13, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_14, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_15, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_16, upward_rank: 0.003125
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_2, core_id: 1, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_2, core_id: 1, comm_name: Task_0->Task_2, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_2, core_id: 1, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_2, core_id: 1, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_2, core_id: 2, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_2, core_id: 2, comm_name: Task_0->Task_2, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_2, core_id: 2, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_2, core_id: 2, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_2, core_id: 3, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_2, core_id: 3, comm_name: Task_0->Task_2, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_2, core_id: 3, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_2, core_id: 3, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_2, core_id: 4, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_2, core_id: 4, comm_name: Task_0->Task_2, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_2, core_id: 4, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_2, core_id: 4, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_2, core_id: 5, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_2, core_id: 5, comm_name: Task_0->Task_2, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_2, core_id: 5, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_2, core_id: 5, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_2, core_id: 6, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_2, core_id: 6, comm_name: Task_0->Task_2, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_2, core_id: 6, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_2, core_id: 6, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_2, core_id: 7, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_2, core_id: 7, comm_name: Task_0->Task_2, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_2, core_id: 7, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_2, core_id: 7, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_2, core_id: 8, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_2, core_id: 8, comm_name: Task_0->Task_2, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_2, core_id: 8, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_2, core_id: 8, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_2, core_id: 9, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_2, core_id: 9, comm_name: Task_0->Task_2, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_2, core_id: 9, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_2, core_id: 9, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_2, core_id: 10, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_2, core_id: 10, comm_name: Task_0->Task_2, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_2, core_id: 10, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_2, core_id: 10, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_2, core_id: 11, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_2, core_id: 11, comm_name: Task_0->Task_2, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_2, core_id: 11, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_2, core_id: 11, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_2, core_id: 12, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_2, core_id: 12, comm_name: Task_0->Task_2, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_2, core_id: 12, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_2, core_id: 12, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_2, core_id: 13, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_2, core_id: 13, comm_name: Task_0->Task_2, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_2, core_id: 13, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_2, core_id: 13, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_2, core_id: 14, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_2, core_id: 14, comm_name: Task_0->Task_2, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_2, core_id: 14, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_2, core_id: 14, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_2, core_id: 15, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_2, core_id: 15, comm_name: Task_0->Task_2, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_2, core_id: 15, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_2, core_id: 15, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:98: [eft_scheduler/DEBUG] task: Task_2, best_core_id: 1, earliest_finish_time_us: 1193378.613878
+[0.000000] scheduler_heft.cpp:151: [heft_scheduler/DEBUG] selected_task: Task_2, selected_core_id: 1, estimated_finish_time: 1193378.613878
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_3, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_4, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_5, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_6, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_7, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_8, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_9, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_10, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_11, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_12, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_13, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_14, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_15, upward_rank: 0.003125
+[0.000000] hardware.cpp:179: [hardware/DEBUG] set_thread_membind_nodeset (current): 0xffffffff,0xffffffff,0xffffffff, set_thread_membind_nodeset (new): 0x00000001.
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_16, upward_rank: 0.003125
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179693, Task ID: Task_2, Core ID: 1 => message: started.
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_3, core_id: 2, earliest_start_time_us: 1190237.000000
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0x55555555,0x55555555,0x55555555.
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_3, core_id: 2, comm_name: Task_0->Task_3, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_3, core_id: 2, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_3, core_id: 2, finish_time_us: 1193378.613878
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179693, Task ID: Task_2, Core ID: 1 => message: BIND memory policy - thread is bound to NUMA nodes 0.
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_3, core_id: 3, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_3, core_id: 3, comm_name: Task_0->Task_3, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_3, core_id: 3, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_3, core_id: 3, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_3, core_id: 4, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_3, core_id: 4, comm_name: Task_0->Task_3, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_3, core_id: 4, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_3, core_id: 4, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_3, core_id: 5, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_3, core_id: 5, comm_name: Task_0->Task_3, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_3, core_id: 5, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_3, core_id: 5, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_3, core_id: 6, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_3, core_id: 6, comm_name: Task_0->Task_3, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_3, core_id: 6, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_3, core_id: 6, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_3, core_id: 7, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_3, core_id: 7, comm_name: Task_0->Task_3, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_3, core_id: 7, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_3, core_id: 7, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_3, core_id: 8, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_3, core_id: 8, comm_name: Task_0->Task_3, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_3, core_id: 8, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_3, core_id: 8, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_3, core_id: 9, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_3, core_id: 9, comm_name: Task_0->Task_3, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_3, core_id: 9, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_3, core_id: 9, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_3, core_id: 10, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_3, core_id: 10, comm_name: Task_0->Task_3, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_3, core_id: 10, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_3, core_id: 10, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_3, core_id: 11, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_3, core_id: 11, comm_name: Task_0->Task_3, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_3, core_id: 11, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_3, core_id: 11, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_3, core_id: 12, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_3, core_id: 12, comm_name: Task_0->Task_3, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_3, core_id: 12, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_3, core_id: 12, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_3, core_id: 13, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_3, core_id: 13, comm_name: Task_0->Task_3, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_3, core_id: 13, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_3, core_id: 13, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_3, core_id: 14, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_3, core_id: 14, comm_name: Task_0->Task_3, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_3, core_id: 14, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_3, core_id: 14, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_3, core_id: 15, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_3, core_id: 15, comm_name: Task_0->Task_3, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_3, core_id: 15, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_3, core_id: 15, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:98: [eft_scheduler/DEBUG] task: Task_3, best_core_id: 2, earliest_finish_time_us: 1193378.613878
+[0.000000] scheduler_heft.cpp:151: [heft_scheduler/DEBUG] selected_task: Task_3, selected_core_id: 2, estimated_finish_time: 1193378.613878
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_4, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_5, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_6, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_7, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_8, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_9, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_10, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_11, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_12, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_13, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_14, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_15, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_16, upward_rank: 0.003125
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_4, core_id: 3, earliest_start_time_us: 1190237.000000
+[0.000000] hardware.cpp:179: [hardware/DEBUG] set_thread_membind_nodeset (current): 0xffffffff,0xffffffff,0xffffffff, set_thread_membind_nodeset (new): 0x00000001.
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_4, core_id: 3, comm_name: Task_0->Task_4, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179694, Task ID: Task_3, Core ID: 2 => message: started.
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_4, core_id: 3, estimated_compute_time_us: 3125.000000
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0x55555555,0x55555555,0x55555555.
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_4, core_id: 3, finish_time_us: 1193378.613878
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179694, Task ID: Task_3, Core ID: 2 => message: BIND memory policy - thread is bound to NUMA nodes 0.
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_4, core_id: 4, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_4, core_id: 4, comm_name: Task_0->Task_4, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_4, core_id: 4, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_4, core_id: 4, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_4, core_id: 5, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_4, core_id: 5, comm_name: Task_0->Task_4, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_4, core_id: 5, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_4, core_id: 5, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_4, core_id: 6, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_4, core_id: 6, comm_name: Task_0->Task_4, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_4, core_id: 6, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_4, core_id: 6, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_4, core_id: 7, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_4, core_id: 7, comm_name: Task_0->Task_4, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_4, core_id: 7, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_4, core_id: 7, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_4, core_id: 8, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_4, core_id: 8, comm_name: Task_0->Task_4, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_4, core_id: 8, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_4, core_id: 8, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_4, core_id: 9, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_4, core_id: 9, comm_name: Task_0->Task_4, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_4, core_id: 9, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_4, core_id: 9, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_4, core_id: 10, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_4, core_id: 10, comm_name: Task_0->Task_4, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_4, core_id: 10, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_4, core_id: 10, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_4, core_id: 11, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_4, core_id: 11, comm_name: Task_0->Task_4, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_4, core_id: 11, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_4, core_id: 11, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_4, core_id: 12, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_4, core_id: 12, comm_name: Task_0->Task_4, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_4, core_id: 12, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_4, core_id: 12, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_4, core_id: 13, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_4, core_id: 13, comm_name: Task_0->Task_4, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_4, core_id: 13, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_4, core_id: 13, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_4, core_id: 14, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_4, core_id: 14, comm_name: Task_0->Task_4, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_4, core_id: 14, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_4, core_id: 14, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_4, core_id: 15, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_4, core_id: 15, comm_name: Task_0->Task_4, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_4, core_id: 15, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_4, core_id: 15, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:98: [eft_scheduler/DEBUG] task: Task_4, best_core_id: 3, earliest_finish_time_us: 1193378.613878
+[0.000000] scheduler_heft.cpp:151: [heft_scheduler/DEBUG] selected_task: Task_4, selected_core_id: 3, estimated_finish_time: 1193378.613878
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_5, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_6, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_7, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_8, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_9, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_10, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_11, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_12, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_13, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_14, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_15, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_16, upward_rank: 0.003125
+[0.000000] hardware.cpp:179: [hardware/DEBUG] set_thread_membind_nodeset (current): 0xffffffff,0xffffffff,0xffffffff, set_thread_membind_nodeset (new): 0x00000001.
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_5, core_id: 4, earliest_start_time_us: 1190237.000000
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179695, Task ID: Task_4, Core ID: 3 => message: started.
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_5, core_id: 4, comm_name: Task_0->Task_5, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0x55555555,0x55555555,0x55555555.
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_5, core_id: 4, estimated_compute_time_us: 3125.000000
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179695, Task ID: Task_4, Core ID: 3 => message: BIND memory policy - thread is bound to NUMA nodes 0.
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_5, core_id: 4, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_5, core_id: 5, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_5, core_id: 5, comm_name: Task_0->Task_5, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_5, core_id: 5, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_5, core_id: 5, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_5, core_id: 6, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_5, core_id: 6, comm_name: Task_0->Task_5, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_5, core_id: 6, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_5, core_id: 6, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_5, core_id: 7, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_5, core_id: 7, comm_name: Task_0->Task_5, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_5, core_id: 7, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_5, core_id: 7, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_5, core_id: 8, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_5, core_id: 8, comm_name: Task_0->Task_5, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_5, core_id: 8, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_5, core_id: 8, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_5, core_id: 9, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_5, core_id: 9, comm_name: Task_0->Task_5, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_5, core_id: 9, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_5, core_id: 9, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_5, core_id: 10, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_5, core_id: 10, comm_name: Task_0->Task_5, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_5, core_id: 10, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_5, core_id: 10, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_5, core_id: 11, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_5, core_id: 11, comm_name: Task_0->Task_5, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_5, core_id: 11, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_5, core_id: 11, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_5, core_id: 12, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_5, core_id: 12, comm_name: Task_0->Task_5, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_5, core_id: 12, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_5, core_id: 12, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_5, core_id: 13, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_5, core_id: 13, comm_name: Task_0->Task_5, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_5, core_id: 13, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_5, core_id: 13, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_5, core_id: 14, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_5, core_id: 14, comm_name: Task_0->Task_5, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_5, core_id: 14, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_5, core_id: 14, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_5, core_id: 15, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_5, core_id: 15, comm_name: Task_0->Task_5, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_5, core_id: 15, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_5, core_id: 15, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:98: [eft_scheduler/DEBUG] task: Task_5, best_core_id: 4, earliest_finish_time_us: 1193378.613878
+[0.000000] scheduler_heft.cpp:151: [heft_scheduler/DEBUG] selected_task: Task_5, selected_core_id: 4, estimated_finish_time: 1193378.613878
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_6, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_7, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_8, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_9, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_10, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_11, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_12, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_13, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_14, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_15, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_16, upward_rank: 0.003125
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_6, core_id: 5, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_6, core_id: 5, comm_name: Task_0->Task_6, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_6, core_id: 5, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_6, core_id: 5, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_6, core_id: 6, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_6, core_id: 6, comm_name: Task_0->Task_6, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_6, core_id: 6, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_6, core_id: 6, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_6, core_id: 7, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_6, core_id: 7, comm_name: Task_0->Task_6, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] hardware.cpp:179: [hardware/DEBUG] set_thread_membind_nodeset (current): 0xffffffff,0xffffffff,0xffffffff, set_thread_membind_nodeset (new): 0x00000001.
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_6, core_id: 7, estimated_compute_time_us: 3125.000000
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179696, Task ID: Task_5, Core ID: 4 => message: started.
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_6, core_id: 7, finish_time_us: 1193378.613878
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0x55555555,0x55555555,0x55555555.
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_6, core_id: 8, earliest_start_time_us: 1190237.000000
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179696, Task ID: Task_5, Core ID: 4 => message: BIND memory policy - thread is bound to NUMA nodes 0.
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_6, core_id: 8, comm_name: Task_0->Task_6, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_6, core_id: 8, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_6, core_id: 8, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_6, core_id: 9, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_6, core_id: 9, comm_name: Task_0->Task_6, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_6, core_id: 9, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_6, core_id: 9, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_6, core_id: 10, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_6, core_id: 10, comm_name: Task_0->Task_6, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_6, core_id: 10, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_6, core_id: 10, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_6, core_id: 11, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_6, core_id: 11, comm_name: Task_0->Task_6, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_6, core_id: 11, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_6, core_id: 11, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_6, core_id: 12, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_6, core_id: 12, comm_name: Task_0->Task_6, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_6, core_id: 12, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_6, core_id: 12, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_6, core_id: 13, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_6, core_id: 13, comm_name: Task_0->Task_6, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_6, core_id: 13, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_6, core_id: 13, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_6, core_id: 14, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_6, core_id: 14, comm_name: Task_0->Task_6, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_6, core_id: 14, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_6, core_id: 14, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_6, core_id: 15, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_6, core_id: 15, comm_name: Task_0->Task_6, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_6, core_id: 15, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_6, core_id: 15, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:98: [eft_scheduler/DEBUG] task: Task_6, best_core_id: 5, earliest_finish_time_us: 1193378.613878
+[0.000000] scheduler_heft.cpp:151: [heft_scheduler/DEBUG] selected_task: Task_6, selected_core_id: 5, estimated_finish_time: 1193378.613878
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_7, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_8, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_9, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_10, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_11, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_12, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_13, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_14, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_15, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_16, upward_rank: 0.003125
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_7, core_id: 6, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_7, core_id: 6, comm_name: Task_0->Task_7, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_7, core_id: 6, estimated_compute_time_us: 3125.000000
+[0.000000] hardware.cpp:179: [hardware/DEBUG] set_thread_membind_nodeset (current): 0xffffffff,0xffffffff,0xffffffff, set_thread_membind_nodeset (new): 0x00000001.
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_7, core_id: 6, finish_time_us: 1193378.613878
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179697, Task ID: Task_6, Core ID: 5 => message: started.
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_7, core_id: 7, earliest_start_time_us: 1190237.000000
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0x55555555,0x55555555,0x55555555.
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_7, core_id: 7, comm_name: Task_0->Task_7, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_7, core_id: 7, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_7, core_id: 7, finish_time_us: 1193378.613878
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179697, Task ID: Task_6, Core ID: 5 => message: BIND memory policy - thread is bound to NUMA nodes 0.
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_7, core_id: 8, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_7, core_id: 8, comm_name: Task_0->Task_7, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_7, core_id: 8, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_7, core_id: 8, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_7, core_id: 9, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_7, core_id: 9, comm_name: Task_0->Task_7, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_7, core_id: 9, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_7, core_id: 9, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_7, core_id: 10, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_7, core_id: 10, comm_name: Task_0->Task_7, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_7, core_id: 10, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_7, core_id: 10, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_7, core_id: 11, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_7, core_id: 11, comm_name: Task_0->Task_7, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_7, core_id: 11, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_7, core_id: 11, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_7, core_id: 12, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_7, core_id: 12, comm_name: Task_0->Task_7, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_7, core_id: 12, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_7, core_id: 12, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_7, core_id: 13, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_7, core_id: 13, comm_name: Task_0->Task_7, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_7, core_id: 13, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_7, core_id: 13, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_7, core_id: 14, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_7, core_id: 14, comm_name: Task_0->Task_7, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_7, core_id: 14, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_7, core_id: 14, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_7, core_id: 15, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_7, core_id: 15, comm_name: Task_0->Task_7, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_7, core_id: 15, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_7, core_id: 15, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:98: [eft_scheduler/DEBUG] task: Task_7, best_core_id: 6, earliest_finish_time_us: 1193378.613878
+[0.000000] scheduler_heft.cpp:151: [heft_scheduler/DEBUG] selected_task: Task_7, selected_core_id: 6, estimated_finish_time: 1193378.613878
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_8, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_9, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_10, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_11, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_12, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_13, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_14, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_15, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_16, upward_rank: 0.003125
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_8, core_id: 7, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_8, core_id: 7, comm_name: Task_0->Task_8, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_8, core_id: 7, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_8, core_id: 7, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_8, core_id: 8, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_8, core_id: 8, comm_name: Task_0->Task_8, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_8, core_id: 8, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_8, core_id: 8, finish_time_us: 1193378.613878
+[0.000000] hardware.cpp:179: [hardware/DEBUG] set_thread_membind_nodeset (current): 0xffffffff,0xffffffff,0xffffffff, set_thread_membind_nodeset (new): 0x00000001.
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_8, core_id: 9, earliest_start_time_us: 1190237.000000
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179698, Task ID: Task_7, Core ID: 6 => message: started.
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_8, core_id: 9, comm_name: Task_0->Task_8, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0x55555555,0x55555555,0x55555555.
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_8, core_id: 9, estimated_compute_time_us: 3125.000000
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179698, Task ID: Task_7, Core ID: 6 => message: BIND memory policy - thread is bound to NUMA nodes 0.
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_8, core_id: 9, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_8, core_id: 10, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_8, core_id: 10, comm_name: Task_0->Task_8, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_8, core_id: 10, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_8, core_id: 10, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_8, core_id: 11, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_8, core_id: 11, comm_name: Task_0->Task_8, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_8, core_id: 11, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_8, core_id: 11, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_8, core_id: 12, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_8, core_id: 12, comm_name: Task_0->Task_8, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_8, core_id: 12, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_8, core_id: 12, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_8, core_id: 13, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_8, core_id: 13, comm_name: Task_0->Task_8, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_8, core_id: 13, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_8, core_id: 13, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_8, core_id: 14, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_8, core_id: 14, comm_name: Task_0->Task_8, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_8, core_id: 14, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_8, core_id: 14, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_8, core_id: 15, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_8, core_id: 15, comm_name: Task_0->Task_8, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_8, core_id: 15, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_8, core_id: 15, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:98: [eft_scheduler/DEBUG] task: Task_8, best_core_id: 7, earliest_finish_time_us: 1193378.613878
+[0.000000] scheduler_heft.cpp:151: [heft_scheduler/DEBUG] selected_task: Task_8, selected_core_id: 7, estimated_finish_time: 1193378.613878
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_9, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_10, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_11, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_12, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_13, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_14, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_15, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_16, upward_rank: 0.003125
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_9, core_id: 8, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_9, core_id: 8, comm_name: Task_0->Task_9, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_9, core_id: 8, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_9, core_id: 8, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_9, core_id: 9, earliest_start_time_us: 1190237.000000
+[0.000000] hardware.cpp:179: [hardware/DEBUG] set_thread_membind_nodeset (current): 0xffffffff,0xffffffff,0xffffffff, set_thread_membind_nodeset (new): 0x00000001.
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_9, core_id: 9, comm_name: Task_0->Task_9, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179699, Task ID: Task_8, Core ID: 7 => message: started.
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_9, core_id: 9, estimated_compute_time_us: 3125.000000
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0x55555555,0x55555555,0x55555555.
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_9, core_id: 9, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_9, core_id: 10, earliest_start_time_us: 1190237.000000
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179699, Task ID: Task_8, Core ID: 7 => message: BIND memory policy - thread is bound to NUMA nodes 0.
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_9, core_id: 10, comm_name: Task_0->Task_9, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_9, core_id: 10, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_9, core_id: 10, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_9, core_id: 11, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_9, core_id: 11, comm_name: Task_0->Task_9, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_9, core_id: 11, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_9, core_id: 11, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_9, core_id: 12, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_9, core_id: 12, comm_name: Task_0->Task_9, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_9, core_id: 12, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_9, core_id: 12, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_9, core_id: 13, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_9, core_id: 13, comm_name: Task_0->Task_9, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_9, core_id: 13, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_9, core_id: 13, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_9, core_id: 14, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_9, core_id: 14, comm_name: Task_0->Task_9, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_9, core_id: 14, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_9, core_id: 14, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_9, core_id: 15, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_9, core_id: 15, comm_name: Task_0->Task_9, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_9, core_id: 15, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_9, core_id: 15, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:98: [eft_scheduler/DEBUG] task: Task_9, best_core_id: 8, earliest_finish_time_us: 1193378.613878
+[0.000000] scheduler_heft.cpp:151: [heft_scheduler/DEBUG] selected_task: Task_9, selected_core_id: 8, estimated_finish_time: 1193378.613878
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_10, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_11, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_12, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_13, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_14, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_15, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_16, upward_rank: 0.003125
+[0.000000] hardware.cpp:179: [hardware/DEBUG] set_thread_membind_nodeset (current): 0xffffffff,0xffffffff,0xffffffff, set_thread_membind_nodeset (new): 0x00000001.
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_10, core_id: 9, earliest_start_time_us: 1190237.000000
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179700, Task ID: Task_9, Core ID: 8 => message: started.
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_10, core_id: 9, comm_name: Task_0->Task_10, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0x55555555,0x55555555,0x55555555.
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_10, core_id: 9, estimated_compute_time_us: 3125.000000
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179700, Task ID: Task_9, Core ID: 8 => message: BIND memory policy - thread is bound to NUMA nodes 0.
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_10, core_id: 9, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_10, core_id: 10, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_10, core_id: 10, comm_name: Task_0->Task_10, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_10, core_id: 10, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_10, core_id: 10, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_10, core_id: 11, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_10, core_id: 11, comm_name: Task_0->Task_10, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_10, core_id: 11, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_10, core_id: 11, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_10, core_id: 12, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_10, core_id: 12, comm_name: Task_0->Task_10, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_10, core_id: 12, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_10, core_id: 12, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_10, core_id: 13, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_10, core_id: 13, comm_name: Task_0->Task_10, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_10, core_id: 13, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_10, core_id: 13, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_10, core_id: 14, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_10, core_id: 14, comm_name: Task_0->Task_10, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_10, core_id: 14, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_10, core_id: 14, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_10, core_id: 15, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_10, core_id: 15, comm_name: Task_0->Task_10, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_10, core_id: 15, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_10, core_id: 15, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:98: [eft_scheduler/DEBUG] task: Task_10, best_core_id: 9, earliest_finish_time_us: 1193378.613878
+[0.000000] scheduler_heft.cpp:151: [heft_scheduler/DEBUG] selected_task: Task_10, selected_core_id: 9, estimated_finish_time: 1193378.613878
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_11, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_12, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_13, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_14, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_15, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_16, upward_rank: 0.003125
+[0.000000] hardware.cpp:179: [hardware/DEBUG] set_thread_membind_nodeset (current): 0xffffffff,0xffffffff,0xffffffff, set_thread_membind_nodeset (new): 0x00000001.
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_11, core_id: 10, earliest_start_time_us: 1190237.000000
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179701, Task ID: Task_10, Core ID: 9 => message: started.
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_11, core_id: 10, comm_name: Task_0->Task_11, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0x55555555,0x55555555,0x55555555.
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_11, core_id: 10, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_11, core_id: 10, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_11, core_id: 11, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_11, core_id: 11, comm_name: Task_0->Task_11, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_11, core_id: 11, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_11, core_id: 11, finish_time_us: 1193378.613878
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179701, Task ID: Task_10, Core ID: 9 => message: BIND memory policy - thread is bound to NUMA nodes 0.
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_11, core_id: 12, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_11, core_id: 12, comm_name: Task_0->Task_11, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_11, core_id: 12, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_11, core_id: 12, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_11, core_id: 13, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_11, core_id: 13, comm_name: Task_0->Task_11, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_11, core_id: 13, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_11, core_id: 13, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_11, core_id: 14, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_11, core_id: 14, comm_name: Task_0->Task_11, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_11, core_id: 14, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_11, core_id: 14, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_11, core_id: 15, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_11, core_id: 15, comm_name: Task_0->Task_11, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_11, core_id: 15, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_11, core_id: 15, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:98: [eft_scheduler/DEBUG] task: Task_11, best_core_id: 10, earliest_finish_time_us: 1193378.613878
+[0.000000] scheduler_heft.cpp:151: [heft_scheduler/DEBUG] selected_task: Task_11, selected_core_id: 10, estimated_finish_time: 1193378.613878
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_12, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_13, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_14, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_15, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_16, upward_rank: 0.003125
+[0.000000] hardware.cpp:179: [hardware/DEBUG] set_thread_membind_nodeset (current): 0xffffffff,0xffffffff,0xffffffff, set_thread_membind_nodeset (new): 0x00000001.
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_12, core_id: 11, earliest_start_time_us: 1190237.000000
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179702, Task ID: Task_11, Core ID: 10 => message: started.
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_12, core_id: 11, comm_name: Task_0->Task_12, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_12, core_id: 11, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_12, core_id: 11, finish_time_us: 1193378.613878
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0x55555555,0x55555555,0x55555555.
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_12, core_id: 12, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_12, core_id: 12, comm_name: Task_0->Task_12, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_12, core_id: 12, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_12, core_id: 12, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_12, core_id: 13, earliest_start_time_us: 1190237.000000
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179702, Task ID: Task_11, Core ID: 10 => message: BIND memory policy - thread is bound to NUMA nodes 0.
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_12, core_id: 13, comm_name: Task_0->Task_12, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_12, core_id: 13, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_12, core_id: 13, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_12, core_id: 14, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_12, core_id: 14, comm_name: Task_0->Task_12, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_12, core_id: 14, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_12, core_id: 14, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_12, core_id: 15, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_12, core_id: 15, comm_name: Task_0->Task_12, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_12, core_id: 15, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_12, core_id: 15, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:98: [eft_scheduler/DEBUG] task: Task_12, best_core_id: 11, earliest_finish_time_us: 1193378.613878
+[0.000000] scheduler_heft.cpp:151: [heft_scheduler/DEBUG] selected_task: Task_12, selected_core_id: 11, estimated_finish_time: 1193378.613878
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_13, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_14, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_15, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_16, upward_rank: 0.003125
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_13, core_id: 12, earliest_start_time_us: 1190237.000000
+[0.000000] hardware.cpp:179: [hardware/DEBUG] set_thread_membind_nodeset (current): 0xffffffff,0xffffffff,0xffffffff, set_thread_membind_nodeset (new): 0x00000001.
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_13, core_id: 12, comm_name: Task_0->Task_13, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_13, core_id: 12, estimated_compute_time_us: 3125.000000
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179703, Task ID: Task_12, Core ID: 11 => message: started.
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_13, core_id: 12, finish_time_us: 1193378.613878
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0x55555555,0x55555555,0x55555555.
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_13, core_id: 13, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_13, core_id: 13, comm_name: Task_0->Task_13, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_13, core_id: 13, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_13, core_id: 13, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_13, core_id: 14, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_13, core_id: 14, comm_name: Task_0->Task_13, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_13, core_id: 14, estimated_compute_time_us: 3125.000000
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179703, Task ID: Task_12, Core ID: 11 => message: BIND memory policy - thread is bound to NUMA nodes 0.
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_13, core_id: 14, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_13, core_id: 15, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_13, core_id: 15, comm_name: Task_0->Task_13, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_13, core_id: 15, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_13, core_id: 15, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:98: [eft_scheduler/DEBUG] task: Task_13, best_core_id: 12, earliest_finish_time_us: 1193378.613878
+[0.000000] scheduler_heft.cpp:151: [heft_scheduler/DEBUG] selected_task: Task_13, selected_core_id: 12, estimated_finish_time: 1193378.613878
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_14, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_15, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_16, upward_rank: 0.003125
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_14, core_id: 13, earliest_start_time_us: 1190237.000000
+[0.000000] hardware.cpp:179: [hardware/DEBUG] set_thread_membind_nodeset (current): 0xffffffff,0xffffffff,0xffffffff, set_thread_membind_nodeset (new): 0x00000001.
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_14, core_id: 13, comm_name: Task_0->Task_14, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179704, Task ID: Task_13, Core ID: 12 => message: started.
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_14, core_id: 13, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_14, core_id: 13, finish_time_us: 1193378.613878
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0x55555555,0x55555555,0x55555555.
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_14, core_id: 14, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_14, core_id: 14, comm_name: Task_0->Task_14, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_14, core_id: 14, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_14, core_id: 14, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_14, core_id: 15, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_14, core_id: 15, comm_name: Task_0->Task_14, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_14, core_id: 15, estimated_compute_time_us: 3125.000000
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179704, Task ID: Task_13, Core ID: 12 => message: BIND memory policy - thread is bound to NUMA nodes 0.
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_14, core_id: 15, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:98: [eft_scheduler/DEBUG] task: Task_14, best_core_id: 13, earliest_finish_time_us: 1193378.613878
+[0.000000] scheduler_heft.cpp:151: [heft_scheduler/DEBUG] selected_task: Task_14, selected_core_id: 13, estimated_finish_time: 1193378.613878
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_15, upward_rank: 0.003125
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_16, upward_rank: 0.003125
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_15, core_id: 14, earliest_start_time_us: 1190237.000000
+[0.000000] hardware.cpp:179: [hardware/DEBUG] set_thread_membind_nodeset (current): 0xffffffff,0xffffffff,0xffffffff, set_thread_membind_nodeset (new): 0x00000001.
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_15, core_id: 14, comm_name: Task_0->Task_15, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_15, core_id: 14, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_15, core_id: 14, finish_time_us: 1193378.613878
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179705, Task ID: Task_14, Core ID: 13 => message: started.
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_15, core_id: 15, earliest_start_time_us: 1190237.000000
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0x55555555,0x55555555,0x55555555.
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_15, core_id: 15, comm_name: Task_0->Task_15, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_15, core_id: 15, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_15, core_id: 15, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:98: [eft_scheduler/DEBUG] task: Task_15, best_core_id: 14, earliest_finish_time_us: 1193378.613878
+[0.000000] scheduler_heft.cpp:151: [heft_scheduler/DEBUG] selected_task: Task_15, selected_core_id: 14, estimated_finish_time: 1193378.613878
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179705, Task ID: Task_14, Core ID: 13 => message: BIND memory policy - thread is bound to NUMA nodes 0.
+[0.000000] scheduler_heft.cpp:144: [heft_scheduler/DEBUG] priority_queued_task: Task_16, upward_rank: 0.003125
+[0.000000] scheduler_eft.cpp:24: [eft_scheduler/DEBUG] task: Task_16, core_id: 15, earliest_start_time_us: 1190237.000000
+[0.000000] scheduler_eft.cpp:46: [eft_scheduler/DEBUG] task: Task_16, core_id: 15, comm_name: Task_0->Task_16, read_time_us: 16.613878, payload: 2000000000.000000, estimated_read_time_us: 16.613878
+[0.000000] scheduler_eft.cpp:56: [eft_scheduler/DEBUG] task: Task_16, core_id: 15, estimated_compute_time_us: 3125.000000
+[0.000000] scheduler_eft.cpp:90: [eft_scheduler/DEBUG] task: Task_16, core_id: 15, finish_time_us: 1193378.613878
+[0.000000] scheduler_eft.cpp:98: [eft_scheduler/DEBUG] task: Task_16, best_core_id: 15, earliest_finish_time_us: 1193378.613878
+[0.000000] hardware.cpp:179: [hardware/DEBUG] set_thread_membind_nodeset (current): 0xffffffff,0xffffffff,0xffffffff, set_thread_membind_nodeset (new): 0x00000001.
+[0.000000] scheduler_heft.cpp:151: [heft_scheduler/DEBUG] selected_task: Task_16, selected_core_id: 15, estimated_finish_time: 1193378.613878
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179706, Task ID: Task_15, Core ID: 14 => message: started.
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0x55555555,0x55555555,0x55555555.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179706, Task ID: Task_15, Core ID: 14 => message: BIND memory policy - thread is bound to NUMA nodes 0.
+[0.000000] hardware.cpp:179: [hardware/DEBUG] set_thread_membind_nodeset (current): 0xffffffff,0xffffffff,0xffffffff, set_thread_membind_nodeset (new): 0x00000001.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179707, Task ID: Task_16, Core ID: 15 => message: started.
+[0.000000] hardware.cpp:210: [hardware/DEBUG] read_nodeset_from_thread: 0x55555555,0x55555555,0x55555555.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179707, Task ID: Task_16, Core ID: 15 => message: BIND memory policy - thread is bound to NUMA nodes 0.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179693, Task ID: Task_2, Core ID: 1 => read: Task_0->Task_2, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179699, Task ID: Task_8, Core ID: 7 => read: Task_0->Task_8, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179692, Task ID: Task_1, Core ID: 0 => read: Task_0->Task_1, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179695, Task ID: Task_4, Core ID: 3 => read: Task_0->Task_4, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179694, Task ID: Task_3, Core ID: 2 => read: Task_0->Task_3, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179696, Task ID: Task_5, Core ID: 4 => read: Task_0->Task_5, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179700, Task ID: Task_9, Core ID: 8 => read: Task_0->Task_9, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179698, Task ID: Task_7, Core ID: 6 => read: Task_0->Task_7, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179704, Task ID: Task_13, Core ID: 12 => read: Task_0->Task_13, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179705, Task ID: Task_14, Core ID: 13 => read: Task_0->Task_14, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179693, Task ID: Task_2, Core ID: 1 => write: Task_2->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179693, Task ID: Task_2, Core ID: 1 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179706, Task ID: Task_15, Core ID: 14 => read: Task_0->Task_15, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179703, Task ID: Task_12, Core ID: 11 => read: Task_0->Task_12, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179701, Task ID: Task_10, Core ID: 9 => read: Task_0->Task_10, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179699, Task ID: Task_8, Core ID: 7 => write: Task_8->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179699, Task ID: Task_8, Core ID: 7 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179692, Task ID: Task_1, Core ID: 0 => write: Task_1->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179692, Task ID: Task_1, Core ID: 0 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179695, Task ID: Task_4, Core ID: 3 => write: Task_4->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179695, Task ID: Task_4, Core ID: 3 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179694, Task ID: Task_3, Core ID: 2 => write: Task_3->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179694, Task ID: Task_3, Core ID: 2 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179696, Task ID: Task_5, Core ID: 4 => write: Task_5->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179696, Task ID: Task_5, Core ID: 4 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179700, Task ID: Task_9, Core ID: 8 => write: Task_9->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179700, Task ID: Task_9, Core ID: 8 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179698, Task ID: Task_7, Core ID: 6 => write: Task_7->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179698, Task ID: Task_7, Core ID: 6 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179704, Task ID: Task_13, Core ID: 12 => write: Task_13->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179704, Task ID: Task_13, Core ID: 12 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179705, Task ID: Task_14, Core ID: 13 => write: Task_14->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179705, Task ID: Task_14, Core ID: 13 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179702, Task ID: Task_11, Core ID: 10 => read: Task_0->Task_11, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179707, Task ID: Task_16, Core ID: 15 => read: Task_0->Task_16, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179697, Task ID: Task_6, Core ID: 5 => read: Task_0->Task_6, payload (bytes): 2000000000.000000, checksum: 0, numa_locality_before_read: 0, numa_locality_after_read: 0, data (pages) migration: no
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179706, Task ID: Task_15, Core ID: 14 => write: Task_15->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179706, Task ID: Task_15, Core ID: 14 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179703, Task ID: Task_12, Core ID: 11 => write: Task_12->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179703, Task ID: Task_12, Core ID: 11 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179701, Task ID: Task_10, Core ID: 9 => write: Task_10->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179701, Task ID: Task_10, Core ID: 9 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179702, Task ID: Task_11, Core ID: 10 => write: Task_11->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179702, Task ID: Task_11, Core ID: 10 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179707, Task ID: Task_16, Core ID: 15 => write: Task_16->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179707, Task ID: Task_16, Core ID: 15 => message: finished.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179697, Task ID: Task_6, Core ID: 5 => write: Task_6->end, message: skipt writing operation for end task.
+[0.000000] [mapper_bare_metal/INFO] Process ID: 179690, Thread ID: 179697, Task ID: Task_6, Core ID: 5 => message: finished.
+Offsets validation failed for Task_12: expected 2958900.0, got 1472440.0
+Profile exported: ./results/profile/dis_16/heft/1_one_domain_1/5.csv
+Gantt created: './results/gantt/dis_16/heft/1_one_domain_1/5.png'.
+Profile exported: ./results/profile/dis_16/heft/1_one_domain_1/5.csv
+Gantt created: './results/gantt/dis_16/heft/1_one_domain_1/5.png'.
+Profile exported: ./results/profile/dis_16/heft/1_one_domain_1/5.csv
+Gantt created: './results/gantt/dis_16/heft/1_one_domain_1/5.png'.
+Traceback (most recent call last):
+  File "/home/cc/runtime_workflow_scheduler/./scripts/generate_profile.py", line 470, in <module>
+    print_profile(data, rel_lat_matrix, args.time_unit, args.payload_unit, args.export_csv)
+  File "/home/cc/runtime_workflow_scheduler/./scripts/generate_profile.py", line 368, in print_profile
+    durations = compute_durations(data, df_profile, time_unit)
+  File "/home/cc/runtime_workflow_scheduler/./scripts/generate_profile.py", line 205, in compute_durations
+    read_time_local = sum(
+  File "/home/cc/runtime_workflow_scheduler/./scripts/generate_profile.py", line 206, in <genexpr>
+    float(data['comm_name_read_offsets'][f"{row['data_item']}"]['end']) -
+KeyError: 'Task_0->Task_12'
+Gantt created: './results/gantt/dis_16/heft/1_one_domain_1/5.png'.
