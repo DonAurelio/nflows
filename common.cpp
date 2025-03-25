@@ -1,44 +1,73 @@
 #include "common.hpp"
 
-#include <iostream>
-#include <ranges>
-
 XBT_LOG_NEW_DEFAULT_CATEGORY(common, "Messages specific to this module.");
 
-std::string common_get_str_from_clock_frequency_type(clock_frequency_type_t type)
+/* UTILS */
+double common_get_time_us()
 {
-    switch (type) {
-        case CommonClockFrequencyType::DYNAMIC_CLOCK_FREQUENCY: return "dynamic";
-        case CommonClockFrequencyType::STATIC_CLOCK_FREQUENCY: return "static";
-        case CommonClockFrequencyType::ARRAY_CLOCK_FREQUENCY: return "array";
-        default: return "unknown";
-    }
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return (double)tv.tv_sec * 1000000 + tv.tv_usec;
 }
 
-simgrid_execs_t common_read_dag_from_dot(const std::string &file_name)
+std::string common_join(const std::vector<int> &vec, const std::string &delimiter)
+{
+    std::ostringstream oss;
+
+    for (size_t i = 0; i < vec.size(); ++i)
+    {
+        oss << vec[i];
+        if (i != vec.size() - 1)
+        { // Avoid adding a delimiter after the last element
+            oss << delimiter;
+        }
+    }
+
+    return oss.str();
+}
+
+std::pair<std::string, std::string> common_split(const std::string &input, std::string delimiter = "->")
+{
+    size_t pos = input.find(delimiter);
+    if (pos == std::string::npos)
+    {
+        // If "->" is not found, return empty strings or handle as needed
+        return {"", ""};
+    }
+
+    std::string first = input.substr(0, pos);
+    std::string second = input.substr(pos + delimiter.length());
+    return {first, second};
+}
+
+/* USER */
+simgrid_execs_t common_dag_read_from_dot(const std::string &file_name)
 {
     simgrid_execs_t execs;
-    // for (auto &activity : simgrid::s4u::create_DAG_from_DAX(file_name.c_str()))
     for (auto &activity : simgrid::s4u::create_DAG_from_dot(file_name.c_str()))
         if (auto *exec = dynamic_cast<simgrid::s4u::Exec *>(activity.get()))
             execs.push_back((simgrid_exec_t *)exec);
 
-    /* DELETE ENTRY/EXIT TASK */
-    // TODO: The last tasks still have end as dependency.
-    //  We need to remove this
+    /* DELETE ENTRY TASK */  
     simgrid_exec_t *root = execs.front();
-
+    
+    // Mark comms as completed to release dependent execs.
     for (const auto &succ_ptr : root->get_successors())
         (succ_ptr.get())->complete(simgrid::s4u::Activity::State::FINISHED);
+
+    // Mark exec as completed.
     root->complete(simgrid::s4u::Activity::State::FINISHED);
     execs.erase(execs.begin());
 
+    /* DELETE EXIT TASK */  
+    // TODO: The final tasks still include 'end' as a dependency.  
+    // This is currently handled in other functions, but it is not a practical solution.
     execs.pop_back();
 
     return execs;
 }
 
-simgrid_execs_t common_get_ready_tasks(const simgrid_execs_t &execs)
+simgrid_execs_t common_dag_get_ready_execs(const simgrid_execs_t &execs)
 {
     simgrid_execs_t ready_execs;
     for (auto &exec : execs)
@@ -48,7 +77,132 @@ simgrid_execs_t common_get_ready_tasks(const simgrid_execs_t &execs)
     return ready_execs;
 }
 
-std::vector<int> common_get_avail_core_ids(const common_t *common)
+std::string common_clock_frequency_type_to_str(clock_frequency_type_t type)
+{
+    switch (type) {
+        case COMMON_DYNAMIC_CLOCK_FREQUENCY: return "dynamic";
+        case COMMON_STATIC_CLOCK_FREQUENCY: return "static";
+        case COMMON_ARRAY_CLOCK_FREQUENCY: return "array";
+    }
+
+    std::cerr << "Error: Unknown clock_frequency_type '" << type << "'\n";
+    std::exit(EXIT_FAILURE);  
+}
+
+clock_frequency_type_t common_clock_frequency_str_to_type(std::string &type)
+{
+    if (type == "dynamic") return COMMON_DYNAMIC_CLOCK_FREQUENCY;
+    if (type == "static") return COMMON_STATIC_CLOCK_FREQUENCY;
+    if (type == "array") return COMMON_ARRAY_CLOCK_FREQUENCY;
+
+    std::cerr << "Error: Unknown clock_frequency_type '" << type << "'\n";
+    std::exit(EXIT_FAILURE);    
+}
+
+scheduler_type_t common_scheduler_str_to_type(std::string &type)
+{
+    if (type == "min-min") return COMMON_SCHED_TYPE_MIN_MIN;
+    if (type == "heft") return COMMON_SCHED_TYPE_HEFT;
+    if (type == "fifo") return COMMON_SCHED_TYPE_FIFO;
+
+    std::cerr << "Error: Unknown scheduler_type '" << type << "'\n";
+    std::exit(EXIT_FAILURE); 
+}
+
+std::string common_scheduler_type_to_str(scheduler_type_t &type)
+{
+    switch (type) {
+        case COMMON_SCHED_TYPE_MIN_MIN: return "min-min";
+        case COMMON_SCHED_TYPE_HEFT: return "heft";
+        case COMMON_SCHED_TYPE_FIFO: return "fifo";
+    }
+
+    std::cerr << "Error: Unknown scheduler_type '" << type << "'\n";
+    std::exit(EXIT_FAILURE); 
+}
+
+std::string common_scheduler_param_get(const common_t *common, const std::string &key)
+{
+    auto it = common->scheduler_params.find(key);
+    if (it != common->scheduler_params.end())
+        return it->second;
+    return "";
+}
+
+mapper_type_t common_mapper_str_to_type(std::string &type)
+{
+    if (type == "bare-metal") return COMMON_MAPPER_BARE_METAL;
+    if (type == "simulation") return COMMON_MAPPER_SIMULATION;
+
+    std::cerr << "Error: Unknown mapper_type '" << type << "'\n";
+    std::exit(EXIT_FAILURE); 
+}
+
+std::string common_mapper_type_to_str(mapper_type_t &type)
+{
+    switch (type) {
+        case COMMON_MAPPER_BARE_METAL: return "bare-metal";
+        case COMMON_MAPPER_SIMULATION: return "simulation";
+    }
+
+    std::cerr << "Error: Unknown mapper_type '" << type << "'\n";
+    std::exit(EXIT_FAILURE); 
+}
+
+hwloc_membind_policy_t common_mapper_mem_policy_str_to_type(std::string &type) {
+    if (type == "default") return HWLOC_MEMBIND_DEFAULT;
+    if (type == "firsttouch") return HWLOC_MEMBIND_FIRSTTOUCH;
+    if (type == "bind") return HWLOC_MEMBIND_BIND;
+    if (type == "interleave") return HWLOC_MEMBIND_INTERLEAVE;
+    if (type == "nexttouch") return HWLOC_MEMBIND_NEXTTOUCH;
+    if (type == "mixed") return HWLOC_MEMBIND_MIXED;
+
+    std::cerr << "Error: Unsupported memory policy type '" << type << "'\n";
+    std::exit(EXIT_FAILURE);
+}
+
+std::string common_mapper_mem_policy_type_to_str(hwloc_membind_policy_t &type) {
+    switch (type) {
+        case HWLOC_MEMBIND_DEFAULT: return "default";
+        case HWLOC_MEMBIND_FIRSTTOUCH: return "firsttouch";
+        case HWLOC_MEMBIND_BIND: return "bind";
+        case HWLOC_MEMBIND_INTERLEAVE: return "interleave";
+        case HWLOC_MEMBIND_NEXTTOUCH: return "nexttouch";
+        case HWLOC_MEMBIND_MIXED: return "mixed";
+    }
+
+    std::cerr << "Error: Unsupported memory policy enum value (" << static_cast<int>(type) << ")\n";
+    std::exit(EXIT_FAILURE);
+}
+
+distance_matrix_t common_distance_matrix_read_from_txt(const std::string &txt_file)
+{
+    std::ifstream file(txt_file);
+    if (!file.is_open())
+    {
+        std::cerr << "Error: Could not open file " << txt_file << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    int n;
+    file >> n; // Read matrix dimensions from the first line
+
+    distance_matrix_t matrix(n, std::vector<double>(n));
+
+    // Read matrix values
+    for (int i = 0; i < n; ++i)
+    {
+        for (int j = 0; j < n; ++j)
+        {
+            file >> matrix[i][j];
+        }
+    }
+    file.close();
+
+    return matrix;
+}
+
+std::vector<int> common_core_id_get_avail(const common_t *common)
 {
     unsigned int i = 0;
     std::vector<int> avail_core_ids;
@@ -62,32 +216,33 @@ std::vector<int> common_get_avail_core_ids(const common_t *common)
     return avail_core_ids;
 }
 
-void common_set_core_id_avail_unitl(common_t *common, unsigned int core_id, double duration)
+void common_core_id_set_avail(common_t *common, unsigned int core_id, bool avail)
 {
-    common->core_avail_until[core_id] = duration;
+    common->core_avail[core_id] = avail;
 }
 
-double common_get_core_id_avail_unitl(const common_t *common, unsigned int core_id)
+double common_core_id_get_avail_until(const common_t *common, unsigned int core_id)
 {
     return common->core_avail_until.at(core_id);
 }
 
-void common_set_core_id_as_avail(common_t *common, unsigned int core_id)
+void common_core_id_set_avail_unitl(common_t *common, unsigned int core_id, double duration)
 {
-    common->core_avail[core_id] = true;
+    common->core_avail_until[core_id] = duration;
 }
 
-void common_set_core_id_as_unavail(common_t *common, unsigned int core_id)
+name_to_time_range_payload_t common_comm_name_to_w_time_offset_payload_filter(const common_t *common, const std::string &dst_name)
 {
-    common->core_avail[core_id] = false;
-}
+    name_to_time_range_payload_t matches;
 
-std::string common_get_scheduler_param(const common_t *common, const std::string &key)
-{
-    auto it = common->scheduler_params.find(key);
-    if (it != common->scheduler_params.end())
-        return it->second;
-    return "";
+    for (const auto &[key, value] : common->comm_name_to_w_time_offset_payload)
+    {
+        auto [left, right] = common_split(key, "->");
+        if (dst_name == right)
+            matches[key] = value;
+    }
+
+    return matches;
 }
 
 void common_increment_active_threads_counter(common_t *common)
@@ -113,51 +268,6 @@ void common_wait_active_threads(common_t *common)
     while (common->active_threads > 0)
         pthread_cond_wait(&(common->cond), &(common->mutex)); // Wait until active_threads == 0
     pthread_mutex_unlock(&(common->mutex));
-}
-
-name_to_time_range_payload_t common_filter_name_to_time_range_payload(
-    const common_t *common, const std::string &name, time_range_payload_type_t type, comm_name_match_t comm_part_to_match)
-{
-    name_to_time_range_payload_t matches;
-    name_to_time_range_payload_t map;
-
-    switch (type)
-    {
-    case COMM_READ_TIMESTAMPS:
-        map = common->comm_name_to_r_ts_range_payload;
-        break;
-    case COMM_WRITE_TIMESTAMPS:
-        map = common->comm_name_to_w_ts_range_payload;
-        break;
-    case COMPUTE_TIMESTAMPS:
-        map = common->exec_name_to_c_ts_range_payload;
-        break;
-    case COMM_READ_OFFSETS:
-        map = common->comm_name_to_r_time_offset_payload;
-        break;
-    case COMM_WRITE_OFFSETS:
-        map = common->comm_name_to_w_time_offset_payload;
-        break;
-    case COMPUTE_OFFSETS:
-        map = common->exec_name_to_c_time_offset_payload;
-        break;
-    default:
-        map = common->exec_name_to_c_ts_range_payload;
-        break;
-    }
-
-    for (const auto &[key, value] : map)
-    {
-        auto [left, right] = common_split(key, "->");
-
-        std::string name_to_match = left.empty() ? name : (comm_part_to_match == COMM_SRC) ? left : right;
-        if (name_to_match == name)
-        {
-            matches[key] = value;
-        }
-    }
-
-    return matches;
 }
 
 double common_earliest_start_time(const common_t *common, const std::string &exec_name, unsigned int core_id)
@@ -202,39 +312,8 @@ double common_compute_time(const common_t *common, double flops, double processo
     return (flops / processor_speed_flops_per_second) * 1000000;
 }
 
-std::vector<std::vector<double>> common_read_distance_matrix_from_file(const std::string &filename)
-{
-    std::ifstream file(filename);
-    if (!file.is_open())
-    {
-        std::cerr << "Error: Could not open file " << filename << std::endl;
-        exit(EXIT_FAILURE);
-    }
 
-    int n;
-    file >> n; // Read matrix dimensions from the first line
 
-    std::vector<std::vector<double>> matrix(n, std::vector<double>(n));
-
-    // Read matrix values
-    for (int i = 0; i < n; ++i)
-    {
-        for (int j = 0; j < n; ++j)
-        {
-            file >> matrix[i][j];
-        }
-    }
-    file.close();
-
-    return matrix;
-}
-
-double common_get_time_us()
-{
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    return (double)tv.tv_sec * 1000000 + tv.tv_usec;
-}
 
 std::string common_get_timestamped_filename(const std::string &base_name, const std::string &format = "%Y%m%d_%H%M%S")
 {
@@ -248,34 +327,20 @@ std::string common_get_timestamped_filename(const std::string &base_name, const 
     return base_name + ".yaml";
 }
 
-std::string common_join(const std::vector<int> &vec, const std::string &delimiter)
+
+
+
+void common_update_name_to_status(name_to_status_t &mapping, const std::string &name)
 {
-    std::ostringstream oss;
-
-    for (size_t i = 0; i < vec.size(); ++i)
-    {
-        oss << vec[i];
-        if (i != vec.size() - 1)
-        { // Avoid adding a delimiter after the last element
-            oss << delimiter;
-        }
-    }
-
-    return oss.str();
+    mapping[name] += 1;
 }
 
-std::pair<std::string, std::string> common_split(const std::string &input, std::string delimiter = "->")
+size_t common_count_name_to_status(const name_to_status_t &mapping)
 {
-    size_t pos = input.find(delimiter);
-    if (pos == std::string::npos)
-    {
-        // If "->" is not found, return empty strings or handle as needed
-        return {"", ""};
-    }
+    size_t count = 0;
+    for (const auto &entry : mapping) count += entry.second;
 
-    std::string first = input.substr(0, pos);
-    std::string second = input.substr(pos + delimiter.length());
-    return {first, second};
+    return count;
 }
 
 void common_print_distance_matrix(const distance_matrix_t &matrix, const std::string &key, std::ostream &out)
@@ -355,10 +420,31 @@ void common_print_name_to_address(const name_to_address_t &mapping, std::ostream
     out << std::endl;
 }
 
+void common_print_name_to_status(const name_to_status_t &mapping, const std::string &header, std::ostream &out)
+{
+    if (mapping.empty()) return;
+
+    out << header << ":\n";
+    for (const auto &[key, count] : mapping)
+    {
+        out << "  " << key << ": " << count << "\n";
+    }
+    out << std::endl;
+}
+
 void common_print_metadata(const common_t *common, std::ostream &out)
 {
-    out << "checksum: " << common->checksum << "\n";
-    out << "active_threads: " << common->active_threads << "\n";
+    out << "threads_checksum: " << common->checksum << "\n";
+    out << "threads_active: " << common->active_threads << "\n";
+    out << std::endl;
+    out << "tasks_count: " << common->active_tasks.size() << "\n";
+    out << "reads_count: " << common->active_reads.size() << "\n";
+    out << "writes_count: " << common->active_writes.size() << "\n";
+    out << std::endl;
+    out << "tasks_active_count: " << common_count_name_to_status(common->active_tasks) << "\n";
+    out << "reads_active_count: " << common_count_name_to_status(common->active_reads) << "\n";
+    out << "writes_active_count: " << common_count_name_to_status(common->active_writes) << "\n";
+    out << std::endl;
     out << "flops_per_cycle: " << common->flops_per_cycle << "\n";
     out << "clock_frequency_type: " << common_get_str_from_clock_frequency_type(common->clock_frequency_type) << "\n";
     out << "clock_frequency_hz: " << common->clock_frequency_hz << "\n";
@@ -394,6 +480,9 @@ void common_print_common_structure(const common_t *common)
     std::ofstream out(file_name);
 
     common_print_metadata(common, out);
+    common_print_name_to_status(common->active_tasks, "tasks_active", out);
+    common_print_name_to_status(common->active_reads, "reads_active", out);
+    common_print_name_to_status(common->active_writes, "writes_active", out);
     common_print_distance_matrix(common->distance_lat_ns, "distance_latency_ns", out);
     common_print_distance_matrix(common->distance_bw_gbps, "distance_bandwidth_gbs", out);
     common_print_name_to_numa_ids(common->comm_name_to_numa_ids_w, "numa_mappings_write", out);

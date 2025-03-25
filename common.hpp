@@ -1,23 +1,23 @@
 #pragma once
 
 #include <hwloc.h>
+#include <sys/time.h>
+
+#include <nlohmann/json.hpp>
+#include <simgrid/s4u.hpp>
 
 #include <iomanip>
 #include <map>
 #include <string>
 #include <tuple>
 #include <vector>
-
+#include <ranges>
 #include <ctime>
 #include <fstream>
 #include <iostream>
 #include <ostream>
 #include <sstream>
-#include <sys/time.h>
-
 #include <bitset>
-#include <nlohmann/json.hpp>
-#include <simgrid/s4u.hpp>
 
 enum CommonClockFrequencyType
 {
@@ -182,20 +182,18 @@ std::string common_scheduler_param_get(const common_t *common, const std::string
 mapper_type_t common_mapper_str_to_type(std::string &type);
 std::string common_mapper_type_to_str(mapper_type_t &type);
 
-hwloc_membind_policy_t common_mapper_mem_policy_str_to_type(std::string &type):
-std::string common_mapper_mem_policy_type_to_str(hwloc_membind_policy_t &type):
+hwloc_membind_policy_t common_mapper_mem_policy_str_to_type(std::string &type);
+std::string common_mapper_mem_policy_type_to_str(hwloc_membind_policy_t &type);
 
-distance_matrix_t common_distance_matrix_read_from_file(const std::string &txt_file);
+distance_matrix_t common_distance_matrix_read_from_txt(const std::string &txt_file);
 
-void common_core_id_set_as_avail(common_t *common, unsigned int core_id);
-void common_core_id_set_as_unavail(common_t *common, unsigned int core_id);
+std::vector<int> common_core_id_get_avail(const common_t *common);
+void common_core_id_set_avail(common_t *common, unsigned int core_id, bool avail);
 
 double common_core_id_get_avail_unitl(const common_t *common, unsigned int core_id);
 void common_core_id_set_avail_unitl(common_t *common, unsigned int core_id, double duration);
 
-std::vector<int> common_core_id_get_avail(const common_t *common);
-
-name_to_time_range_payload_t common_name_to_time_range_payload_filter(const common_t *common, const std::string &name,time_range_payload_type_t type, comm_name_match_t comm_name);
+name_to_time_range_payload_t common_comm_name_to_w_time_offset_payload_filter(const common_t *common, const std::string &dst_name);
 
 /* USER UTILS */
 double common_earliest_start_time(const common_t *common, const std::string &exec_name, unsigned int core_id);
@@ -203,7 +201,7 @@ double common_communication_time(const common_t *common, unsigned int src_numa_i
 double common_compute_time(const common_t *common, double flops, double processor_speed_flops_per_second);
 
 /* RUNTIME */
-void common_threads_checksum_update(common_t *common, size_t checksum):
+void common_threads_checksum_update(common_t *common, size_t checksum);
 void common_threads_active_increment(common_t *common);
 void common_threads_active_decrement(common_t *common);
 void common_threads_active_wait(common_t *common);
