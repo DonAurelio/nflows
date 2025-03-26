@@ -103,7 +103,6 @@ struct common_s
     clock_frequency_type_t clock_frequency_type;
 
     std::string out_file_name;
-    std::string out_date_format;
 
     // Units are aligned with the reporting units used by Intel Memory Checker.
     // Latency (ns), Bandwidth (GB/s).

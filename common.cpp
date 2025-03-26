@@ -392,46 +392,109 @@ void common_exec_name_to_rcw_time_offset_payload_create(common_t *common, const 
 /* OUTPUT */
 void common_print_common_structure(const common_t *common)
 {
-    std::string file_name = common_get_timestamped_filename(common->log_base_name, common->log_date_format);
-    std::ofstream out(file_name);
+    std::ofstream out(common->out_file_name);
 
-    common_print_metadata(common, out);
-    common_print_name_to_status(common->active_tasks, "tasks_active", out);
-    common_print_name_to_status(common->active_reads, "reads_active", out);
-    common_print_name_to_status(common->active_writes, "writes_active", out);
-    common_print_distance_matrix(common->distance_lat_ns, "distance_latency_ns", out);
-    common_print_distance_matrix(common->distance_bw_gbps, "distance_bandwidth_gbs", out);
-    common_print_name_to_numa_ids(common->comm_name_to_numa_ids_w, "numa_mappings_write", out);
-    common_print_name_to_numa_ids(common->comm_name_to_numa_ids_r, "numa_mappings_read", out);
-    common_print_name_to_thread_locality(common->exec_name_to_thread_locality, out);
-    common_print_name_to_address(common->comm_name_to_address, out);
-    common_print_name_to_time_range_payload(common->comm_name_to_r_ts_range_payload, "comm_name_read_timestamps", out);
-    common_print_name_to_time_range_payload(common->comm_name_to_w_ts_range_payload, "comm_name_write_timestamps", out);
-    common_print_name_to_time_range_payload(common->exec_name_to_c_ts_range_payload, "exec_name_compute_timestamps",
-                                            out);
-    common_print_name_to_time_range_payload(common->comm_name_to_r_time_offset_payload, "comm_name_read_offsets", out);
-    common_print_name_to_time_range_payload(common->comm_name_to_w_time_offset_payload, "comm_name_write_offsets", out);
-    common_print_name_to_time_range_payload(common->exec_name_to_c_time_offset_payload, "exec_name_compute_offsets",
-                                            out);
-    common_print_name_to_time_range_payload(common->exec_name_to_rcw_time_offset_payload, "exec_name_total_offsets",
-                                            out);
+    common_print_user(common, out);
+    common_print_runtime(common, out);
+    common_print_workflow(common, out);
 
     out.close();
+}
+
+void common_print_user(const common_t *common, std::ostream &out)
+{
+    out << "user" << ":\n";
+    out << "  " << "flops_per_cycle: " << common->flops_per_cycle << "\n";
+    out << "  " << "clock_frequency_type: " << common_clock_frequency_type_to_str(common->clock_frequency_type) << "\n";
+
+    if (!common->clock_frequencies_hz.empty())
+    {
+        out << "  " << "clock_frequencies_hz:\n";
+        for (size_t i = 0; i < common->core_avail.size(); ++i)
+            out << "    " << i << ": " << common->clock_frequencies_hz[i] << "\n";
+    } else {
+        out << "  " << "clock_frequency_hz: " << common->clock_frequency_hz << "\n";
+    }
+
+    common_print_distance_matrix(common->distance_lat_ns, "distance_lat_ns", out);
+    common_print_distance_matrix(common->distance_bw_gbps, "distance_bw_gbps", out);
+
+    out << std::endl;
 }
 
 void common_print_distance_matrix(const distance_matrix_t &matrix, const std::string &key, std::ostream &out)
 {
     if (matrix.empty()) return;
 
-    out << key << ":\n";
+    out << "  " << key << ":\n";
     for (const auto &row : matrix)
     {
-        out << "  - [";
+        out << "    - [";
         for (size_t i = 0; i < row.size(); ++i)
         {
             out << row[i] << (i != row.size() - 1 ? ", " : "");
         }
         out << "]\n";
+    }
+}
+
+void common_print_workflow(const common_t *common, std::ostream &out)
+{
+    out << "workflow" << ":\n";
+    out << "  " << "tasks_count: " << common->tasks_active.size() << "\n";
+    out << "  " << "reads_count: " << common->reads_active.size() << "\n";
+    out << "  " << "writes_count: " << common->writes_active.size() << "\n";
+    out << std::endl;
+}
+
+void common_print_runtime(const common_t *common, std::ostream &out)
+{
+    out << "runtime" << ":\n";
+    out << "  " << "threads_checksum: " << common->threads_checksum << "\n";
+    out << "  " << "threads_active: " << common->threads_active << "\n";
+    out << "  " << "tasks_active_count: " << common_count_name_to_status(common->active_tasks) << "\n";
+    out << "  " << "reads_active_count: " << common_count_name_to_status(common->active_reads) << "\n";
+    out << "  " << "writes_active_count: " << common_count_name_to_status(common->active_writes) << "\n";
+    if (!common->core_avail.empty())
+    {
+        out << "  " << "core_availability:\n";
+        for (size_t i = 0; i < common->core_avail.size(); ++i)
+        {
+            if (common->core_avail[i])  // Print only available cores
+            {
+                out << "    " << i << ": {avail_until: " << common->core_avail_until[i] << "}" << "\n";
+            }        
+        }
+    }
+    out << std::endl;
+}
+
+void common_print_trace(const common_t *common, std::ostream &out)
+{
+    out << "trace" << ":\n";
+    common_print_name_to_thread_locality(common->exec_name_to_thread_locality, out);
+    common_print_name_to_numa_ids(common->comm_name_to_numa_ids_w, "numa_mappings_write", out);
+    common_print_name_to_numa_ids(common->comm_name_to_numa_ids_r, "numa_mappings_read", out);
+    common_print_name_to_time_range_payload(common->comm_name_to_r_ts_range_payload, "comm_name_read_timestamps", out);
+    common_print_name_to_time_range_payload(common->comm_name_to_w_ts_range_payload, "comm_name_write_timestamps", out);
+    common_print_name_to_time_range_payload(common->exec_name_to_c_ts_range_payload, "exec_name_compute_timestamps", out);
+    common_print_name_to_time_range_payload(common->comm_name_to_r_time_offset_payload, "comm_name_read_offsets", out);
+    common_print_name_to_time_range_payload(common->comm_name_to_w_time_offset_payload, "comm_name_write_offsets", out);
+    common_print_name_to_time_range_payload(common->exec_name_to_c_time_offset_payload, "exec_name_compute_offsets", out);
+    common_print_name_to_time_range_payload(common->exec_name_to_rcw_time_offset_payload, "exec_name_total_offsets", out);
+}
+
+void common_print_name_to_thread_locality(const name_to_thread_locality_t &mapping, std::ostream &out)
+{
+    if (mapping.empty()) return;
+
+    out << "name_to_thread_locality:\n";
+    for (const auto &[key, loc] : mapping)
+    {
+        out << "  " << key << ": {numa_id: " << loc.numa_id << ", core_id: " << loc.core_id
+            << ", voluntary_cs: " << loc.voluntary_context_switches
+            << ", involuntary_cs: " << loc.involuntary_context_switches << ", core_migrations: " << loc.core_migrations
+            << "}\n";
     }
     out << std::endl;
 }
@@ -455,23 +518,9 @@ void common_print_name_to_numa_ids(const name_to_numa_ids_t &mapping, const std:
     out << std::endl;
 }
 
-void common_print_name_to_thread_locality(const name_to_thread_locality_t &mapping, std::ostream &out)
-{
-    if (mapping.empty()) return;
 
-    out << "name_to_thread_locality:\n";
-    for (const auto &[key, loc] : mapping)
-    {
-        out << "  " << key << ": {numa_id: " << loc.numa_id << ", core_id: " << loc.core_id
-            << ", voluntary_cs: " << loc.voluntary_context_switches
-            << ", involuntary_cs: " << loc.involuntary_context_switches << ", core_migrations: " << loc.core_migrations
-            << "}\n";
-    }
-    out << std::endl;
-}
 
-void common_print_name_to_time_range_payload(const name_to_time_range_payload_t &mapping, const std::string &header,
-                                             std::ostream &out)
+void common_print_name_to_time_range_payload(const name_to_time_range_payload_t &mapping, const std::string &header, std::ostream &out)
 {
     if (mapping.empty()) return;
 
@@ -483,71 +532,3 @@ void common_print_name_to_time_range_payload(const name_to_time_range_payload_t 
     }
     out << std::endl;
 }
-
-void common_print_name_to_address(const name_to_address_t &mapping, std::ostream &out)
-{
-    if (mapping.empty()) return;
-
-    out << "name_to_address:\n";
-    for (const auto &[key, address] : mapping)
-    {
-        out << "  " << key << ": {address: " << static_cast<void *>(address) << "}\n";
-    }
-    out << std::endl;
-}
-
-void common_print_name_to_status(const name_to_status_t &mapping, const std::string &header, std::ostream &out)
-{
-    if (mapping.empty()) return;
-
-    out << header << ":\n";
-    for (const auto &[key, count] : mapping)
-    {
-        out << "  " << key << ": " << count << "\n";
-    }
-    out << std::endl;
-}
-
-void common_print_metadata(const common_t *common, std::ostream &out)
-{
-    out << "threads_checksum: " << common->checksum << "\n";
-    out << "threads_active: " << common->active_threads << "\n";
-    out << std::endl;
-    out << "tasks_count: " << common->active_tasks.size() << "\n";
-    out << "reads_count: " << common->active_reads.size() << "\n";
-    out << "writes_count: " << common->active_writes.size() << "\n";
-    out << std::endl;
-    out << "tasks_active_count: " << common_count_name_to_status(common->active_tasks) << "\n";
-    out << "reads_active_count: " << common_count_name_to_status(common->active_reads) << "\n";
-    out << "writes_active_count: " << common_count_name_to_status(common->active_writes) << "\n";
-    out << std::endl;
-    out << "flops_per_cycle: " << common->flops_per_cycle << "\n";
-    out << "clock_frequency_type: " << common_get_str_from_clock_frequency_type(common->clock_frequency_type) << "\n";
-    out << "clock_frequency_hz: " << common->clock_frequency_hz << "\n";
-    out << std::endl;
-
-    if (!common->clock_frequencies_hz.empty())
-    {
-        out << "clock_frequencies_hz:\n";
-        for (size_t i = 0; i < common->core_avail.size(); ++i)
-        {
-            out << "  " << i << ": " << common->clock_frequencies_hz[i] << "\n";
-        }
-        out << std::endl;
-    }
-
-    if (!common->core_avail.empty())
-    {
-        out << "core_availability:\n";
-        for (size_t i = 0; i < common->core_avail.size(); ++i)
-        {
-            if (common->core_avail[i])  // Print only available cores
-            {
-                out << "  " << i << ": {avail_until: " << common->core_avail_until[i] << "}" << "\n";
-            }        
-        }
-        out << std::endl;
-    }
-}
-
-
