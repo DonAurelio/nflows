@@ -122,32 +122,39 @@ struct common_s
     // Runtime system status.
     hwloc_topology_t topology;
 
+    size_t threads_checksum;
+    unsigned int threads_active;
     pthread_mutex_t threads_mutex;
     pthread_cond_t threads_cond;
 
-    size_t threads_checksum;
-    unsigned int threads_active;
-
+    // Counters
     name_to_count_t execs_active;
     name_to_count_t reads_active;
     name_to_count_t writes_active;
+    std::mutex counters_mutex;  // Protects execs_active, reads_active, writes_active
 
-    // Locality information collections.
+    // Communication mappings
     name_to_address_t comm_name_to_address;
     name_to_numa_ids_t comm_name_to_numa_ids_r;
     name_to_numa_ids_t comm_name_to_numa_ids_w;
-    name_to_thread_locality_t exec_name_to_thread_locality;
+    std::mutex comm_maps_mutex;  // Protects the 3 maps above
 
-    // Timing (absolute timestamp) information collections.
+    // Execution mappings
+    name_to_thread_locality_t exec_name_to_thread_locality;
+    std::mutex exec_locality_mutex;
+
+    // Timestamp mappings
     name_to_time_range_payload_t comm_name_to_r_ts_range_payload;
     name_to_time_range_payload_t comm_name_to_w_ts_range_payload;
     name_to_time_range_payload_t exec_name_to_c_ts_range_payload;
+    std::mutex timestamp_mutex;  // Protects all timestamp-related maps
 
-    // Timing (relative durations/offset) information collections.
+    // Offset mappings
     name_to_time_range_payload_t comm_name_to_r_time_offset_payload;
     name_to_time_range_payload_t comm_name_to_w_time_offset_payload;
     name_to_time_range_payload_t exec_name_to_c_time_offset_payload;
     name_to_time_range_payload_t exec_name_to_rcw_time_offset_payload;
+    std::mutex offset_mutex;  // Protects all offset-related maps
 };
 typedef struct common_s common_t;
 
@@ -224,13 +231,15 @@ void common_exec_name_to_c_time_offset_payload_create(common_t *common, const st
 void common_exec_name_to_rcw_time_offset_payload_create(common_t *common, const std::string& exec_name, const time_range_payload_t& time_range_payload);
 
 /* OUTPUT */
-void common_print_common_structure(const common_t *common);
-void common_print_metadata(const common_t *common, std::ostream &out);
-void common_print_name_to_address(const name_to_address_t &mapping, std::ostream &out);
-void common_print_name_to_thread_locality(const name_to_thread_locality_t &mapping, std::ostream &out);
-void common_print_name_to_numa_ids(const name_to_numa_ids_t &mapping, std::string header, std::ostream &out);
-void common_print_distance_matrix(const distance_matrix_t &matrix, const std::string &key, std::ostream &out);
-void common_print_name_to_time_range_payload(const name_to_time_range_payload_t &mapping, const std::string &header,std::ostream &out);
+void common_print_common_structure(const common_t *common, int indent);
+void common_print_user(const common_t *common, std::ostream &out, int indent);
+void common_print_distance_matrix(const distance_matrix_t &matrix, const std::string &key, std::ostream &out, int indent);
+void common_print_workflow(const common_t *common, std::ostream &out, int indent);
+void common_print_runtime(const common_t *common, std::ostream &out, int indent);
+void common_print_trace(const common_t *common, std::ostream &out, int indent);
+void common_print_name_to_thread_locality(const name_to_thread_locality_t &mapping, std::ostream &out, int indent);
+void common_print_name_to_numa_ids(const name_to_numa_ids_t &mapping, const std::string header, std::ostream &out, int indent);
+void common_print_name_to_time_range_payload(const name_to_time_range_payload_t &mapping, const std::string &header, std::ostream &out, int indent);
 
 /* OUTPUT UTILS */
-size_t common_name_to_count_get(name_to_count_t &mapping);
+size_t common_name_to_count_get(const name_to_count_t &mapping);

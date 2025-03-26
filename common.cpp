@@ -290,7 +290,9 @@ double common_compute_time(const common_t *common, double flops, double processo
 /* RUNTIME */
 void common_threads_checksum_update(common_t *common, size_t checksum)
 {
+    pthread_mutex_lock(&(common->threads_mutex));
     common->threads_checksum += checksum;
+    pthread_mutex_unlock(&(common->threads_mutex));
 }
 
 void common_threads_active_increment(common_t *common)
@@ -309,7 +311,7 @@ void common_threads_active_decrement(common_t *common)
     pthread_mutex_unlock(&(common->threads_mutex));
 }
 
-void common_threads_active_wait(common_t *common);
+void common_threads_active_wait(common_t *common)
 {
     // Wait for all threads to finish
     pthread_mutex_lock(&(common->threads_mutex));
@@ -318,73 +320,73 @@ void common_threads_active_wait(common_t *common);
     pthread_mutex_unlock(&(common->threads_mutex));
 }
 
-void common_execs_active_increment(common_t *common, const std::string &name)
-{
-    common->execs_active += 1;
+void common_execs_active_increment(common_t *common, const std::string &name) {
+    std::lock_guard<std::mutex> lock(common->counters_mutex);
+    common->execs_active[name] += 1;
 }
 
-void common_reads_active_increment(common_t *common, const std::string &name)
-{
-    common->reads_active += 1;
+void common_reads_active_increment(common_t *common, const std::string &name) {
+    std::lock_guard<std::mutex> lock(common->counters_mutex);
+    common->reads_active[name] += 1;
 }
 
-void common_writes_active_increment(common_t *common, const std::string &name)
-{
-    common->writes_active += 1;
+void common_writes_active_increment(common_t *common, const std::string &name) {
+    std::lock_guard<std::mutex> lock(common->counters_mutex);
+    common->writes_active[name] += 1;
 }
 
-void common_comm_name_to_address_create(common_t *common, const std::string& comm_name, char* write_buffer)
-{
+void common_comm_name_to_address_create(common_t *common, const std::string& comm_name, char* write_buffer) {
+    std::lock_guard<std::mutex> lock(common->comm_maps_mutex);
     common->comm_name_to_address[comm_name] = write_buffer;
 }
 
-void common_comm_name_to_numa_ids_r_create(common_t *common, const std::string& comm_name, const std::vector<int>& memory_bindings)
-{
+void common_comm_name_to_numa_ids_r_create(common_t *common, const std::string& comm_name, const std::vector<int>& memory_bindings) {
+    std::lock_guard<std::mutex> lock(common->comm_maps_mutex);
     common->comm_name_to_numa_ids_r[comm_name] = memory_bindings;
 }
 
-void common_comm_name_to_numa_ids_w_create(common_t *common, const std::string& comm_name, const std::vector<int>& memory_bindings)
-{
+void common_comm_name_to_numa_ids_w_create(common_t *common, const std::string& comm_name, const std::vector<int>& memory_bindings) {
+    std::lock_guard<std::mutex> lock(common->comm_maps_mutex);
     common->comm_name_to_numa_ids_w[comm_name] = memory_bindings;
 }
 
-void common_exec_name_to_thread_locality_create(common_t *common, const std::string& exec_name,const thread_locality_t& locality)
-{
+void common_exec_name_to_thread_locality_create(common_t *common, const std::string& exec_name, const thread_locality_t& locality) {
+    std::lock_guard<std::mutex> lock(common->exec_locality_mutex);
     common->exec_name_to_thread_locality[exec_name] = locality;
 }
 
-void common_comm_name_to_r_ts_range_payload_create(common_t *common, const std::string& comm_name, const time_range_payload_t& time_range_payload)
-{
+void common_comm_name_to_r_ts_range_payload_create(common_t *common, const std::string& comm_name, const time_range_payload_t& time_range_payload) {
+    std::lock_guard<std::mutex> lock(common->timestamp_mutex);
     common->comm_name_to_r_ts_range_payload[comm_name] = time_range_payload;
 }
 
-void common_comm_name_to_w_ts_range_payload_create(common_t *common, const std::string& comm_name, const time_range_payload_t& time_range_payload)
-{
+void common_comm_name_to_w_ts_range_payload_create(common_t *common, const std::string& comm_name, const time_range_payload_t& time_range_payload) {
+    std::lock_guard<std::mutex> lock(common->timestamp_mutex);
     common->comm_name_to_w_ts_range_payload[comm_name] = time_range_payload;
 }
 
-void common_exec_name_to_c_ts_range_payload_create(common_t *common, const std::string& exec_name, const time_range_payload_t& time_range_payload)
-{
+void common_exec_name_to_c_ts_range_payload_create(common_t *common, const std::string& exec_name, const time_range_payload_t& time_range_payload) {
+    std::lock_guard<std::mutex> lock(common->timestamp_mutex);
     common->exec_name_to_c_ts_range_payload[exec_name] = time_range_payload;
 }
 
-void common_comm_name_to_r_time_offset_payload_create(common_t *common, const std::string& comm_name, const time_range_payload_t& time_range_payload)
-{
+void common_comm_name_to_r_time_offset_payload_create(common_t *common, const std::string& comm_name, const time_range_payload_t& time_range_payload) {
+    std::lock_guard<std::mutex> lock(common->offset_mutex);
     common->comm_name_to_r_time_offset_payload[comm_name] = time_range_payload;
 }
 
-void common_comm_name_to_w_time_offset_payload_create(common_t *common, const std::string& comm_name, const time_range_payload_t& time_range_payload)
-{
+void common_comm_name_to_w_time_offset_payload_create(common_t *common, const std::string& comm_name, const time_range_payload_t& time_range_payload) {
+    std::lock_guard<std::mutex> lock(common->offset_mutex);
     common->comm_name_to_w_time_offset_payload[comm_name] = time_range_payload;
 }
 
-void common_exec_name_to_c_time_offset_payload_create(common_t *common, const std::string& exec_name, const time_range_payload_t& time_range_payload)
-{
+void common_exec_name_to_c_time_offset_payload_create(common_t *common, const std::string& exec_name, const time_range_payload_t& time_range_payload) {
+    std::lock_guard<std::mutex> lock(common->offset_mutex);
     common->exec_name_to_c_time_offset_payload[exec_name] = time_range_payload;
 }
 
-void common_exec_name_to_rcw_time_offset_payload_create(common_t *common, const std::string& exec_name, const time_range_payload_t& time_range_payload)
-{
+void common_exec_name_to_rcw_time_offset_payload_create(common_t *common, const std::string& exec_name, const time_range_payload_t& time_range_payload) {
+    std::lock_guard<std::mutex> lock(common->offset_mutex);
     common->exec_name_to_rcw_time_offset_payload[exec_name] = time_range_payload;
 }
 
@@ -452,7 +454,7 @@ void common_print_workflow(const common_t *common, std::ostream &out, int indent
     std::string indent_str1(indent + 2, ' ');
     
     out << indent_str << "workflow" << ":\n";
-    out << indent_str1 << "tasks_count: " << common->tasks_active.size() << "\n";
+    out << indent_str1 << "execs_count: " << common->execs_active.size() << "\n";
     out << indent_str1 << "reads_count: " << common->reads_active.size() << "\n";
     out << indent_str1 << "writes_count: " << common->writes_active.size() << "\n";
     out << std::endl;
@@ -467,9 +469,9 @@ void common_print_runtime(const common_t *common, std::ostream &out, int indent 
     out << indent_str << "runtime" << ":\n";
     out << indent_str1 << "threads_checksum: " << common->threads_checksum << "\n";
     out << indent_str1 << "threads_active: " << common->threads_active << "\n";
-    out << indent_str1 << "tasks_active_count: " << common_count_name_to_status(common->active_tasks) << "\n";
-    out << indent_str1 << "reads_active_count: " << common_count_name_to_status(common->active_reads) << "\n";
-    out << indent_str1 << "writes_active_count: " << common_count_name_to_status(common->active_writes) << "\n";
+    out << indent_str1 << "tasks_active_count: " << common_name_to_count_get(common->execs_active) << "\n";
+    out << indent_str1 << "reads_active_count: " << common_name_to_count_get(common->reads_active) << "\n";
+    out << indent_str1 << "writes_active_count: " << common_name_to_count_get(common->writes_active) << "\n";
 
     if (!common->core_avail.empty())
     {
@@ -556,4 +558,13 @@ void common_print_name_to_time_range_payload(const name_to_time_range_payload_t 
         out << indent_str1 << key << ": {start: " << start << ", end: " << end << ", payload: " << bytes << "}\n";
     }
     out << std::endl;
+}
+
+/* OUTPUT UTILS */
+size_t common_name_to_count_get(const name_to_count_t &mapping) {
+    size_t total = 0;
+    for (const auto &[name, count] : mapping) {
+        total += count;
+    }
+    return total;
 }
