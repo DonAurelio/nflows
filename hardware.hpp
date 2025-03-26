@@ -2,13 +2,15 @@
 
 #include "common.hpp"
 
-int get_hwloc_core_id_by_pu_id(const common_t *common, int os_pu_id);
-int get_hwloc_numa_id_by_core_id(const common_t *common, int hwloc_core_id);
-double get_hwloc_core_performance_by_id(const common_t *common, int hwloc_core_id);
-std::vector<int> get_hwloc_numa_ids_by_address(const common_t *common, char *address, size_t size);
+int hardware_hwloc_core_id_get_by_pu_id(const common_t *common, int os_pu_id);
+double hardware_hwloc_core_id_get_clock_frequency(const common_t *common, int hwloc_core_id);
 
-void set_hwloc_thread_mem_policy(const common_t *common);
-std::string get_hwloc_thread_mem_policy(const common_t *common);
-thread_locality_t get_hwloc_thread_locality(const common_t *common);
+int hardware_hwloc_numa_id_get_by_core_id(const common_t *common, int hwloc_core_id);
+std::vector<int> hardware_hwloc_numa_id_get_by_address(const common_t *common, char *address, size_t size);
 
-void bind_exec_to_thread(thread_data_t *data);
+void hardware_hwloc_thread_mem_policy_set(const common_t *common);
+hwloc_membind_policy_t hardware_hwloc_thread_mem_policy_get_from_os(const common_t *common);
+
+thread_locality_t hardware_hwloc_thread_get_locality_from_os(const common_t *common);
+
+void hardware_hwloc_thread_bind_to_core_id(thread_data_t *data);
