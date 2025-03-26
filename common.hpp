@@ -2,7 +2,7 @@
 
 #include <hwloc.h>
 #include <sys/time.h>
-
+#include <xbt/log.h>
 #include <nlohmann/json.hpp>
 #include <simgrid/s4u.hpp>
 
@@ -172,6 +172,8 @@ typedef struct thread_data_s thread_data_t;
 double common_get_time_us();
 std::string common_join(const std::vector<int> &vec, const std::string &delimiter);
 std::pair<std::string, std::string> common_split(const std::string &input, std::string delimiter);
+std::vector<bool> common_core_avail_mask_to_vect(uint64_t mask, size_t &core_count);
+nlohmann::json common_config_file_read(const std::string& config_path)
 
 /* USER */
 simgrid_execs_t common_dag_read_from_dot(const std::string &dot_file);

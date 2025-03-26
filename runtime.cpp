@@ -1,32 +1,83 @@
 #include "runtime.hpp"
 
+XBT_LOG_NEW_DEFAULT_CATEGORY(runtime, "Messages specific to this module.");
 
 void runtime_start(mapper_t **mapper)
 {
-    (*mapper)->start();
+    try {
+        (*mapper)->start();
+    }
+    catch (const std::out_of_range &e) {
+        XBT_ERROR("Error (out of range): %s", e.what());
+        std::exit(EXIT_FAILURE);
+    } 
+    catch (const std::bad_alloc &e) {
+        XBT_ERROR("Error (memory allocation failed): %s", e.what());
+        std::exit(EXIT_FAILURE);
+    } 
+    catch (const std::runtime_error &e) {
+        XBT_ERROR("Runtime Error: %s", e.what());
+        std::exit(EXIT_FAILURE);
+    } 
+    catch (const std::exception &e) {
+        XBT_ERROR("Standard Exception: %s", e.what());
+        std::exit(EXIT_FAILURE);
+    } 
+    catch (...) {
+        XBT_ERROR("Unknown Error: An unexpected exception occurred.");
+        std::exit(EXIT_FAILURE);
+    }
 }
 
-void runtime_write(common_t **common)
+void runtime_stop(common_t **common)
 {
     common_print_common_structure(*common);
 }
 
 void runtime_initialize(common_t **common, simgrid_execs_t **dag, scheduler_t **scheduler, mapper_t **mapper, const std::string &config_path)
 {
-    std::ifstream config_file(config_path);
-    if (!config_file) {
-        throw std::runtime_error("Unable to open config file: " + config_path);
-    }
 
-    nlohmann::json data;
-    config_file >> data;
-    config_file.close();
+    nlohmann::json data = common_config_file_read(config_path);
+    simgrid_execs_t execs = common_read_dag_from_dot(data["dag_file"]);
 
     *common = new common_t();
-    initialize_common(*common, data);
 
-    *dag = new simgrid_execs_t(common_read_dag_from_dot(data["dag_file"]));
+    // User-defined.
+    common->flops_per_cycle = data["flops_per_cycle"];
+    common->clock_frequency_type = common_clock_frequency_str_to_type(data["clock_frequency_type"]);
 
+    switch (common->clock_frequency_type) {
+        case COMMON_DYNAMIC_CLOCK_FREQUENCY:
+            common->clock_frequency_hz = 0;
+            break;
+            
+        case COMMON_STATIC_CLOCK_FREQUENCY:
+            common->clock_frequency_hz = data["clock_frequency_hz"];
+            break;
+            
+        case COMMON_ARRAY_CLOCK_FREQUENCY:
+            common->clock_frequencies_hz = data["clock_frequencies_hz"].get<std::vector<double>>();
+            break;
+            
+        default:
+            // This should never happen if the input validation was proper
+            throw std::runtime_error("Invalid clock frequency type enum value");
+    }
+
+    common->out_file_name = data["out_file_name"];
+
+
+
+
+    for (const auto& param : data["scheduler_params"].get<std::vector<std::string>>()) {
+        auto pos = param.find('=');
+        if (pos != std::string::npos) {
+            common->scheduler_params[param.substr(0, pos)] = param.substr(pos + 1);
+        }
+    }
+
+
+    *dag = new simgrid_execs_t(execs);
     *scheduler = create_scheduler(data["scheduler_type"], *common, **dag);
     *mapper = create_mapper(data["mapper_type"], *common, **scheduler);
 }
@@ -54,7 +105,7 @@ void runtime_finalize(common_t **common, simgrid_execs_t **dag, scheduler_t **sc
     }
 }
 
-void initialize_common(common_t *common, const nlohmann::json &data) {
+void initialize_common(common_t *common, const simgrid_execs_t *dag, const nlohmann::json &data) {
     hwloc_topology_init(&(common->topology));
     hwloc_topology_load(common->topology);
 
@@ -119,24 +170,22 @@ void initialize_common(common_t *common, const nlohmann::json &data) {
 
     common->distance_lat_ns = common_read_distance_matrix_from_file(data["distance_matrices"]["latency"]);
     common->distance_bw_gbps = common_read_distance_matrix_from_file(data["distance_matrices"]["bandwidth"]);
+
+    for (const simgrid_exec_t *exec : *dag)
+    {
+        common->active_tasks[exec->get_name()] = 0;
+
+        for (const auto &succ_ptr : exec->get_dependencies())
+            common->active_reads[(succ_ptr.get())->get_name()] = 0;
+
+        for (const auto &succ_ptr : exec->get_successors())
+            // Skipt all task_i->end communications.
+            if (common_split((succ_ptr.get())->get_cname(), "->").second != std::string("end"))
+                common->active_writes[(succ_ptr.get())->get_name()] = 0;
+    }
 }
 
-std::vector<bool> parse_core_avail_mask(uint64_t mask, size_t &core_count) {
-    core_count = 0;
-    uint64_t temp_mask = mask;
-    while (temp_mask) {
-        core_count++;
-        temp_mask >>= 1;
-    }
 
-    std::vector<bool> core_avail(core_count, false);
-    for (size_t i = 0; i < core_count; ++i) {
-        if (mask & (1ULL << i)) {
-            core_avail[i] = true;
-        }
-    }
-    return core_avail;
-}
 
 scheduler_t* create_scheduler(const std::string &type, common_t *common, simgrid_execs_t &dag) {
     static const std::unordered_map<std::string, scheduler_type_t> scheduler_types = {

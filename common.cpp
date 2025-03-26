@@ -40,6 +40,45 @@ std::pair<std::string, std::string> common_split(const std::string &input, std::
     return {first, second};
 }
 
+std::vector<bool> common_core_avail_mask_to_vect(uint64_t mask, size_t &core_count)
+{
+    core_count = 0;
+    uint64_t temp_mask = mask;
+    while (temp_mask) {
+        core_count++;
+        temp_mask >>= 1;
+    }
+
+    std::vector<bool> core_avail(core_count, false);
+    for (size_t i = 0; i < core_count; ++i) {
+        if (mask & (1ULL << i)) {
+            core_avail[i] = true;
+        }
+    }
+    return core_avail;
+}
+
+nlohmann::json common_config_file_read(const std::string& config_path)
+{
+    // 1. Open file
+    std::ifstream config_file(config_path);
+    if (!config_file) {
+        XBT_ERROR("Cannot open config file: %s", config_path.c_str());
+        throw std::runtime_error("Config file error");
+    }
+
+    // 2. Parse JSON
+    nlohmann::json data;
+    try {
+        config_file >> data;
+    } catch (const nlohmann::json::exception& e) {
+        XBT_ERROR("Invalid JSON in %s: %s", config_path.c_str(), e.what());
+        throw std::runtime_error("JSON parse error");
+    }
+
+    return data;
+}
+
 /* USER */
 simgrid_execs_t common_dag_read_from_dot(const std::string &file_name)
 {
