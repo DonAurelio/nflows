@@ -245,31 +245,7 @@ name_to_time_range_payload_t common_comm_name_to_w_time_offset_payload_filter(co
     return matches;
 }
 
-void common_increment_active_threads_counter(common_t *common)
-{
-    pthread_mutex_lock(&(common->mutex));
-    common->active_threads += 1;
-    pthread_mutex_unlock(&(common->mutex));
-}
-
-void common_decrement_active_threads_counter(common_t *common)
-{
-    pthread_mutex_lock(&(common->mutex));
-    common->active_threads -= 1;
-    if (common->active_threads == 0)
-        pthread_cond_signal(&(common->cond)); // Signal the main thread
-    pthread_mutex_unlock(&(common->mutex));
-}
-
-void common_wait_active_threads(common_t *common)
-{
-    // Wait for all threads to finish
-    pthread_mutex_lock(&(common->mutex));
-    while (common->active_threads > 0)
-        pthread_cond_wait(&(common->cond), &(common->mutex)); // Wait until active_threads == 0
-    pthread_mutex_unlock(&(common->mutex));
-}
-
+/* USER UTILS */
 double common_earliest_start_time(const common_t *common, const std::string &exec_name, unsigned int core_id)
 {
     // EST(n_i,p_i) = max{ avail[j], max_{n_{m} e pred(n_i)}( AFT(n_{m}) + c_{m,i} ) };
@@ -312,35 +288,135 @@ double common_compute_time(const common_t *common, double flops, double processo
     return (flops / processor_speed_flops_per_second) * 1000000;
 }
 
-
-
-
-std::string common_get_timestamped_filename(const std::string &base_name, const std::string &format = "%Y%m%d_%H%M%S")
+/* RUNTIME */
+void common_threads_checksum_update(common_t *common, size_t checksum)
 {
-    std::time_t now = std::time(nullptr);
-    char buf[100];
-
-    if (!format.empty() && std::strftime(buf, sizeof(buf), format.c_str(), std::localtime(&now)))
-    {
-        return base_name + buf + ".yaml";
-    }
-    return base_name + ".yaml";
+    common->threads_checksum += checksum;
 }
 
-
-
-
-void common_update_name_to_status(name_to_status_t &mapping, const std::string &name)
+void common_threads_active_increment(common_t *common)
 {
-    mapping[name] += 1;
+    pthread_mutex_lock(&(common->threads_mutex));
+    common->threads_active += 1;
+    pthread_mutex_unlock(&(common->threads_mutex));
 }
 
-size_t common_count_name_to_status(const name_to_status_t &mapping)
+void common_threads_active_decrement(common_t *common)
 {
-    size_t count = 0;
-    for (const auto &entry : mapping) count += entry.second;
+    pthread_mutex_lock(&(common->threads_mutex));
+    common->threads_active -= 1;
+    if (common->threads_active == 0)
+        pthread_cond_signal(&(common->threads_cond)); // Signal the main thread
+    pthread_mutex_unlock(&(common->threads_mutex));
+}
 
-    return count;
+void common_threads_active_wait(common_t *common);
+{
+    // Wait for all threads to finish
+    pthread_mutex_lock(&(common->threads_mutex));
+    while (common->threads_active > 0)
+        pthread_cond_wait(&(common->threads_cond), &(common->threads_mutex)); // Wait until active_threads == 0
+    pthread_mutex_unlock(&(common->threads_mutex));
+}
+
+void common_execs_active_increment(common_t *common, const std::string &name)
+{
+    common->execs_active += 1;
+}
+
+void common_reads_active_increment(common_t *common, const std::string &name)
+{
+    common->reads_active += 1;
+}
+
+void common_writes_active_increment(common_t *common, const std::string &name)
+{
+    common->writes_active += 1;
+}
+
+void common_comm_name_to_address_create(common_t *common, const std::string& comm_name, char* write_buffer)
+{
+    common->comm_name_to_address[comm_name] = write_buffer;
+}
+
+void common_comm_name_to_numa_ids_r_create(common_t *common, const std::string& comm_name, const std::vector<int>& memory_bindings)
+{
+    common->comm_name_to_numa_ids_r[comm_name] = memory_bindings;
+}
+
+void common_comm_name_to_numa_ids_w_create(common_t *common, const std::string& comm_name, const std::vector<int>& memory_bindings)
+{
+    common->comm_name_to_numa_ids_w[comm_name] = memory_bindings;
+}
+
+void common_exec_name_to_thread_locality_create(common_t *common, const std::string& exec_name,const thread_locality_t& locality)
+{
+    common->exec_name_to_thread_locality[exec_name] = locality;
+}
+
+void common_comm_name_to_r_ts_range_payload_create(common_t *common, const std::string& comm_name, const time_range_payload_t& time_range_payload)
+{
+    common->comm_name_to_r_ts_range_payload[comm_name] = time_range_payload;
+}
+
+void common_comm_name_to_w_ts_range_payload_create(common_t *common, const std::string& comm_name, const time_range_payload_t& time_range_payload)
+{
+    common->comm_name_to_w_ts_range_payload[comm_name] = time_range_payload;
+}
+
+void common_exec_name_to_c_ts_range_payload_create(common_t *common, const std::string& exec_name, const time_range_payload_t& time_range_payload)
+{
+    common->exec_name_to_c_ts_range_payload[exec_name] = time_range_payload;
+}
+
+void common_comm_name_to_r_time_offset_payload_create(common_t *common, const std::string& comm_name, const time_range_payload_t& time_range_payload)
+{
+    common->comm_name_to_r_time_offset_payload[comm_name] = time_range_payload;
+}
+
+void common_comm_name_to_w_time_offset_payload_create(common_t *common, const std::string& comm_name, const time_range_payload_t& time_range_payload)
+{
+    common->comm_name_to_w_time_offset_payload[comm_name] = time_range_payload;
+}
+
+void common_exec_name_to_c_time_offset_payload_create(common_t *common, const std::string& exec_name, const time_range_payload_t& time_range_payload)
+{
+    common->exec_name_to_c_time_offset_payload[exec_name] = time_range_payload;
+}
+
+void common_exec_name_to_rcw_time_offset_payload_create(common_t *common, const std::string& exec_name, const time_range_payload_t& time_range_payload)
+{
+    common->exec_name_to_rcw_time_offset_payload[exec_name] = time_range_payload;
+}
+
+/* OUTPUT */
+void common_print_common_structure(const common_t *common)
+{
+    std::string file_name = common_get_timestamped_filename(common->log_base_name, common->log_date_format);
+    std::ofstream out(file_name);
+
+    common_print_metadata(common, out);
+    common_print_name_to_status(common->active_tasks, "tasks_active", out);
+    common_print_name_to_status(common->active_reads, "reads_active", out);
+    common_print_name_to_status(common->active_writes, "writes_active", out);
+    common_print_distance_matrix(common->distance_lat_ns, "distance_latency_ns", out);
+    common_print_distance_matrix(common->distance_bw_gbps, "distance_bandwidth_gbs", out);
+    common_print_name_to_numa_ids(common->comm_name_to_numa_ids_w, "numa_mappings_write", out);
+    common_print_name_to_numa_ids(common->comm_name_to_numa_ids_r, "numa_mappings_read", out);
+    common_print_name_to_thread_locality(common->exec_name_to_thread_locality, out);
+    common_print_name_to_address(common->comm_name_to_address, out);
+    common_print_name_to_time_range_payload(common->comm_name_to_r_ts_range_payload, "comm_name_read_timestamps", out);
+    common_print_name_to_time_range_payload(common->comm_name_to_w_ts_range_payload, "comm_name_write_timestamps", out);
+    common_print_name_to_time_range_payload(common->exec_name_to_c_ts_range_payload, "exec_name_compute_timestamps",
+                                            out);
+    common_print_name_to_time_range_payload(common->comm_name_to_r_time_offset_payload, "comm_name_read_offsets", out);
+    common_print_name_to_time_range_payload(common->comm_name_to_w_time_offset_payload, "comm_name_write_offsets", out);
+    common_print_name_to_time_range_payload(common->exec_name_to_c_time_offset_payload, "exec_name_compute_offsets",
+                                            out);
+    common_print_name_to_time_range_payload(common->exec_name_to_rcw_time_offset_payload, "exec_name_total_offsets",
+                                            out);
+
+    out.close();
 }
 
 void common_print_distance_matrix(const distance_matrix_t &matrix, const std::string &key, std::ostream &out)
@@ -474,31 +550,4 @@ void common_print_metadata(const common_t *common, std::ostream &out)
     }
 }
 
-void common_print_common_structure(const common_t *common)
-{
-    std::string file_name = common_get_timestamped_filename(common->log_base_name, common->log_date_format);
-    std::ofstream out(file_name);
 
-    common_print_metadata(common, out);
-    common_print_name_to_status(common->active_tasks, "tasks_active", out);
-    common_print_name_to_status(common->active_reads, "reads_active", out);
-    common_print_name_to_status(common->active_writes, "writes_active", out);
-    common_print_distance_matrix(common->distance_lat_ns, "distance_latency_ns", out);
-    common_print_distance_matrix(common->distance_bw_gbps, "distance_bandwidth_gbs", out);
-    common_print_name_to_numa_ids(common->comm_name_to_numa_ids_w, "numa_mappings_write", out);
-    common_print_name_to_numa_ids(common->comm_name_to_numa_ids_r, "numa_mappings_read", out);
-    common_print_name_to_thread_locality(common->exec_name_to_thread_locality, out);
-    common_print_name_to_address(common->comm_name_to_address, out);
-    common_print_name_to_time_range_payload(common->comm_name_to_r_ts_range_payload, "comm_name_read_timestamps", out);
-    common_print_name_to_time_range_payload(common->comm_name_to_w_ts_range_payload, "comm_name_write_timestamps", out);
-    common_print_name_to_time_range_payload(common->exec_name_to_c_ts_range_payload, "exec_name_compute_timestamps",
-                                            out);
-    common_print_name_to_time_range_payload(common->comm_name_to_r_time_offset_payload, "comm_name_read_offsets", out);
-    common_print_name_to_time_range_payload(common->comm_name_to_w_time_offset_payload, "comm_name_write_offsets", out);
-    common_print_name_to_time_range_payload(common->exec_name_to_c_time_offset_payload, "exec_name_compute_offsets",
-                                            out);
-    common_print_name_to_time_range_payload(common->exec_name_to_rcw_time_offset_payload, "exec_name_total_offsets",
-                                            out);
-
-    out.close();
-}
