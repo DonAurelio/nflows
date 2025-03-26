@@ -116,7 +116,7 @@ simgrid_execs_t common_dag_get_ready_execs(const simgrid_execs_t &execs)
     return ready_execs;
 }
 
-clock_frequency_type_t common_clock_frequency_str_to_type(std::string &type)
+clock_frequency_type_t common_clock_frequency_str_to_type(const std::string &type)
 {
     if (type == "dynamic") return COMMON_DYNAMIC_CLOCK_FREQUENCY;
     if (type == "static") return COMMON_STATIC_CLOCK_FREQUENCY;
@@ -138,7 +138,7 @@ std::string common_clock_frequency_type_to_str(clock_frequency_type_t type)
     std::exit(EXIT_FAILURE);  
 }
 
-scheduler_type_t common_scheduler_str_to_type(std::string &type)
+scheduler_type_t common_scheduler_str_to_type(const std::string &type)
 {
     if (type == "min-min") return COMMON_SCHED_TYPE_MIN_MIN;
     if (type == "heft") return COMMON_SCHED_TYPE_HEFT;
@@ -168,7 +168,7 @@ std::string common_scheduler_param_get(const common_t *common, const std::string
     return "";
 }
 
-mapper_type_t common_mapper_str_to_type(std::string &type)
+mapper_type_t common_mapper_str_to_type(const std::string &type)
 {
     if (type == "bare-metal") return COMMON_MAPPER_BARE_METAL;
     if (type == "simulation") return COMMON_MAPPER_SIMULATION;
@@ -188,7 +188,7 @@ std::string common_mapper_type_to_str(mapper_type_t &type)
     std::exit(EXIT_FAILURE); 
 }
 
-hwloc_membind_policy_t common_mapper_mem_policy_str_to_type(std::string &type) {
+hwloc_membind_policy_t common_mapper_mem_policy_str_to_type(const std::string &type) {
     if (type == "default") return HWLOC_MEMBIND_DEFAULT;
     if (type == "firsttouch") return HWLOC_MEMBIND_FIRSTTOUCH;
     if (type == "bind") return HWLOC_MEMBIND_BIND;
