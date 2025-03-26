@@ -189,8 +189,8 @@ distance_matrix_t common_distance_matrix_read_from_txt(const std::string &txt_fi
 std::vector<int> common_core_id_get_avail(const common_t *common);
 void common_core_id_set_avail(common_t *common, unsigned int core_id, bool avail);
 
-double common_core_id_get_avail_unitl(const common_t *common, unsigned int core_id);
-void common_core_id_set_avail_unitl(common_t *common, unsigned int core_id, double duration);
+double common_core_id_get_avail_until(const common_t *common, unsigned int core_id);
+void common_core_id_set_avail_until(common_t *common, unsigned int core_id, double duration);
 
 name_to_time_range_payload_t common_comm_name_to_w_time_offset_payload_filter(const common_t *common, const std::string &dst_name);
 
