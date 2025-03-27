@@ -4,122 +4,123 @@ XBT_LOG_NEW_DEFAULT_CATEGORY(runtime, "Messages specific to this module.");
 
 void runtime_start(mapper_t **mapper)
 {
-    XBT_INFO("Start runtime.");
+    XBT_INFO("Start Runtime.");
     (*mapper)->start();
 }
 
 void runtime_stop(common_t **common)
 {
-    XBT_INFO("Stop runtime.");
+    XBT_INFO("End Runtime.");
     common_print_common_structure(*common, 0);
 }
 
 void runtime_initialize(common_t **common, simgrid_execs_t **dag, scheduler_t **scheduler, mapper_t **mapper, const std::string &config_path)
 {
-    XBT_INFO("Initialize runtime.");
+    XBT_INFO("Initialize Runtime.");
     nlohmann::json data = common_config_file_read(config_path);
     simgrid_execs_t execs = common_dag_read_from_dot(data["dag_file"]);
 
     *dag = new simgrid_execs_t(execs);
-    simgrid_execs_t dag_tmp = (**dag);
-
     *common = new common_t();
-    common_t *common_tmp = (*common);
 
     // User-defined.
-    common_tmp->flops_per_cycle = data["flops_per_cycle"];
-    common_tmp->clock_frequency_type = common_clock_frequency_str_to_type(data["clock_frequency_type"]);
+    (*common)->flops_per_cycle = data["flops_per_cycle"];
+    (*common)->clock_frequency_type = common_clock_frequency_str_to_type(data["clock_frequency_type"]);
 
-    switch (common_tmp->clock_frequency_type) {
+    switch ((*common)->clock_frequency_type) {
         case COMMON_DYNAMIC_CLOCK_FREQUENCY:
-            common_tmp->clock_frequency_hz = 0;
+            (*common)->clock_frequency_hz = 0;
             break;
             
         case COMMON_STATIC_CLOCK_FREQUENCY:
-            common_tmp->clock_frequency_hz = data["clock_frequency_hz"];
+            (*common)->clock_frequency_hz = data["clock_frequency_hz"];
             break;
             
         case COMMON_ARRAY_CLOCK_FREQUENCY:
-            common_tmp->clock_frequencies_hz = data["clock_frequencies_hz"].get<std::vector<double>>();
+            (*common)->clock_frequencies_hz = data["clock_frequencies_hz"].get<std::vector<double>>();
             break;
             
         default:
             // This should never happen if the input validation was proper
             XBT_ERROR("Invalid clock frequency type enum value");
-            std::exit(EXIT_FAILURE);
+            throw std::runtime_error("Invalid clock frequency type enum value");
     }
 
-    common_tmp->out_file_name = data["out_file_name"];
+    (*common)->out_file_name = data["out_file_name"];
 
-    common_tmp->distance_lat_ns = common_distance_matrix_read_from_txt(data["distance_matrices"]["latency_ns"]);
-    common_tmp->distance_bw_gbps = common_distance_matrix_read_from_txt(data["distance_matrices"]["bandwidth_gbps"]);
+    (*common)->distance_lat_ns = common_distance_matrix_read_from_txt(data["distance_matrices"]["latency_ns"]);
+    (*common)->distance_bw_gbps = common_distance_matrix_read_from_txt(data["distance_matrices"]["bandwidth_gbps"]);
 
     size_t core_count;
-    common_tmp->core_avail = common_core_avail_mask_to_vect(std::stoull(data["core_avail_mask"].get<std::string>(), nullptr, 16), core_count);
-    common_tmp->core_avail_until.resize(core_count, 0.0);
+    (*common)->core_avail = common_core_avail_mask_to_vect(std::stoull(data["core_avail_mask"].get<std::string>(), nullptr, 16), core_count);
+    (*common)->core_avail_until.resize(core_count, 0.0);
 
     *scheduler = nullptr;
-    switch (common_scheduler_str_to_type(data["scheduler_type"])) {
+    const std::string scheduler_type = data["scheduler_type"];
+    switch (common_scheduler_str_to_type(scheduler_type)) {
         case COMMON_SCHED_TYPE_MIN_MIN:
-            *scheduler = new min_min_scheduler_t(common_tmp, dag_tmp);
+            *scheduler = new min_min_scheduler_t((*common), (**dag)); break;
         case COMMON_SCHED_TYPE_HEFT:
-            *scheduler = new heft_scheduler_t(common_tmp, dag_tmp);
+            *scheduler = new heft_scheduler_t((*common), (**dag)); break;
         case COMMON_SCHED_TYPE_FIFO:
-            *scheduler = new fifo_scheduler_t(common_tmp, dag_tmp);
-        default:
-            XBT_ERROR("Invalid scheduler type enum");
-            std::exit(EXIT_FAILURE);
+            *scheduler = new fifo_scheduler_t((*common), (**dag)); break;
+        case COMMON_SCHED_TYPE_UNKNOWN:
+            XBT_ERROR("Invalid scheduler type: '%s'.", scheduler_type.c_str());
+            throw std::runtime_error("Invalid scheduler type.");
+            // break not needed here due to the throw
     }
 
     for (const auto& param : data["scheduler_params"].get<std::vector<std::string>>()) {
         auto pos = param.find('=');
         if (pos != std::string::npos) {
-            common_tmp->scheduler_params[param.substr(0, pos)] = param.substr(pos + 1);
+            (*common)->scheduler_params[param.substr(0, pos)] = param.substr(pos + 1);
         }
     }
 
-    common_tmp->mapper_mem_policy_type = common_mapper_mem_policy_str_to_type(data["mapper_mem_policy_type"]);
-    common_tmp->mapper_mem_bind_numa_node_ids = data["mapper_mem_bind_numa_node_id"].get<std::vector<unsigned>>();
+    (*common)->mapper_mem_policy_type = common_mapper_mem_policy_str_to_type(data["mapper_mem_policy_type"]);
+    (*common)->mapper_mem_bind_numa_node_ids = data["mapper_mem_bind_numa_node_ids"].get<std::vector<unsigned>>();
 
     *mapper = nullptr;
-    switch (common_mapper_str_to_type(data["mapper_type"])) {
+    std::string mapper_type = data["mapper_type"];
+    switch (common_mapper_str_to_type(mapper_type)) {
         case COMMON_MAPPER_BARE_METAL:
-            *mapper = new mapper_bare_metal_t(common_tmp, (**scheduler));
+            *mapper = new mapper_bare_metal_t((*common), (**scheduler)); break;
         case COMMON_MAPPER_SIMULATION:
-            *mapper = new mapper_simulation_t(common_tmp, (**scheduler));
+            *mapper = new mapper_simulation_t((*common), (**scheduler)); break;
         default:
-            XBT_ERROR("Unexpected mapper type");
-            std::exit(EXIT_FAILURE);
+            XBT_ERROR("Invalid mapper type '%s'", mapper_type.c_str());
+            throw std::runtime_error("Invalid mapper type.");
+            // No break needed after throw (unreachable)
     }
 
     // Runtime system status.
-    hwloc_topology_init(&(common_tmp->topology));
-    hwloc_topology_load(common_tmp->topology);
+    hwloc_topology_init(&((*common)->topology));
+    hwloc_topology_load((*common)->topology);
 
-    common_tmp->threads_active = 0;
-    common_tmp->threads_checksum = 0;
+    (*common)->threads_active = 0;
+    (*common)->threads_checksum = 0;
 
-    common_tmp->threads_cond = PTHREAD_COND_INITIALIZER;
-    common_tmp->threads_mutex = PTHREAD_MUTEX_INITIALIZER;
+    (*common)->threads_cond = PTHREAD_COND_INITIALIZER;
+    (*common)->threads_mutex = PTHREAD_MUTEX_INITIALIZER;
 
     // Counters
-    for (const simgrid_exec_t *exec : dag_tmp)
+    for (const simgrid_exec_t *exec :(**dag))
     {
-        common_tmp->execs_active[exec->get_name()] = 0;
+        (*common)->execs_active[exec->get_name()] = 0;
 
         for (const auto &succ_ptr : exec->get_dependencies())
-            common_tmp->reads_active[(succ_ptr.get())->get_name()] = 0;
+            (*common)->reads_active[(succ_ptr.get())->get_name()] = 0;
 
         for (const auto &succ_ptr : exec->get_successors())
             // Skipt all task_i->end communications.
             if (common_split((succ_ptr.get())->get_cname(), "->").second != std::string("end"))
-                common_tmp->writes_active[(succ_ptr.get())->get_name()] = 0;
+                (*common)->writes_active[(succ_ptr.get())->get_name()] = 0;
     }
 }
 
 void runtime_finalize(common_t **common, simgrid_execs_t **dag, scheduler_t **scheduler, mapper_t **mapper) {
 
-    XBT_INFO("Finalize runtime.");
+    XBT_INFO("Finalize Runtime.");
     auto safe_delete = [](auto **ptr) {
         if (ptr && *ptr) {
             delete *ptr;
@@ -127,12 +128,10 @@ void runtime_finalize(common_t **common, simgrid_execs_t **dag, scheduler_t **sc
         }
     };
 
+    if (common && (*common)->topology) hwloc_topology_destroy((*common)->topology);
+
     safe_delete(mapper);
     safe_delete(scheduler);
     safe_delete(dag);
-
-    if (!common) {
-        hwloc_topology_destroy((*common)->topology); // Release hwloc resources
-        safe_delete(common);
-    }
+    safe_delete(common);
 }

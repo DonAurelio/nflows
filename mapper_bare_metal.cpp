@@ -13,6 +13,7 @@ Mapper_Bare_Metal::~Mapper_Bare_Metal()
 
 void Mapper_Bare_Metal::start()
 {
+    XBT_INFO("Start Mapper_Bare_Metal");
     simgrid_exec_t *selected_exec;
     int selected_core_id;
     unsigned long estimated_completion_time;
@@ -53,6 +54,8 @@ void Mapper_Bare_Metal::start()
     // Workaround to properly finalize SimGrid resources.
     simgrid::s4u::Engine *e = simgrid::s4u::Engine::get_instance();
     e->run();
+
+    XBT_INFO("End Mapper_Bare_Metal");
 }
 
 /**

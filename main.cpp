@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
         std::exit(EXIT_FAILURE);
     }
     catch (const nlohmann::detail::type_error &e) {
+        XBT_ERROR("JSON Parse Error: %s", e.what());
         runtime_stop(&common);
         runtime_finalize(&common, &dag, &scheduler, &mapper);
         std::exit(EXIT_FAILURE);

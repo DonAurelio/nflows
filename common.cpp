@@ -118,12 +118,11 @@ simgrid_execs_t common_dag_get_ready_execs(const simgrid_execs_t &execs)
 
 clock_frequency_type_t common_clock_frequency_str_to_type(const std::string &type)
 {
-    if (type == "dynamic") return COMMON_DYNAMIC_CLOCK_FREQUENCY;
-    if (type == "static") return COMMON_STATIC_CLOCK_FREQUENCY;
-    if (type == "array") return COMMON_ARRAY_CLOCK_FREQUENCY;
+    if (type.compare("dynamic") == 0) return COMMON_DYNAMIC_CLOCK_FREQUENCY;
+    if (type.compare("static") == 0) return COMMON_STATIC_CLOCK_FREQUENCY;
+    if (type.compare("array") == 0) return COMMON_ARRAY_CLOCK_FREQUENCY;
 
-    std::cerr << "Error: Unknown clock_frequency_type '" << type << "'\n";
-    std::exit(EXIT_FAILURE);    
+    return COMMON_UNKNOWN_CLOCK_FREQUENCY;
 }
 
 std::string common_clock_frequency_type_to_str(clock_frequency_type_t type)
@@ -132,20 +131,18 @@ std::string common_clock_frequency_type_to_str(clock_frequency_type_t type)
         case COMMON_DYNAMIC_CLOCK_FREQUENCY: return "dynamic";
         case COMMON_STATIC_CLOCK_FREQUENCY: return "static";
         case COMMON_ARRAY_CLOCK_FREQUENCY: return "array";
+        case COMMON_UNKNOWN_CLOCK_FREQUENCY: return "unknown";
+        default: return ""; 
     }
-
-    std::cerr << "Error: Unknown clock_frequency_type '" << type << "'\n";
-    std::exit(EXIT_FAILURE);  
 }
 
 scheduler_type_t common_scheduler_str_to_type(const std::string &type)
 {
-    if (type == "min-min") return COMMON_SCHED_TYPE_MIN_MIN;
-    if (type == "heft") return COMMON_SCHED_TYPE_HEFT;
-    if (type == "fifo") return COMMON_SCHED_TYPE_FIFO;
-
-    std::cerr << "Error: Unknown scheduler_type '" << type << "'\n";
-    std::exit(EXIT_FAILURE); 
+    if (type.compare("min-min") == 0) return COMMON_SCHED_TYPE_MIN_MIN;
+    if (type.compare("heft") == 0) return COMMON_SCHED_TYPE_HEFT;
+    if (type.compare("fifo") == 0) return COMMON_SCHED_TYPE_FIFO;
+    
+    return COMMON_SCHED_TYPE_UNKNOWN;
 }
 
 std::string common_scheduler_type_to_str(scheduler_type_t &type)
@@ -154,10 +151,9 @@ std::string common_scheduler_type_to_str(scheduler_type_t &type)
         case COMMON_SCHED_TYPE_MIN_MIN: return "min-min";
         case COMMON_SCHED_TYPE_HEFT: return "heft";
         case COMMON_SCHED_TYPE_FIFO: return "fifo";
+        case COMMON_SCHED_TYPE_UNKNOWN: return "unknown";
+        default: return "";
     }
-
-    std::cerr << "Error: Unknown scheduler_type '" << type << "'\n";
-    std::exit(EXIT_FAILURE); 
 }
 
 std::string common_scheduler_param_get(const common_t *common, const std::string &key)
@@ -170,11 +166,10 @@ std::string common_scheduler_param_get(const common_t *common, const std::string
 
 mapper_type_t common_mapper_str_to_type(const std::string &type)
 {
-    if (type == "bare-metal") return COMMON_MAPPER_BARE_METAL;
-    if (type == "simulation") return COMMON_MAPPER_SIMULATION;
+    if (type.compare("bare-metal") == 0) return COMMON_MAPPER_BARE_METAL;
+    if (type.compare("simulation") == 0) return COMMON_MAPPER_SIMULATION;
 
-    std::cerr << "Error: Unknown mapper_type '" << type << "'\n";
-    std::exit(EXIT_FAILURE); 
+    return COMMON_MAPPER_UNKNOWN;
 }
 
 std::string common_mapper_type_to_str(mapper_type_t &type)
@@ -182,22 +177,21 @@ std::string common_mapper_type_to_str(mapper_type_t &type)
     switch (type) {
         case COMMON_MAPPER_BARE_METAL: return "bare-metal";
         case COMMON_MAPPER_SIMULATION: return "simulation";
+        case COMMON_MAPPER_UNKNOWN: return "unknown";
+        default: return "";
     }
-
-    std::cerr << "Error: Unknown mapper_type '" << type << "'\n";
-    std::exit(EXIT_FAILURE); 
 }
 
 hwloc_membind_policy_t common_mapper_mem_policy_str_to_type(const std::string &type) {
-    if (type == "default") return HWLOC_MEMBIND_DEFAULT;
-    if (type == "firsttouch") return HWLOC_MEMBIND_FIRSTTOUCH;
-    if (type == "bind") return HWLOC_MEMBIND_BIND;
-    if (type == "interleave") return HWLOC_MEMBIND_INTERLEAVE;
-    if (type == "nexttouch") return HWLOC_MEMBIND_NEXTTOUCH;
-    if (type == "mixed") return HWLOC_MEMBIND_MIXED;
+    if (type.compare("default") == 0) return HWLOC_MEMBIND_DEFAULT;
+    if (type.compare("first-touch") == 0) return HWLOC_MEMBIND_FIRSTTOUCH;
+    if (type.compare("bind") == 0) return HWLOC_MEMBIND_BIND;
+    if (type.compare("interleave") == 0) return HWLOC_MEMBIND_INTERLEAVE;
+    if (type.compare("next-touch") == 0) return HWLOC_MEMBIND_NEXTTOUCH;
+    if (type.compare("mixed") == 0) return HWLOC_MEMBIND_MIXED;
 
-    std::cerr << "Error: Unsupported memory policy type '" << type << "'\n";
-    std::exit(EXIT_FAILURE);
+    XBT_ERROR("Unsupported memory policy type '%s'.", type.c_str());
+    throw std::runtime_error("Unsupported memory policy type '" + type + "'.");
 }
 
 std::string common_mapper_mem_policy_type_to_str(hwloc_membind_policy_t &type) {
@@ -210,8 +204,8 @@ std::string common_mapper_mem_policy_type_to_str(hwloc_membind_policy_t &type) {
         case HWLOC_MEMBIND_MIXED: return "mixed";
     }
 
-    std::cerr << "Error: Unsupported memory policy enum value (" << static_cast<int>(type) << ")\n";
-    std::exit(EXIT_FAILURE);
+    XBT_ERROR("Unsupported memory policy type.");
+    throw std::runtime_error("Unsupported memory policy type.");
 }
 
 distance_matrix_t common_distance_matrix_read_from_txt(const std::string &txt_file)

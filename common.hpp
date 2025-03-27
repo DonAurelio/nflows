@@ -24,6 +24,7 @@ enum CommonClockFrequencyType
     COMMON_DYNAMIC_CLOCK_FREQUENCY,
     COMMON_STATIC_CLOCK_FREQUENCY,
     COMMON_ARRAY_CLOCK_FREQUENCY,
+    COMMON_UNKNOWN_CLOCK_FREQUENCY,
 };
 typedef CommonClockFrequencyType clock_frequency_type_t;
 
@@ -32,6 +33,7 @@ enum CommonSchedulerType
     COMMON_SCHED_TYPE_MIN_MIN,
     COMMON_SCHED_TYPE_HEFT,
     COMMON_SCHED_TYPE_FIFO,
+    COMMON_SCHED_TYPE_UNKNOWN,
 };
 typedef CommonSchedulerType scheduler_type_t;
 
@@ -39,27 +41,9 @@ enum CommonMapperType
 {
     COMMON_MAPPER_BARE_METAL,
     COMMON_MAPPER_SIMULATION,
+    COMMON_MAPPER_UNKNOWN,
 };
 typedef CommonMapperType mapper_type_t;
-
-enum CommonTimeRangePayloadType
-{
-    COMMON_COMM_READ_TIMESTAMPS,
-    COMMON_COMM_WRITE_TIMESTAMPS,
-    COMMON_COMPUTE_TIMESTAMPS,
-
-    COMMON_COMM_READ_OFFSETS,
-    COMMON_COMM_WRITE_OFFSETS,
-    COMMON_COMPUTE_OFFSETS,
-};
-typedef CommonTimeRangePayloadType time_range_payload_type_t;
-
-enum CommonCommNameMatch
-{
-    COMMON_COMM_SRC,
-    COMMON_COMM_DST,
-};
-typedef CommonCommNameMatch comm_name_match_t;
 
 struct thread_locality_s
 {
