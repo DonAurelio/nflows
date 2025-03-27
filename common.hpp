@@ -203,11 +203,14 @@ void common_reads_active_increment(common_t *common, const std::string &name);
 void common_writes_active_increment(common_t *common, const std::string &name);
 
 void common_comm_name_to_address_create(common_t *common, const std::string& comm_name, char* write_buffer);
-void common_comm_name_to_numa_ids_r_create(common_t *common, const std::string& comm_name, const std::vector<int>& memory_bindings);
-void common_comm_name_to_numa_ids_w_create(common_t *common, const std::string& comm_name, const std::vector<int>& memory_bindings);
-void common_exec_name_to_thread_locality_create(common_t *common, const std::string& exec_name,const thread_locality_t& locality);
+char* common_comm_name_to_address_get(const common_t *common, const std::string& comm_name);
 
+void common_comm_name_to_numa_ids_r_create(common_t *common, const std::string& comm_name, const std::vector<int>& memory_bindings);
+
+void common_comm_name_to_numa_ids_w_create(common_t *common, const std::string& comm_name, const std::vector<int>& memory_bindings);
 std::vector<int> common_comm_name_to_numa_ids_w_get(const common_t *common, const std::string& comm_name);
+
+void common_exec_name_to_thread_locality_create(common_t *common, const std::string& exec_name,const thread_locality_t& locality);
 
 void common_comm_name_to_r_ts_range_payload_create(common_t *common, const std::string& comm_name, const time_range_payload_t& time_range_payload);
 void common_comm_name_to_w_ts_range_payload_create(common_t *common, const std::string& comm_name, const time_range_payload_t& time_range_payload);

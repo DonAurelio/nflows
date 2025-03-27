@@ -105,103 +105,98 @@ void *mapper_bare_metal_thread_function(void *arg)
     XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => message: started.", thread_pid, thread_tid, exec->get_cname(), thread_core_id);
     XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => message: %s.", thread_pid, thread_tid, exec->get_cname(), thread_core_id, thread_mem_policy.c_str());
 
-    // double earliest_start_time_us = common_earliest_start_time(data->common, data->exec->get_name(), data->assigned_core_id);
+    double earliest_start_time_us = common_earliest_start_time(common, exec->get_name(), assigned_core_id);
 
-    // /* EMULATE MEMORY READING */
+    /* EMULATE MEMORY READING */
+    double actual_read_time_us = 0.0;
 
-    // double actual_read_time_us = 0.0;
+    // Match all communication (Task1->Task2) where this task_name is the destination.
+    name_to_time_range_payload_t matches = common_comm_name_to_w_time_offset_payload_filter(common, exec->get_name());
 
-    // // Match all communication (Task1->Task2) where this task_name is the destination.
-    // for (const auto &[comm_name, time_range_payload] : common_filter_name_to_time_range_payload(data->common, data->exec->get_name(), COMM_WRITE_OFFSETS, COMM_DST))
-    // {
-    //     char *read_buffer = data->common->comm_name_to_address.at(comm_name);
-
-    //     double read_payload_bytes = std::get<2>(time_range_payload);
-
-    //     // Used to check data (pages) migration.
-    //     std::vector<int> numa_locality_before_read =
-    //         get_hwloc_numa_ids_by_address(data->common, read_buffer, read_payload_bytes);
-
-    //     double read_start_timestemp_us = common_get_time_us();
-
-    //     size_t checksum = 0;
-    //     for (size_t i = 0; i < read_payload_bytes; i++)
-    //     {
-    //         checksum += read_buffer[i]; // Access each byte in the buffer (simulates reading)
-    //     }
-
-    //     double read_end_timestemp_us = common_get_time_us();
-
-    //     // Track reading consistency.
-    //     data->common->checksum += checksum;
-
-    //     // Read time offset per dependecy.
-    //     data->common->comm_name_to_r_time_offset_payload[comm_name] = time_range_payload_t(
-    //         earliest_start_time_us, earliest_start_time_us + (read_end_timestemp_us - read_start_timestemp_us),
-    //         read_payload_bytes);
-
-    //     // Used to check data (pages) migration. Migration is trigered once the data is being read.
-    //     std::vector<int> numa_locality_after_read =
-    //         get_hwloc_numa_ids_by_address(data->common, read_buffer, read_payload_bytes);
-
-    //     // Save data locality.
-    //     data->common->comm_name_to_numa_ids_r[comm_name] = numa_locality_after_read;
-
-    //     // Save read timestamps.
-    //     data->common->comm_name_to_r_ts_range_payload[comm_name] =
-    //         time_range_payload_t(read_start_timestemp_us, read_end_timestemp_us, read_payload_bytes);
-
-    //     actual_read_time_us = std::max(actual_read_time_us, read_end_timestemp_us - read_start_timestemp_us);
-
-    //     XBT_INFO(
-    //         "Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => "
-    //         "read: %s, payload (bytes): %f, checksum: %ld, "
-    //         "numa_locality_before_read: %s, "
-    //         "numa_locality_after_read: %s, "
-    //         "data (pages) migration: %s",
-    //         getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()),
-    //         comm_name.c_str(), read_payload_bytes, checksum,
-    //         common_join(numa_locality_before_read, " ").c_str(), 
-    //         common_join(numa_locality_after_read, " ").c_str(),
-    //         numa_locality_before_read != numa_locality_after_read ? "yes" : "no");
-
-    //     // Clean up.
-    //     free(read_buffer);
+    for (const auto &[comm_name, time_range_payload] : matches)
+    {
+        char *read_buffer = common_comm_name_to_address_get(common, comm_name);
         
-    //     // Mark as completed.
-    //     common_update_name_to_status(data->common->active_reads, comm_name);
-    // }
+        double read_payload_bytes = std::get<2>(time_range_payload);
 
-    // /* EMULATE COMPUTATION */
+        // Used to check data (pages) migration.
+        std::vector<int> nlbr = hardware_hwloc_numa_id_get_by_address(common, read_buffer, read_payload_bytes);
 
-    // double flops = data->exec->get_remaining();
+        double read_start_timestemp_us = common_get_time_us();
 
-    // // The volatile keyword is used to prevent the compiler from optimizing away the floating-point operations.
-    // volatile double a = 1.0, b = 2.0, c = 0.0;
+        size_t checksum = 0;
+        for (size_t i = 0; i < read_payload_bytes; i++)
+            checksum += read_buffer[i]; // Access each byte in the buffer (simulates reading)
 
-    // double exec_start_timestamp_us = common_get_time_us();
+        double read_end_timestemp_us = common_get_time_us();
 
-    // // FMA (Fused Multiply-Add) operation. This is a common pattern in scientific computing
-    // // benchmarks (e.g., LINPACK)
-    // for (uint64_t i = 0; i < flops; ++i)
-    //     c = a * b + c;
+        XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => read: %s, payload (bytes): %f, checksum: %ld", 
+            thread_pid, thread_tid, exec->get_cname(), thread_core_id, comm_name.c_str(), read_payload_bytes, checksum);
 
-    // double exec_end_timestamp_us = common_get_time_us();
+        // Used to check data (pages) migration. Migration is trigered once the data is being read.
+        std::vector<int> nlar = hardware_hwloc_numa_id_get_by_address(common, read_buffer, read_payload_bytes);
 
-    // // Calculate the compute time in microseconds.
-    // double compute_time_us = exec_end_timestamp_us - exec_start_timestamp_us;
+        // Track reading consistency.
+        common_threads_checksum_update(common, checksum);
 
-    // // Compute time offset
-    // data->common->exec_name_to_c_time_offset_payload[data->exec->get_cname()] = time_range_payload_t(
-    //     earliest_start_time_us + actual_read_time_us,
-    //     earliest_start_time_us + actual_read_time_us + compute_time_us, flops);
+        // Save read data locality.
+        common_comm_name_to_numa_ids_r_create(common, comm_name, nlar); 
 
-    // // Save compute timestamps.
-    // data->common->exec_name_to_c_ts_range_payload[data->exec->get_cname()] =
-    //     time_range_payload_t{exec_start_timestamp_us, exec_end_timestamp_us, flops};
+        // Save read timestamps.
+        time_range_payload_t read_ts_payload = time_range_payload_t(read_start_timestemp_us, read_end_timestemp_us, read_payload_bytes);
+        common_comm_name_to_r_ts_range_payload_create(common, comm_name, read_ts_payload);
 
-    // // Mark as completed.
-    // common_update_name_to_status(data->common->active_tasks, data->exec->get_name());
+        // Save read time offset.
+        time_range_payload_t read_of_payload = time_range_payload_t(
+            earliest_start_time_us, earliest_start_time_us + (read_end_timestemp_us - read_start_timestemp_us), read_payload_bytes);
+        common_comm_name_to_r_time_offset_payload_create(common, comm_name, read_of_payload);
+
+        actual_read_time_us = std::max(actual_read_time_us, read_end_timestemp_us - read_start_timestemp_us);
+        
+        const char* nlbr_str = common_join(nlbr).c_str();
+        const char* nlar_str = common_join(nlar).c_str();
+        const char* migration = nlbr != nlar ? "yes" : "no";
+
+        XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => read: %s, numa_locality_before_read: [%s], numa_locality_after_read: [%s], data (pages) migration: %s",
+            thread_pid, thread_tid, exec->get_cname(), thread_core_id, comm_name.c_str(), nlbr_str, nlar_str, migration);
+
+        common_reads_active_increment(common, comm_name);
+
+        // Clean up.
+        free(read_buffer);
+    }
+
+    /* EMULATE COMPUTATION */
+    double flops = exec->get_remaining();
+
+    // The volatile keyword is used to prevent the compiler from optimizing away the floating-point operations.
+    volatile double a = 1.0, b = 2.0, c = 0.0;
+
+    double exec_start_timestamp_us = common_get_time_us();
+
+    // FMA (Fused Multiply-Add) operation. This is a common pattern in scientific computing
+    // benchmarks (e.g., LINPACK)
+    for (uint64_t i = 0; i < flops; ++i) c = a * b + c;
+
+    double exec_end_timestamp_us = common_get_time_us();
+
+    // Calculate the compute time in microseconds.
+    double compute_time_us = exec_end_timestamp_us - exec_start_timestamp_us;
+
+    // Save compute timestamps.
+    time_range_payload_t exec_ts_range_payload = time_range_payload_t{exec_start_timestamp_us, exec_end_timestamp_us, flops};
+    common_exec_name_to_c_ts_range_payload_create(common, exec->get_name(), exec_ts_range_payload);
+
+    // Save compute offsets.
+    time_range_payload_t exec_of_range_payload = time_range_payload_t{
+        earliest_start_time_us + actual_read_time_us, 
+        earliest_start_time_us + actual_read_time_us + compute_time_us, 
+        flops
+    };
+
+    common_exec_name_to_c_time_offset_payload_create(common, exec->get_name(), exec_of_range_payload);
+
+    common_execs_active_increment(common, exec->get_name());
 
     // /* EMULATE MEMORY WRITTING */
 

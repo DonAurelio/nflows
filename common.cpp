@@ -373,6 +373,11 @@ void common_comm_name_to_address_create(common_t *common, const std::string& com
     common->comm_name_to_address[comm_name] = write_buffer;
 }
 
+char* common_comm_name_to_address_get(const common_t *common, const std::string& comm_name)
+{
+    return common->comm_name_to_address.at(comm_name);
+}
+
 void common_comm_name_to_numa_ids_r_create(common_t *common, const std::string& comm_name, const std::vector<int>& memory_bindings) {
     std::lock_guard<std::mutex> lock(common->comm_maps_mutex);
     common->comm_name_to_numa_ids_r[comm_name] = memory_bindings;
