@@ -170,7 +170,7 @@ typedef struct thread_data_s thread_data_t;
 
 /* UTILS */
 double common_get_time_us();
-std::string common_join(const std::vector<int> &vec, const std::string &delimiter);
+std::string common_join(const std::vector<int> &vec, const std::string &delimiter=",");
 std::pair<std::string, std::string> common_split(const std::string &input, std::string delimiter);
 std::vector<bool> common_core_avail_mask_to_vect(uint64_t mask, size_t &core_count);
 nlohmann::json common_config_file_read(const std::string& config_path);
@@ -206,7 +206,7 @@ name_to_time_range_payload_t common_comm_name_to_w_time_offset_payload_filter(co
 /* USER UTILS */
 double common_earliest_start_time(const common_t *common, const std::string &exec_name, unsigned int core_id);
 double common_communication_time(const common_t *common, unsigned int src_numa_id, unsigned int dst_numa_id, double payload);
-double common_compute_time(const common_t *common, double flops, double processor_speed_flops_per_second);
+double common_compute_time(const common_t *common, double flops, double clock_frequency_hz);
 
 /* RUNTIME */
 void common_threads_checksum_update(common_t *common, size_t checksum);
@@ -222,6 +222,8 @@ void common_comm_name_to_address_create(common_t *common, const std::string& com
 void common_comm_name_to_numa_ids_r_create(common_t *common, const std::string& comm_name, const std::vector<int>& memory_bindings);
 void common_comm_name_to_numa_ids_w_create(common_t *common, const std::string& comm_name, const std::vector<int>& memory_bindings);
 void common_exec_name_to_thread_locality_create(common_t *common, const std::string& exec_name,const thread_locality_t& locality);
+
+std::vector<int> common_comm_name_to_numa_ids_w_get(const common_t *common, const std::string& comm_name);
 
 void common_comm_name_to_r_ts_range_payload_create(common_t *common, const std::string& comm_name, const time_range_payload_t& time_range_payload);
 void common_comm_name_to_w_ts_range_payload_create(common_t *common, const std::string& comm_name, const time_range_payload_t& time_range_payload);

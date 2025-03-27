@@ -16,7 +16,9 @@ std::tuple<int, double> EFT_Scheduler::get_best_core_id(const simgrid_exec_t *ex
     double earliest_finish_time_us = std::numeric_limits<double>::max();
 
     // Estimate exec earliest_finish_time for every core_id.
-    for (int core_id : common_get_avail_core_ids(this->common))
+    std::vector<int> core_id_avail = common_core_id_get_avail(this->common);
+
+    for (int core_id : core_id_avail)
     {
         /* 1. ESTIMATE EARLIEST_START_TIME(n_i). */
         double earliest_start_time_us = common_earliest_start_time(this->common, exec->get_name(), core_id);
@@ -28,17 +30,19 @@ std::tuple<int, double> EFT_Scheduler::get_best_core_id(const simgrid_exec_t *ex
         double estimated_read_time_us = 0.0;
 
         // Determine the NUMA node corresponding to the core that will perform the reading operation.
-        int read_dst_numa_id = get_hwloc_numa_id_by_core_id(this->common, core_id);
+        int read_dst_numa_id = hardware_hwloc_numa_id_get_by_core_id(this->common, core_id);
 
         // Match all communication (Task1->Task2) where this task_name is the destination.
-        for (const auto &[comm_name, time_range_payload] : common_filter_name_to_time_range_payload(this->common, exec->get_name(), COMM_WRITE_OFFSETS, COMM_DST))
+        name_to_time_range_payload_t matches = common_comm_name_to_w_time_offset_payload_filter(this->common, exec->get_name());
+
+        for (const auto &[comm_name, time_range_payload] : matches)
         {
             double read_payload_bytes = (double) std::get<2>(time_range_payload);
 
             // ASSUMPTION:
             // For the read time estimation, we assume that the entire data item is stored in a single memory domain, the first one.
-            int read_src_numa_id = this->common->comm_name_to_numa_ids_w.at(comm_name).front();
-
+            int read_src_numa_id = common_comm_name_to_numa_ids_w_get(this->common, comm_name).front();
+            
             double read_time_us = common_communication_time(this->common, read_src_numa_id, read_dst_numa_id, read_payload_bytes);
             
             estimated_read_time_us = std::max(estimated_read_time_us, read_time_us);
@@ -50,8 +54,8 @@ std::tuple<int, double> EFT_Scheduler::get_best_core_id(const simgrid_exec_t *ex
         /* 3. ESTIMATE COMPUTE_TIME(EXEC). */
 
         double flops = exec->get_remaining();
-        double processor_speed_flops_per_second = (double) get_hwloc_core_performance_by_id(this->common, core_id);
-        double estimated_compute_time_us = common_compute_time(this->common, flops, processor_speed_flops_per_second);
+        double clock_frequency_hz = hardware_hwloc_core_id_get_clock_frequency(this->common, core_id);
+        double estimated_compute_time_us = common_compute_time(this->common, flops, clock_frequency_hz);
 
         XBT_DEBUG("task: %s, core_id: %d, estimated_compute_time_us: %f", exec->get_cname(), core_id, estimated_compute_time_us);
 
@@ -60,7 +64,7 @@ std::tuple<int, double> EFT_Scheduler::get_best_core_id(const simgrid_exec_t *ex
         double estimated_write_time_us = 0.0;
 
         // Retrieve the NUMA node that will perform the write operation.
-        int write_src_numa_id = get_hwloc_numa_id_by_core_id(this->common, core_id);
+        int write_src_numa_id = hardware_hwloc_numa_id_get_by_core_id(this->common, core_id);
 
         for (const auto &succ : exec->get_successors())
         {

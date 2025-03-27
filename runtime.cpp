@@ -4,38 +4,19 @@ XBT_LOG_NEW_DEFAULT_CATEGORY(runtime, "Messages specific to this module.");
 
 void runtime_start(mapper_t **mapper)
 {
-    try {
-        (*mapper)->start();
-    }
-    catch (const std::out_of_range &e) {
-        XBT_ERROR("Error (out of range): %s", e.what());
-        std::exit(EXIT_FAILURE);
-    } 
-    catch (const std::bad_alloc &e) {
-        XBT_ERROR("Error (memory allocation failed): %s", e.what());
-        std::exit(EXIT_FAILURE);
-    } 
-    catch (const std::runtime_error &e) {
-        XBT_ERROR("Runtime Error: %s", e.what());
-        std::exit(EXIT_FAILURE);
-    } 
-    catch (const std::exception &e) {
-        XBT_ERROR("Standard Exception: %s", e.what());
-        std::exit(EXIT_FAILURE);
-    } 
-    catch (...) {
-        XBT_ERROR("Unknown Error: An unexpected exception occurred.");
-        std::exit(EXIT_FAILURE);
-    }
+    XBT_INFO("Start runtime.");
+    (*mapper)->start();
 }
 
 void runtime_stop(common_t **common)
 {
+    XBT_INFO("Stop runtime.");
     common_print_common_structure(*common, 0);
 }
 
 void runtime_initialize(common_t **common, simgrid_execs_t **dag, scheduler_t **scheduler, mapper_t **mapper, const std::string &config_path)
 {
+    XBT_INFO("Initialize runtime.");
     nlohmann::json data = common_config_file_read(config_path);
     simgrid_execs_t execs = common_dag_read_from_dot(data["dag_file"]);
 
@@ -137,8 +118,10 @@ void runtime_initialize(common_t **common, simgrid_execs_t **dag, scheduler_t **
 }
 
 void runtime_finalize(common_t **common, simgrid_execs_t **dag, scheduler_t **scheduler, mapper_t **mapper) {
+
+    XBT_INFO("Finalize runtime.");
     auto safe_delete = [](auto **ptr) {
-        if (*ptr) {
+        if (ptr && *ptr) {
             delete *ptr;
             *ptr = nullptr;
         }
@@ -148,7 +131,7 @@ void runtime_finalize(common_t **common, simgrid_execs_t **dag, scheduler_t **sc
     safe_delete(scheduler);
     safe_delete(dag);
 
-    if (*common) {
+    if (!common) {
         hwloc_topology_destroy((*common)->topology); // Release hwloc resources
         safe_delete(common);
     }

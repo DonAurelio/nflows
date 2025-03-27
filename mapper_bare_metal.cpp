@@ -24,7 +24,6 @@ void Mapper_Bare_Metal::start()
         if (!selected_exec)
         {
             XBT_INFO("There are not ready tasks, waiting 5 seconds.");
-            // printf("There are not ready tasks, waiting 5 seconds.\n");
             sleep(5);
             continue;
         }
@@ -32,7 +31,6 @@ void Mapper_Bare_Metal::start()
         if (selected_core_id == -1)
         {
             XBT_INFO("There are not available cores, waiting 5 seconds.");
-            // printf("There are not available cores, waiting 5 seconds.\n");
             sleep(5);
             continue;
         }
@@ -47,10 +45,10 @@ void Mapper_Bare_Metal::start()
 
         // Set as assigned.
         selected_exec->set_host(this->dummy_host);
-        bind_exec_to_thread(data);
+        hardware_hwloc_thread_bind_to_core_id(data);
     }
 
-    common_wait_active_threads(this->common);
+    common_threads_active_wait(this->common);
 
     // Workaround to properly finalize SimGrid resources.
     simgrid::s4u::Engine *e = simgrid::s4u::Engine::get_instance();
@@ -70,7 +68,7 @@ void Mapper_Bare_Metal::start()
  *
  * 4. Record the read, write, and execution times.
  *
- * 5. Save thread locality information, including the last NUMA node, core ID, and context switches.
+ * 5. Save thread locality information, including the NUMA node ids, core ID, and context switches.
  *
  * @param arg Structure used to collect thread execution data.
  * @return void*
@@ -79,232 +77,254 @@ void Mapper_Bare_Metal::start()
  */
 void *mapper_bare_metal_thread_function(void *arg)
 {
-    thread_data_t *data = (thread_data_t *)arg;
+    hardware_hwloc_thread_mem_policy_set(((thread_data_t *) arg)->common);
 
-    // Set the thread memory policy.
-    set_hwloc_thread_mem_policy(data->common);
+    thread_data_t* data = ((thread_data_t *) arg);
 
-    XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => message: started.", getpid(), gettid(),
-             data->exec->get_cname(), get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()));
+    common_t *common = data->common;
+    simgrid_exec_t *exec = data->exec;
+    int assigned_core_id = data->assigned_core_id;
+    
+    std::vector<int> mem_bind_numa_ids;
+    hwloc_membind_policy_t mem_bind_policy = hardware_hwloc_thread_mem_policy_get_from_os(common, mem_bind_numa_ids);
+    std::string thread_mem_policy = common_mapper_mem_policy_type_to_str(mem_bind_policy) + " [" + common_join(mem_bind_numa_ids) + "]";
 
-    XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => message: %s.", getpid(), gettid(),
-             data->exec->get_cname(), get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()),
-             get_hwloc_thread_mem_policy(data->common).c_str());
+    int thread_core_id = hardware_hwloc_core_id_get_by_pu_id(common, sched_getcpu());
+    int thread_pid = getpid();
+    int thread_tid = gettid();
 
-    double earliest_start_time_us = common_earliest_start_time(data->common, data->exec->get_name(), data->assigned_core_id);
-
-    /* EMULATE MEMORY READING */
-
-    double actual_read_time_us = 0.0;
-
-    // Match all communication (Task1->Task2) where this task_name is the destination.
-    for (const auto &[comm_name, time_range_payload] : common_filter_name_to_time_range_payload(data->common, data->exec->get_name(), COMM_WRITE_OFFSETS, COMM_DST))
+    if (thread_core_id != assigned_core_id)
     {
-        char *read_buffer = data->common->comm_name_to_address.at(comm_name);
-        double read_payload_bytes = std::get<2>(time_range_payload);
-
-        // Used to check data (pages) migration.
-        std::vector<int> numa_locality_before_read =
-            get_hwloc_numa_ids_by_address(data->common, read_buffer, read_payload_bytes);
-
-        double read_start_timestemp_us = common_get_time_us();
-
-        size_t checksum = 0;
-        for (size_t i = 0; i < read_payload_bytes; i++)
-        {
-            checksum += read_buffer[i]; // Access each byte in the buffer (simulates reading)
-        }
-
-        double read_end_timestemp_us = common_get_time_us();
-
-        // Track reading consistency.
-        data->common->checksum += checksum;
-
-        // Read time offset per dependecy.
-        data->common->comm_name_to_r_time_offset_payload[comm_name] = time_range_payload_t(
-            earliest_start_time_us, earliest_start_time_us + (read_end_timestemp_us - read_start_timestemp_us),
-            read_payload_bytes);
-
-        // Used to check data (pages) migration. Migration is trigered once the data is being read.
-        std::vector<int> numa_locality_after_read =
-            get_hwloc_numa_ids_by_address(data->common, read_buffer, read_payload_bytes);
-
-        // Save data locality.
-        data->common->comm_name_to_numa_ids_r[comm_name] = numa_locality_after_read;
-
-        // Save read timestamps.
-        data->common->comm_name_to_r_ts_range_payload[comm_name] =
-            time_range_payload_t(read_start_timestemp_us, read_end_timestemp_us, read_payload_bytes);
-
-        actual_read_time_us = std::max(actual_read_time_us, read_end_timestemp_us - read_start_timestemp_us);
-
-        XBT_INFO(
-            "Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => "
-            "read: %s, payload (bytes): %f, checksum: %ld, "
-            "numa_locality_before_read: %s, "
-            "numa_locality_after_read: %s, "
-            "data (pages) migration: %s",
-            getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()),
-            comm_name.c_str(), read_payload_bytes, checksum,
-            common_join(numa_locality_before_read, " ").c_str(), 
-            common_join(numa_locality_after_read, " ").c_str(),
-            numa_locality_before_read != numa_locality_after_read ? "yes" : "no");
-
-        // Clean up.
-        free(read_buffer);
+        XBT_ERROR("thread_core_id (%d) != assigned_core_id (%d)", thread_core_id, assigned_core_id);
+        std::runtime_error("thread_core_id != assigned_core_id");
     }
 
-    /* EMULATE COMPUTATION */
+    XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => message: started.", thread_pid, thread_tid, exec->get_cname(), thread_core_id);
+    XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => message: %s.", thread_pid, thread_tid, exec->get_cname(), thread_core_id, thread_mem_policy.c_str());
 
-    double flops = data->exec->get_remaining();
+    // double earliest_start_time_us = common_earliest_start_time(data->common, data->exec->get_name(), data->assigned_core_id);
 
-    // The volatile keyword is used to prevent the compiler from optimizing away the floating-point operations.
-    volatile double a = 1.0, b = 2.0, c = 0.0;
+    // /* EMULATE MEMORY READING */
 
-    double exec_start_timestamp_us = common_get_time_us();
+    // double actual_read_time_us = 0.0;
 
-    // FMA (Fused Multiply-Add) operation. This is a common pattern in scientific computing
-    // benchmarks (e.g., LINPACK)
-    for (uint64_t i = 0; i < flops; ++i)
-        c = a * b + c;
+    // // Match all communication (Task1->Task2) where this task_name is the destination.
+    // for (const auto &[comm_name, time_range_payload] : common_filter_name_to_time_range_payload(data->common, data->exec->get_name(), COMM_WRITE_OFFSETS, COMM_DST))
+    // {
+    //     char *read_buffer = data->common->comm_name_to_address.at(comm_name);
 
-    double exec_end_timestamp_us = common_get_time_us();
+    //     double read_payload_bytes = std::get<2>(time_range_payload);
 
-    // Calculate the compute time in microseconds.
-    double compute_time_us = exec_end_timestamp_us - exec_start_timestamp_us;
+    //     // Used to check data (pages) migration.
+    //     std::vector<int> numa_locality_before_read =
+    //         get_hwloc_numa_ids_by_address(data->common, read_buffer, read_payload_bytes);
 
-    // Compute time offset
-    data->common->exec_name_to_c_time_offset_payload[data->exec->get_cname()] = time_range_payload_t(
-        earliest_start_time_us + actual_read_time_us,
-        earliest_start_time_us + actual_read_time_us + compute_time_us, flops);
+    //     double read_start_timestemp_us = common_get_time_us();
 
-    // Save compute timestamps.
-    data->common->exec_name_to_c_ts_range_payload[data->exec->get_cname()] =
-        time_range_payload_t{exec_start_timestamp_us, exec_end_timestamp_us, flops};
+    //     size_t checksum = 0;
+    //     for (size_t i = 0; i < read_payload_bytes; i++)
+    //     {
+    //         checksum += read_buffer[i]; // Access each byte in the buffer (simulates reading)
+    //     }
 
-    /* EMULATE MEMORY WRITTING */
+    //     double read_end_timestemp_us = common_get_time_us();
 
-    double actual_write_time_us = 0;
-    for (const auto &succ_ptr : data->exec->get_successors())
-    {
-        const simgrid_activity_t *succ = succ_ptr.get();
-        auto [exec_name, succ_exec_name] = common_split(succ->get_cname(), "->");
+    //     // Track reading consistency.
+    //     data->common->checksum += checksum;
 
-        if (succ_exec_name == std::string("end"))
-        {
-            XBT_INFO(
-                "Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => "
-                "write: %s, message: skipt writing operation for end task.",
-                getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()),
-                succ->get_cname());
+    //     // Read time offset per dependecy.
+    //     data->common->comm_name_to_r_time_offset_payload[comm_name] = time_range_payload_t(
+    //         earliest_start_time_us, earliest_start_time_us + (read_end_timestemp_us - read_start_timestemp_us),
+    //         read_payload_bytes);
 
-            continue;
-        }
+    //     // Used to check data (pages) migration. Migration is trigered once the data is being read.
+    //     std::vector<int> numa_locality_after_read =
+    //         get_hwloc_numa_ids_by_address(data->common, read_buffer, read_payload_bytes);
 
-        double write_payload_bytes = succ->get_remaining();
+    //     // Save data locality.
+    //     data->common->comm_name_to_numa_ids_r[comm_name] = numa_locality_after_read;
 
-        // Emulate memory writting by saving data into memory.
-        char *write_buffer = (char *)malloc(write_payload_bytes);
+    //     // Save read timestamps.
+    //     data->common->comm_name_to_r_ts_range_payload[comm_name] =
+    //         time_range_payload_t(read_start_timestemp_us, read_end_timestemp_us, read_payload_bytes);
 
-        if (!write_buffer)
-        {
-            XBT_ERROR(
-                "Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => "
-                "successor: %s, message: unable to create write buffer.",
-                getpid(), gettid(), data->exec->get_cname(),
-                get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()),
-                succ->get_cname());
+    //     actual_read_time_us = std::max(actual_read_time_us, read_end_timestemp_us - read_start_timestemp_us);
 
-            return NULL;
-        }
+    //     XBT_INFO(
+    //         "Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => "
+    //         "read: %s, payload (bytes): %f, checksum: %ld, "
+    //         "numa_locality_before_read: %s, "
+    //         "numa_locality_after_read: %s, "
+    //         "data (pages) migration: %s",
+    //         getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()),
+    //         comm_name.c_str(), read_payload_bytes, checksum,
+    //         common_join(numa_locality_before_read, " ").c_str(), 
+    //         common_join(numa_locality_after_read, " ").c_str(),
+    //         numa_locality_before_read != numa_locality_after_read ? "yes" : "no");
 
-        /*
-        memset:
-        Fills a block of memory with a specified value, typically used to initialize memory, such as setting
-        all elements of an array to zero or preparing data structures.
+    //     // Clean up.
+    //     free(read_buffer);
+        
+    //     // Mark as completed.
+    //     common_update_name_to_status(data->common->active_reads, comm_name);
+    // }
 
-        Parameters:
-            ptr   - Pointer to the memory block to fill.
-            value - The value to set, interpreted as an unsigned char (0-255). Although passed as an int,
-                    the value is converted to an unsigned char to fill the memory block.
-            num   - The number of bytes to set in the memory block.
+    // /* EMULATE COMPUTATION */
 
-        Description:
-        memset sets each byte of the memory block starting at ptr to the given value. When an integer is
-        provided, it is truncated to the least significant 8 bits (one byte), and this byte is used to
-        fill the entire block.
-        */
+    // double flops = data->exec->get_remaining();
 
-        double write_start_timestamp_us = common_get_time_us();
+    // // The volatile keyword is used to prevent the compiler from optimizing away the floating-point operations.
+    // volatile double a = 1.0, b = 2.0, c = 0.0;
 
-        memset(write_buffer, 0, write_payload_bytes);
+    // double exec_start_timestamp_us = common_get_time_us();
 
-        double write_end_timestamp_us = common_get_time_us();
+    // // FMA (Fused Multiply-Add) operation. This is a common pattern in scientific computing
+    // // benchmarks (e.g., LINPACK)
+    // for (uint64_t i = 0; i < flops; ++i)
+    //     c = a * b + c;
 
-        // Compute write time, assuming reads are carried out in parallel.
-        // The total read time is determined by the longest individual read time.
-        actual_write_time_us = std::max(actual_write_time_us, write_end_timestamp_us - write_start_timestamp_us);
+    // double exec_end_timestamp_us = common_get_time_us();
 
-        // Compute time offset
-        data->common->comm_name_to_w_time_offset_payload[succ->get_cname()] = time_range_payload_t(
-            earliest_start_time_us + actual_read_time_us + compute_time_us,
-            earliest_start_time_us + actual_read_time_us + compute_time_us +
-                (write_end_timestamp_us - write_start_timestamp_us),
-            write_payload_bytes);
+    // // Calculate the compute time in microseconds.
+    // double compute_time_us = exec_end_timestamp_us - exec_start_timestamp_us;
 
-        // Save write timestamps.
-        data->common->comm_name_to_w_ts_range_payload[succ->get_cname()] =
-            time_range_payload_t{write_start_timestamp_us, write_end_timestamp_us, write_payload_bytes};
+    // // Compute time offset
+    // data->common->exec_name_to_c_time_offset_payload[data->exec->get_cname()] = time_range_payload_t(
+    //     earliest_start_time_us + actual_read_time_us,
+    //     earliest_start_time_us + actual_read_time_us + compute_time_us, flops);
 
-        // Save address for subsequent reading.
-        data->common->comm_name_to_address[succ->get_cname()] = write_buffer;
+    // // Save compute timestamps.
+    // data->common->exec_name_to_c_ts_range_payload[data->exec->get_cname()] =
+    //     time_range_payload_t{exec_start_timestamp_us, exec_end_timestamp_us, flops};
 
-        std::vector<int> numa_locality_after_write =
-            get_hwloc_numa_ids_by_address(data->common, write_buffer, write_payload_bytes);
+    // // Mark as completed.
+    // common_update_name_to_status(data->common->active_tasks, data->exec->get_name());
 
-        // Save data locality.
-        data->common->comm_name_to_numa_ids_w[succ->get_cname()] = numa_locality_after_write;
+    // /* EMULATE MEMORY WRITTING */
 
-    XBT_INFO(
-        "Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => "
-        "write: %s, payload (bytes): %f, numa_locality_after_write: %s.",
-        getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()),
-        succ->get_cname(), write_payload_bytes, common_join(numa_locality_after_write, " ").c_str());
-    }
+    // double actual_write_time_us = 0;
+    // for (const auto &succ_ptr : data->exec->get_successors())
+    // {
+    //     const simgrid_activity_t *succ = succ_ptr.get();
+    //     auto [exec_name, succ_exec_name] = common_split(succ->get_cname(), "->");
 
-    XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => message: finished.", getpid(), gettid(),
-             data->exec->get_cname(), get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()));
+    //     if (succ_exec_name == std::string("end"))
+    //     {
+    //         XBT_INFO(
+    //             "Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => "
+    //             "write: %s, message: skipt writing operation for end task.",
+    //             getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()),
+    //             succ->get_cname());
 
-    // Save thread locality.
-    data->common->exec_name_to_thread_locality[data->exec->get_cname()] = get_hwloc_thread_locality(data->common);
+    //         continue;
+    //     }
 
-    /* TIME OFFSETS */
+    //     double write_payload_bytes = succ->get_remaining();
 
-    double actual_finish_time_us =
-        earliest_start_time_us + actual_read_time_us + compute_time_us + actual_write_time_us;
+    //     // Emulate memory writting by saving data into memory.
+    //     char *write_buffer = (char *)malloc(write_payload_bytes);
 
-    data->common->exec_name_to_rcw_time_offset_payload[data->exec->get_cname()] =
-        time_range_payload_t(earliest_start_time_us, actual_finish_time_us, flops);
+    //     if (!write_buffer)
+    //     {
+    //         XBT_ERROR(
+    //             "Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => "
+    //             "successor: %s, message: unable to create write buffer.",
+    //             getpid(), gettid(), data->exec->get_cname(),
+    //             get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()),
+    //             succ->get_cname());
 
-    /* CLEAN UP */
+    //         return NULL;
+    //     }
 
-    // Mark successors as completed.
-    for (const auto &succ_ptr : data->exec->get_successors())
-        (succ_ptr.get())->complete(simgrid::s4u::Activity::State::FINISHED);
+    //     /*
+    //     memset:
+    //     Fills a block of memory with a specified value, typically used to initialize memory, such as setting
+    //     all elements of an array to zero or preparing data structures.
 
-    // In the previous version, this worked, but in the current version, exec is a null pointer.
-    // As a result, the task itself is not marked as completed, but it was assigned,
-    // and its dependencies were marked as completed.
-    // data->exec->complete(simgrid::s4u::Activity::State::FINISHED);
+    //     Parameters:
+    //         ptr   - Pointer to the memory block to fill.
+    //         value - The value to set, interpreted as an unsigned char (0-255). Although passed as an int,
+    //                 the value is converted to an unsigned char to fill the memory block.
+    //         num   - The number of bytes to set in the memory block.
 
-    // Decrement the active thread counter and signal if no more threads
-    common_decrement_active_threads_counter(data->common);
+    //     Description:
+    //     memset sets each byte of the memory block starting at ptr to the given value. When an integer is
+    //     provided, it is truncated to the least significant 8 bits (one byte), and this byte is used to
+    //     fill the entire block.
+    //     */
 
-    // Mark the selected hwloc_core_id as available.
-    common_set_core_id_as_avail(data->common, data->assigned_core_id);
+    //     double write_start_timestamp_us = common_get_time_us();
 
-    // Update core availability
-    common_set_core_id_avail_unitl(data->common, data->assigned_core_id, actual_finish_time_us);
+    //     memset(write_buffer, 0, write_payload_bytes);
+
+    //     double write_end_timestamp_us = common_get_time_us();
+
+    //     // Compute write time, assuming reads are carried out in parallel.
+    //     // The total read time is determined by the longest individual read time.
+    //     actual_write_time_us = std::max(actual_write_time_us, write_end_timestamp_us - write_start_timestamp_us);
+
+    //     // Compute time offset
+    //     data->common->comm_name_to_w_time_offset_payload[succ->get_cname()] = time_range_payload_t(
+    //         earliest_start_time_us + actual_read_time_us + compute_time_us,
+    //         earliest_start_time_us + actual_read_time_us + compute_time_us +
+    //             (write_end_timestamp_us - write_start_timestamp_us),
+    //         write_payload_bytes);
+
+    //     // Save write timestamps.
+    //     data->common->comm_name_to_w_ts_range_payload[succ->get_cname()] =
+    //         time_range_payload_t{write_start_timestamp_us, write_end_timestamp_us, write_payload_bytes};
+
+    //     // Save address for subsequent reading.
+    //     data->common->comm_name_to_address[succ->get_cname()] = write_buffer;
+
+    //     std::vector<int> numa_locality_after_write =
+    //         get_hwloc_numa_ids_by_address(data->common, write_buffer, write_payload_bytes);
+
+    //     // Save data locality.
+    //     data->common->comm_name_to_numa_ids_w[succ->get_cname()] = numa_locality_after_write;
+
+    //     // Mark as completed.
+    //     common_update_name_to_status(data->common->active_writes, succ->get_name());
+
+    // XBT_INFO(
+    //     "Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => "
+    //     "write: %s, payload (bytes): %f, numa_locality_after_write: %s.",
+    //     getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()),
+    //     succ->get_cname(), write_payload_bytes, common_join(numa_locality_after_write, " ").c_str());
+    // }
+
+    XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => message: finished.", thread_pid, thread_tid, exec->get_cname(), thread_core_id);
+    
+    // // Save thread locality.
+    // data->common->exec_name_to_thread_locality[data->exec->get_cname()] = get_hwloc_thread_locality(data->common);
+
+    // /* TIME OFFSETS */
+
+    // double actual_finish_time_us =
+    //     earliest_start_time_us + actual_read_time_us + compute_time_us + actual_write_time_us;
+
+    // data->common->exec_name_to_rcw_time_offset_payload[data->exec->get_cname()] =
+    //     time_range_payload_t(earliest_start_time_us, actual_finish_time_us, flops);
+
+    // /* CLEAN UP */
+
+    // // Mark successors as completed.
+    // for (const auto &succ_ptr : data->exec->get_successors())
+    //     (succ_ptr.get())->complete(simgrid::s4u::Activity::State::FINISHED);
+
+    // // In the previous version, this worked, but in the current version, exec is a null pointer.
+    // // As a result, the task itself is not marked as completed, but it was assigned,
+    // // and its dependencies were marked as completed.
+    // // data->exec->complete(simgrid::s4u::Activity::State::FINISHED);
+
+    // // Decrement the active thread counter and signal if no more threads
+    // common_decrement_active_threads_counter(data->common);
+
+    // // Mark the selected hwloc_core_id as available.
+    // common_set_core_id_as_avail(data->common, data->assigned_core_id);
+
+    // // Update core availability
+    // common_set_core_id_avail_unitl(data->common, data->assigned_core_id, actual_finish_time_us);
 
     // this pointer was created in the thread caller 'assign_exec'
     free(data);

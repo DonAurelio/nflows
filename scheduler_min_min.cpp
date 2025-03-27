@@ -16,7 +16,7 @@ std::tuple<simgrid_exec_t *, int, double> MIN_MIN_Scheduler::next()
     double estimated_finish_time = std::numeric_limits<double>::max();
     simgrid_exec_t *selected_exec = nullptr;
 
-    for (simgrid_exec_t *exec : common_get_ready_tasks(this->dag))
+    for (simgrid_exec_t *exec : common_dag_get_ready_execs(this->dag))
     {
         int core_id;
         double finish_time;

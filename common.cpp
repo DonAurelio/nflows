@@ -72,8 +72,8 @@ nlohmann::json common_config_file_read(const std::string& config_path)
     try {
         config_file >> data;
     } catch (const nlohmann::json::exception& e) {
-        XBT_ERROR("Invalid JSON in %s: %s", config_path.c_str(), e.what());
-        throw std::runtime_error("JSON parse error");
+        XBT_ERROR("Invalid config file (json) in %s: %s", config_path.c_str(), e.what());
+        // throw;  // Rethrow the same exception
     }
 
     return data;
@@ -320,10 +320,10 @@ double common_communication_time(const common_t *common, unsigned int src_numa_i
     return latency_us + (payload / bandwidth_bpus);
 }
 
-double common_compute_time(const common_t *common, double flops, double processor_speed_flops_per_second)
+double common_compute_time(const common_t *common, double flops, double clock_frequency_hz)
 {
     // Calculate the compute time in microseconds.
-    return (flops / processor_speed_flops_per_second) * 1000000;
+    return (flops / (common->flops_per_cycle * clock_frequency_hz)) * 1000000;
 }
 
 /* RUNTIME */
@@ -384,9 +384,15 @@ void common_comm_name_to_numa_ids_r_create(common_t *common, const std::string& 
     common->comm_name_to_numa_ids_r[comm_name] = memory_bindings;
 }
 
-void common_comm_name_to_numa_ids_w_create(common_t *common, const std::string& comm_name, const std::vector<int>& memory_bindings) {
+void common_comm_name_to_numa_ids_w_create(common_t *common, const std::string& comm_name, const std::vector<int>& memory_bindings)
+{
     std::lock_guard<std::mutex> lock(common->comm_maps_mutex);
     common->comm_name_to_numa_ids_w[comm_name] = memory_bindings;
+}
+
+std::vector<int> common_comm_name_to_numa_ids_w_get(const common_t *common, const std::string& comm_name)
+{
+    return common->comm_name_to_numa_ids_w.at(comm_name);
 }
 
 void common_exec_name_to_thread_locality_create(common_t *common, const std::string& exec_name, const thread_locality_t& locality) {

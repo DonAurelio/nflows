@@ -171,7 +171,7 @@ void hardware_hwloc_thread_mem_policy_set(const common_t *common)
     hwloc_bitmap_free(current_nodeset);
 }
 
-hwloc_membind_policy_t hardware_hwloc_thread_mem_policy_get_from_os(const common_t *common)
+hwloc_membind_policy_t hardware_hwloc_thread_mem_policy_get_from_os(const common_t *common, std::vector<int> &out_numa_ids)
 {
     hwloc_membind_policy_t policy;
     hwloc_bitmap_t nodeset = hwloc_bitmap_alloc();
@@ -183,6 +183,14 @@ hwloc_membind_policy_t hardware_hwloc_thread_mem_policy_get_from_os(const common
         XBT_ERROR("get memory binding: %s (errno: %d)", strerror(errno), errno);
         throw std::runtime_error("get memory binding failed: " + std::string(strerror(errno)));
     }
+
+    int node;
+    hwloc_bitmap_foreach_begin(node, nodeset)
+    {
+        hwloc_obj_t obj = hwloc_get_obj_inside_cpuset_by_type(common->topology, nodeset, HWLOC_OBJ_NUMANODE, node);
+        if (obj) out_numa_ids.push_back(obj->logical_index);
+    }
+    hwloc_bitmap_foreach_end();
  
     hwloc_bitmap_free(nodeset);
 
