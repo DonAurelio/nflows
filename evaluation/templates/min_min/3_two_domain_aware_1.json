@@ -1,9 +1,12 @@
 {
     "dag_file": "",
-    "scheduler_type": "min_min",
+
+    "scheduler_type": "min-min",
     "scheduler_params": [],
-    "mapper_type": "bare_metal",
+
+    "mapper_type": "bare-metal",
     "mapper_mem_policy_type": "default",
+    "mapper_mem_bind_numa_node_ids": [],
 
     "core_avail_mask": "0xFF0000FF",
     "flops_per_cycle": 32,
@@ -11,10 +14,9 @@
     "clock_frequency_hz": 1000000000,
 
     "distance_matrices": {
-        "latency": "./evaluation/system/non_uniform_lat.txt",
-        "bandwidth": "./evaluation/system/non_uniform_bw.txt"
+        "latency_ns": "./evaluation/system/non_uniform_lat.txt",
+        "bandwidth_gbps": "./evaluation/system/non_uniform_bw.txt"
     },
 
-    "log_base_name": "",
-    "log_date_format": ""
+    "out_file_name": ""
 }

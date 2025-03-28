@@ -44,7 +44,7 @@ EVALUATION_LOG_DIR := $(EVALUATION_RESULT_DIR)/log
 EVALUATION_OUTPUT_DIR := $(EVALUATION_RESULT_DIR)/output
 EVALUATION_CONFIG_DIR := $(EVALUATION_RESULT_DIR)/config
 
-EVALUATION_REPEATS := 5
+EVALUATION_REPEATS := 3
 EVALUATION_WORKFLOWS := dis_16.dot mon_58.dot red_16.dot
 EVALUATION_GROUPS := min_min fifo heft
 EVALUATION_SLEEPTIME := 10
@@ -183,16 +183,16 @@ $(EVALUATION_WORKFLOWS): %: $(EXECUTABLE)
 			mkdir -p $$CONFIG_DIR $$OUTPUT_DIR $$LOG_DIR; \
 			for repeat in $(shell seq 1 $(EVALUATION_REPEATS)); do \
 				CONFIG_FILE=$$CONFIG_DIR/$${repeat}.json; \
-				OUTPUT_FILE=$$OUTPUT_DIR/$${repeat}; \
+				OUTPUT_FILE=$$OUTPUT_DIR/$${repeat}.yaml; \
 				LOG_FILE=$$LOG_DIR/$${repeat}.log; \
 				$(GENERATE_CONFIG) \
 					--template "$$json_template" \
 					--output_file "$$CONFIG_FILE" > "$$LOG_FILE" 2>&1 \
-					--params log_base_name="$${OUTPUT_FILE}" dag_file="$(EVALUATION_WORKFLOW_DIR)/$@"; \
+					--params out_file_name="$${OUTPUT_FILE}" dag_file="$(EVALUATION_WORKFLOW_DIR)/$@"; \
 				GENERATE_STATUS=$$?; \
 				./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$${CONFIG_FILE}" >> "$$LOG_FILE" 2>&1; \
 				EXECUTABLE_STATUS=$$?; \
-				$(VALIDATE_OFFSETS) "$${OUTPUT_FILE}.yaml"  >> "$$LOG_FILE" 2>&1; \
+				$(VALIDATE_OFFSETS) "$${OUTPUT_FILE}"  >> "$$LOG_FILE" 2>&1; \
 				VALIDATE_STATUS=$$?; \
 				if [ $$GENERATE_STATUS -eq 0 ] && [ $$EXECUTABLE_STATUS -eq 0 ] && [ $$VALIDATE_STATUS -eq 0 ]; then \
 					echo "  [SUCCESS] $$CONFIG_FILE"; \

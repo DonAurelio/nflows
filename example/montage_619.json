@@ -1,10 +1,12 @@
 {
     "dag_file": "./example/montage_619.dot",
+
     "scheduler_type": "fifo",
     "scheduler_params": [
         "fifo_prioritize_by_core_id=yes",
         "fifo_prioritize_by_exec_order=yes"
     ],
+
     "mapper_type": "simulation",
     "mapper_mem_policy_type": "first-touch",
     "mapper_mem_bind_numa_node_ids": [],
