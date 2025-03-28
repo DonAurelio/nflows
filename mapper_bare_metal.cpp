@@ -143,8 +143,8 @@ void *mapper_bare_metal_thread_function(void *arg)
         common_comm_name_to_numa_ids_r_create(common, comm_name, nlar); 
 
         // Save read timestamps.
-        time_range_payload_t read_ts_payload = time_range_payload_t(read_start_timestemp_us, read_end_timestemp_us, read_payload_bytes);
-        common_comm_name_to_r_ts_range_payload_create(common, comm_name, read_ts_payload);
+        time_range_payload_t read_ts_range_payload = time_range_payload_t(read_start_timestemp_us, read_end_timestemp_us, read_payload_bytes);
+        common_comm_name_to_r_ts_range_payload_create(common, comm_name, read_ts_range_payload);
 
         // Save read time offset.
         time_range_payload_t read_of_payload = time_range_payload_t(
@@ -198,131 +198,114 @@ void *mapper_bare_metal_thread_function(void *arg)
 
     common_execs_active_increment(common, exec->get_name());
 
-    // /* EMULATE MEMORY WRITTING */
+    /* EMULATE MEMORY WRITTING */
+    double actual_write_time_us = 0.0;
 
-    // double actual_write_time_us = 0;
-    // for (const auto &succ_ptr : data->exec->get_successors())
-    // {
-    //     const simgrid_activity_t *succ = succ_ptr.get();
-    //     auto [exec_name, succ_exec_name] = common_split(succ->get_cname(), "->");
+    for (const auto &succ_ptr : exec->get_successors())
+    {
+        const simgrid_activity_t *succ = succ_ptr.get();
+        auto [exec_name, succ_exec_name] = common_split(succ->get_cname(), "->");
 
-    //     if (succ_exec_name == std::string("end"))
-    //     {
-    //         XBT_INFO(
-    //             "Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => "
-    //             "write: %s, message: skipt writing operation for end task.",
-    //             getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()),
-    //             succ->get_cname());
+        if (succ_exec_name == std::string("end")) continue;
 
-    //         continue;
-    //     }
+        double write_payload_bytes = succ->get_remaining();
 
-    //     double write_payload_bytes = succ->get_remaining();
+        // Emulate memory writting by saving data into memory.
+        char *write_buffer = (char *)malloc(write_payload_bytes);
 
-    //     // Emulate memory writting by saving data into memory.
-    //     char *write_buffer = (char *)malloc(write_payload_bytes);
+        if (!write_buffer)
+        {
+            XBT_ERROR("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => write: %s, message: unable to create write buffer.",
+                thread_pid, thread_tid, exec->get_cname(), thread_core_id, succ->get_cname());
 
-    //     if (!write_buffer)
-    //     {
-    //         XBT_ERROR(
-    //             "Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => "
-    //             "successor: %s, message: unable to create write buffer.",
-    //             getpid(), gettid(), data->exec->get_cname(),
-    //             get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()),
-    //             succ->get_cname());
+            return NULL;
+        }
 
-    //         return NULL;
-    //     }
+        /*
+        memset:
+        Fills a block of memory with a specified value, typically used to initialize memory, such as setting
+        all elements of an array to zero or preparing data structures.
 
-    //     /*
-    //     memset:
-    //     Fills a block of memory with a specified value, typically used to initialize memory, such as setting
-    //     all elements of an array to zero or preparing data structures.
+        Parameters:
+            ptr   - Pointer to the memory block to fill.
+            value - The value to set, interpreted as an unsigned char (0-255). Although passed as an int,
+                    the value is converted to an unsigned char to fill the memory block.
+            num   - The number of bytes to set in the memory block.
 
-    //     Parameters:
-    //         ptr   - Pointer to the memory block to fill.
-    //         value - The value to set, interpreted as an unsigned char (0-255). Although passed as an int,
-    //                 the value is converted to an unsigned char to fill the memory block.
-    //         num   - The number of bytes to set in the memory block.
+        Description:
+        memset sets each byte of the memory block starting at ptr to the given value. When an integer is
+        provided, it is truncated to the least significant 8 bits (one byte), and this byte is used to
+        fill the entire block.
+        */
 
-    //     Description:
-    //     memset sets each byte of the memory block starting at ptr to the given value. When an integer is
-    //     provided, it is truncated to the least significant 8 bits (one byte), and this byte is used to
-    //     fill the entire block.
-    //     */
+        double write_start_timestamp_us = common_get_time_us();
 
-    //     double write_start_timestamp_us = common_get_time_us();
+        memset(write_buffer, 0, write_payload_bytes);
 
-    //     memset(write_buffer, 0, write_payload_bytes);
+        double write_end_timestamp_us = common_get_time_us();
 
-    //     double write_end_timestamp_us = common_get_time_us();
+        // Save address for subsequent reading.
+        common_comm_name_to_address_create(common, succ->get_name(), write_buffer);
 
-    //     // Compute write time, assuming reads are carried out in parallel.
-    //     // The total read time is determined by the longest individual read time.
-    //     actual_write_time_us = std::max(actual_write_time_us, write_end_timestamp_us - write_start_timestamp_us);
+        // Get data numa locality.
+        std::vector<int> nlaw = hardware_hwloc_numa_id_get_by_address(data->common, write_buffer, write_payload_bytes);
 
-    //     // Compute time offset
-    //     data->common->comm_name_to_w_time_offset_payload[succ->get_cname()] = time_range_payload_t(
-    //         earliest_start_time_us + actual_read_time_us + compute_time_us,
-    //         earliest_start_time_us + actual_read_time_us + compute_time_us +
-    //             (write_end_timestamp_us - write_start_timestamp_us),
-    //         write_payload_bytes);
+        // Save data locality.
+        common_comm_name_to_numa_ids_w_create(common, succ->get_name(), nlaw);
 
-    //     // Save write timestamps.
-    //     data->common->comm_name_to_w_ts_range_payload[succ->get_cname()] =
-    //         time_range_payload_t{write_start_timestamp_us, write_end_timestamp_us, write_payload_bytes};
+        // Compute write time, assuming reads are carried out in parallel.
+        // The total read time is determined by the longest individual read time.
+        actual_write_time_us = std::max(actual_write_time_us, write_end_timestamp_us - write_start_timestamp_us);
 
-    //     // Save address for subsequent reading.
-    //     data->common->comm_name_to_address[succ->get_cname()] = write_buffer;
+        // Save write timestamps.
+        time_range_payload_t write_ts_range_payload = time_range_payload_t{write_start_timestamp_us, write_end_timestamp_us, write_payload_bytes};
 
-    //     std::vector<int> numa_locality_after_write =
-    //         get_hwloc_numa_ids_by_address(data->common, write_buffer, write_payload_bytes);
+        common_comm_name_to_w_ts_range_payload_create(common, succ->get_name(), write_ts_range_payload);
 
-    //     // Save data locality.
-    //     data->common->comm_name_to_numa_ids_w[succ->get_cname()] = numa_locality_after_write;
+        // Save write offsets.
+        time_range_payload_t write_of_range_payload = time_range_payload_t(
+            earliest_start_time_us + actual_read_time_us + compute_time_us,
+            earliest_start_time_us + actual_read_time_us + compute_time_us + (write_end_timestamp_us - write_start_timestamp_us),
+            write_payload_bytes);
 
-    //     // Mark as completed.
-    //     common_update_name_to_status(data->common->active_writes, succ->get_name());
+        common_comm_name_to_w_time_offset_payload_create(common, succ->get_name(), write_of_range_payload);
 
-    // XBT_INFO(
-    //     "Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => "
-    //     "write: %s, payload (bytes): %f, numa_locality_after_write: %s.",
-    //     getpid(), gettid(), data->exec->get_cname(), get_hwloc_core_id_by_pu_id(data->common, sched_getcpu()),
-    //     succ->get_cname(), write_payload_bytes, common_join(numa_locality_after_write, " ").c_str());
-    // }
+        common_writes_active_increment(common, succ->get_name());
 
-    XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => message: finished.", thread_pid, thread_tid, exec->get_cname(), thread_core_id);
+        const char* nlaw_str = common_join(nlaw).c_str();
+        XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => write: %s, payload (bytes): %f, numa_locality_after_write: %s.",
+            thread_pid, thread_tid, exec->get_cname(), thread_core_id, succ->get_cname(), write_payload_bytes, nlaw_str);
     
-    // // Save thread locality.
-    // data->common->exec_name_to_thread_locality[data->exec->get_cname()] = get_hwloc_thread_locality(data->common);
+    }
 
-    // /* TIME OFFSETS */
+    // Save read + compute + write offsets
+    double actual_finish_time_us = earliest_start_time_us + actual_read_time_us + compute_time_us + actual_write_time_us;
+    time_range_payload_t rcw_of_range_payload = time_range_payload_t(earliest_start_time_us, actual_finish_time_us, flops);
+    common_exec_name_to_rcw_time_offset_payload_create(common, exec->get_name(), rcw_of_range_payload);
 
-    // double actual_finish_time_us =
-    //     earliest_start_time_us + actual_read_time_us + compute_time_us + actual_write_time_us;
+    // Save thread locality.
+    thread_locality_t thread_locality = hardware_hwloc_thread_get_locality_from_os(common);
+    common_exec_name_to_thread_locality_create(common, exec->get_name(), thread_locality);
 
-    // data->common->exec_name_to_rcw_time_offset_payload[data->exec->get_cname()] =
-    //     time_range_payload_t(earliest_start_time_us, actual_finish_time_us, flops);
+    /* CLEAN UP */
 
-    // /* CLEAN UP */
+    // Mark successors as completed.
+    for (const auto &succ_ptr : data->exec->get_successors())
+        (succ_ptr.get())->complete(simgrid::s4u::Activity::State::FINISHED);
 
-    // // Mark successors as completed.
-    // for (const auto &succ_ptr : data->exec->get_successors())
-    //     (succ_ptr.get())->complete(simgrid::s4u::Activity::State::FINISHED);
+    // In the previous version, this worked, but in the current version, exec is a null pointer.
+    // As a result, the task itself is not marked as completed, but it was assigned,
+    // and its dependencies were marked as completed.
+    // data->exec->complete(simgrid::s4u::Activity::State::FINISHED);
 
-    // // In the previous version, this worked, but in the current version, exec is a null pointer.
-    // // As a result, the task itself is not marked as completed, but it was assigned,
-    // // and its dependencies were marked as completed.
-    // // data->exec->complete(simgrid::s4u::Activity::State::FINISHED);
+    // Decrement the active thread counter and signal if no more threads
+    common_threads_active_decrement(common);
 
-    // // Decrement the active thread counter and signal if no more threads
-    // common_decrement_active_threads_counter(data->common);
+    // Mark the selected hwloc_core_id as available.
+    common_core_id_set_avail(common, assigned_core_id, true);
 
-    // // Mark the selected hwloc_core_id as available.
-    // common_set_core_id_as_avail(data->common, data->assigned_core_id);
-
-    // // Update core availability
-    // common_set_core_id_avail_unitl(data->common, data->assigned_core_id, actual_finish_time_us);
+    // Update core availability
+    common_core_id_set_avail_until(common, assigned_core_id, actual_finish_time_us);
 
     // this pointer was created in the thread caller 'assign_exec'
     free(data);
