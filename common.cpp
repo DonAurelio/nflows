@@ -26,7 +26,7 @@ std::string common_join(const std::vector<int> &vec, const std::string &delimite
     return oss.str();
 }
 
-std::pair<std::string, std::string> common_split(const std::string &input, std::string delimiter = "->")
+std::pair<std::string, std::string> common_split(const std::string &input, std::string delimiter)
 {
     size_t pos = input.find(delimiter);
     if (pos == std::string::npos)

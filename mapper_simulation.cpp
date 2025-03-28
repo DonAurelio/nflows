@@ -78,128 +78,133 @@ void Mapper_Simulation::start()
  */
 void *mapper_simulation_thread_function(void *arg)
 {
-    // thread_data_t *data = (thread_data_t *)arg;
-    // int assigned_core_numa_id = get_hwloc_numa_id_by_core_id(data->common, data->assigned_core_id);
-
     thread_data_t* data = ((thread_data_t *) arg);
 
-    // common_t *common = data->common;
+    common_t *common = data->common;
     simgrid_exec_t *exec = data->exec;
     int assigned_core_id = data->assigned_core_id;
-    
-    XBT_INFO("Task ID: %s, Core ID: %d => message: started.", exec->get_cname(), assigned_core_id);
-
-    // double earliest_start_time_us = common_earliest_start_time(data->common, data->exec->get_name(), data->assigned_core_id);
-
-    // /* SIMULATE MEMORY READING */
-
-    // double read_start_timestamp_us = earliest_start_time_us;
-    // double max_read_end_timestamp_us = 0.0;
-    
-    // // Match all communication (Task1->Task2) where this task_name is the destination.
-    // for (const auto &[comm_name, time_range_payload] : common_filter_name_to_time_range_payload(data->common, data->exec->get_cname(), COMM_WRITE_OFFSETS, COMM_DST))
-    // {
-    //     double read_payload_bytes = std::get<2>(time_range_payload);
-
-    //     // ASSUMPTION:
-    //     // The simulation assumes that the entire data item is stored in a single memory domain.
-    //     // Future implementations may consider data pages being spread, NUMA balancing (page migration).
-
-    //     int read_src_numa_id = data->common->comm_name_to_numa_ids_w.at(comm_name).front();
-
-    //     double read_time_us = common_communication_time(data->common, read_src_numa_id, assigned_core_numa_id, read_payload_bytes);
-
-    //     double read_end_timestamp_us = read_start_timestamp_us + read_time_us;
-
-    //     // Save data locality.
-    //     data->common->comm_name_to_numa_ids_r[comm_name] = {read_src_numa_id};
-
-    //     // Read time offset per dependecy.
-    //     data->common->comm_name_to_r_time_offset_payload[comm_name] = time_range_payload_t(
-    //         read_start_timestamp_us, read_end_timestamp_us, read_payload_bytes);
-
-    //     max_read_end_timestamp_us = std::max(max_read_end_timestamp_us, read_end_timestamp_us);
-
-    //     XBT_INFO("Task ID: %s, Core ID: %d => read: %s, payload (bytes): %f",
-    //         data->exec->get_cname(), data->assigned_core_id, comm_name.c_str(), read_payload_bytes);
-    // }
-
-    // /* SIMULATE COMPUTATION */
-
-    // double exec_start_timestamp_us = std::max(earliest_start_time_us, max_read_end_timestamp_us);
-
-    // // Calculate the compute time in microseconds.
-    // double flops = data->exec->get_remaining();
-
-    // // Core clock frequency must be static (set to ther value but 0).
-    // double processor_speed_flops_per_second = get_hwloc_core_performance_by_id(data->common, data->assigned_core_id);
-    
-    // double compute_time_us = common_compute_time(data->common, flops, processor_speed_flops_per_second);
-
-    // double exec_end_timestamp_us = exec_start_timestamp_us + compute_time_us;
-
-    // // Compute time offset
-    // data->common->exec_name_to_c_time_offset_payload[data->exec->get_cname()] = time_range_payload_t(
-    //     exec_start_timestamp_us, exec_end_timestamp_us, flops);
-
-    // /* SIMULATE MEMORY WRITTING */
-
-    // double write_start_timestamp_us = exec_end_timestamp_us;
-    // double max_end_write_timestamp_us = 0.0;
-
-    // for (const auto &succ_ptr : data->exec->get_successors())
-    // {
-    //     const simgrid_activity_t *succ = succ_ptr.get();
-    //     auto [exec_name, succ_exec_name] = common_split(succ->get_cname(), "->");
-
-    //     // Skipt all task_i->end communications.
-    //     if (succ_exec_name == std::string("end")) continue;
-
-    //     // ASSUMPTION:
-    //     // Writes will follow the first-touch policy, i.e., data will be saved in 
-    //     // the numa node that share locality with the core_id.
-    //     double write_payload_bytes = succ->get_remaining();
-    //     double write_time_us = common_communication_time(data->common, assigned_core_numa_id, assigned_core_numa_id, write_payload_bytes);
-
-    //     // Compute write time, assuming reads are carried out in parallel.
-    //     // The total read time is determined by the longest individual read time.
-    //     double write_end_timestamp_us = write_start_timestamp_us + write_time_us;
-    //     max_end_write_timestamp_us = std::max(max_end_write_timestamp_us, write_end_timestamp_us);
-
-    //     // Compute time offset
-    //     data->common->comm_name_to_w_time_offset_payload[succ->get_cname()] = time_range_payload_t(
-    //         write_start_timestamp_us, write_end_timestamp_us, write_payload_bytes);
-
-    //     // Save address for subsequent reading.
-    //     data->common->comm_name_to_address[succ->get_cname()] = nullptr;
-
-    //     // Preserve data locality.
-    //     data->common->comm_name_to_numa_ids_w[succ->get_cname()] = {assigned_core_numa_id};
-
-    //     XBT_INFO("Task ID: %s, Core ID: %d => write: %s, payload (bytes): %f.", 
-    //         data->exec->get_cname(), data->assigned_core_id, succ->get_cname(), write_payload_bytes);
-    // }
+    int assigned_core_numa_id = hardware_hwloc_numa_id_get_by_core_id(common, assigned_core_id);
 
     XBT_INFO("Task ID: %s, Core ID: %d => message: started.", exec->get_cname(), assigned_core_id);
 
-    // // Save thread locality.
-    // data->common->exec_name_to_thread_locality[data->exec->get_cname()] = {assigned_core_numa_id, data->assigned_core_id, 0, 0, 0};
+    double earliest_start_time_us = common_earliest_start_time(common, exec->get_name(), assigned_core_id);
 
-    // /* TIME OFFSETS */
-    // data->common->exec_name_to_rcw_time_offset_payload[data->exec->get_cname()] =
-    //     time_range_payload_t(read_start_timestamp_us, std::max(exec_end_timestamp_us, max_end_write_timestamp_us), flops);
+    /* SIMULATE MEMORY READING */
 
-    // /* CLEAN UP */
+    double read_start_timestamp_us = earliest_start_time_us;
+    double max_read_end_timestamp_us = 0.0;
+    
+    // Match all communication (Task1->Task2) where this task_name is the destination.
+    name_to_time_range_payload_t matches = common_comm_name_to_w_time_offset_payload_filter(common, exec->get_name());
 
-    // // Mark successors as completed.
-    // for (const auto &succ_ptr : data->exec->get_successors())
-    //     (succ_ptr.get())->complete(simgrid::s4u::Activity::State::FINISHED);
+    for (const auto &[comm_name, time_range_payload] : matches)
+    {
+        double read_payload_bytes = std::get<2>(time_range_payload);
 
-    // // Mark the selected hwloc_core_id as available.
-    // common_set_core_id_as_avail(data->common, data->assigned_core_id);
+        // ASSUMPTION:
+        // The simulation assumes that the entire data item is stored in a single memory domain.
+        // Future implementations may consider data pages being spread, NUMA balancing (page migration).
+        // Future implmenetations may also consider reproduce a data access pattern collected from a real execution.
 
-    // // Update core availability
-    // common_set_core_id_avail_unitl(data->common, data->assigned_core_id, std::max(exec_end_timestamp_us, max_end_write_timestamp_us));
+        int read_src_numa_id = common_comm_name_to_numa_ids_w_get(common, comm_name).front();      
+
+        double read_time_us = common_communication_time(common, read_src_numa_id, assigned_core_numa_id, read_payload_bytes);
+
+        double read_end_timestamp_us = read_start_timestamp_us + read_time_us;
+
+        max_read_end_timestamp_us = std::max(max_read_end_timestamp_us, read_end_timestamp_us);
+
+        // Save read data locality.
+        common_comm_name_to_numa_ids_r_create(common, comm_name, {read_src_numa_id});
+
+        // Save read time offset.
+        time_range_payload_t read_of_payload = time_range_payload_t(read_start_timestamp_us, read_end_timestamp_us, read_payload_bytes);
+        common_comm_name_to_r_time_offset_payload_create(common, comm_name, read_of_payload);
+
+        XBT_INFO("Task ID: %s, Core ID: %d => read: %s, payload (bytes): %f", exec->get_cname(), assigned_core_id, comm_name.c_str(), read_payload_bytes);
+
+        common_reads_active_increment(common, comm_name);
+    }
+
+    /* SIMULATE COMPUTATION */
+
+    double exec_start_timestamp_us = std::max(earliest_start_time_us, max_read_end_timestamp_us);
+
+    double flops = exec->get_remaining();
+    double clock_frequency_hz = hardware_hwloc_core_id_get_clock_frequency(common, assigned_core_id);
+    double compute_time_us = common_compute_time(common, flops, clock_frequency_hz);
+    
+    double exec_end_timestamp_us = exec_start_timestamp_us + compute_time_us;
+
+    // Save compute offsets.
+    time_range_payload_t exec_of_range_payload = time_range_payload_t{exec_start_timestamp_us, exec_end_timestamp_us, flops};
+
+    common_exec_name_to_c_time_offset_payload_create(common, exec->get_name(), exec_of_range_payload);
+
+    common_execs_active_increment(common, exec->get_name());
+
+    /* SIMULATE MEMORY WRITTING */
+
+    double write_start_timestamp_us = exec_end_timestamp_us;
+    double max_end_write_timestamp_us = 0.0;
+
+    for (const auto &succ_ptr : exec->get_successors())
+    {
+        const simgrid_activity_t *succ = succ_ptr.get();
+        auto [exec_name, succ_exec_name] = common_split(succ->get_name());
+
+        // Skipt all task_i->end communications.
+        if (succ_exec_name == std::string("end")) continue;
+
+        // ASSUMPTION:
+        // Writes will follow the first-touch policy, i.e., data will be saved in 
+        // the numa node that share locality with the core_id.
+        double write_payload_bytes = succ->get_remaining();
+        double write_time_us = common_communication_time(common, assigned_core_numa_id, assigned_core_numa_id, write_payload_bytes);
+
+        // Compute write time, assuming reads are carried out in parallel.
+        // The total read time is determined by the longest individual read time.
+        double write_end_timestamp_us = write_start_timestamp_us + write_time_us;
+        max_end_write_timestamp_us = std::max(max_end_write_timestamp_us, write_end_timestamp_us);
+
+        // Save address for subsequent reading.
+        common_comm_name_to_address_create(common, succ->get_name(), nullptr);
+
+        // Save data locality.
+        common_comm_name_to_numa_ids_w_create(common, succ->get_name(), {assigned_core_numa_id});
+
+        // Save write offsets.
+        time_range_payload_t write_of_range_payload = time_range_payload_t(write_start_timestamp_us, write_end_timestamp_us, write_payload_bytes);
+
+        common_comm_name_to_w_time_offset_payload_create(common, succ->get_name(), write_of_range_payload);
+
+        common_writes_active_increment(common, succ->get_name());
+
+        XBT_INFO("Task ID: %s, Core ID: %d => write: %s, payload (bytes): %f.", exec->get_cname(), assigned_core_id, succ->get_cname(), write_payload_bytes);
+    }
+
+    // Save read + compute + write offsets
+    double actual_finish_time_us = std::max(exec_end_timestamp_us, max_end_write_timestamp_us);
+    time_range_payload_t rcw_of_range_payload = time_range_payload_t(read_start_timestamp_us, actual_finish_time_us, flops);
+    common_exec_name_to_rcw_time_offset_payload_create(common, exec->get_name(), rcw_of_range_payload);
+
+    // Save thread locality.
+    thread_locality_t thread_locality = {assigned_core_numa_id, assigned_core_id, 0, 0, 0};
+    common_exec_name_to_thread_locality_create(common, exec->get_name(), thread_locality);
+
+    /* CLEAN UP */
+
+    // Mark successors as completed.
+    for (const auto &succ_ptr : data->exec->get_successors())
+        (succ_ptr.get())->complete(simgrid::s4u::Activity::State::FINISHED);
+
+    // Mark the selected hwloc_core_id as available.
+    common_core_id_set_avail(common, assigned_core_id, true);
+
+    // Update core availability
+    common_core_id_set_avail_until(common, assigned_core_id, actual_finish_time_us);
+
+    XBT_INFO("Task ID: %s, Core ID: %d => message: finished.", exec->get_cname(), assigned_core_id);
 
     // this pointer was created in the thread caller 'assign_exec'
     free(data);
