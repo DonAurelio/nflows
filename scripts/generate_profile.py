@@ -28,7 +28,7 @@ def get_machine_average_numa_factor(data):
     for matrices of size n x n.
     """
 
-    matrix = data["distance_latency_ns"]
+    matrix = data["distance_lat_ns"]
 
     # Convert the matrix into a Pandas DataFrame
     df = pd.DataFrame(matrix)
@@ -146,6 +146,20 @@ def get_memory_migrations_profile(df_profile, migrations=None):
         pass
 
     return merged_df
+
+def get_memory_spreading_profile(df_profile, filter_spread=False):
+    # Step 1: Create the 'writings' dataframe
+    writings = df_profile[df_profile['access_type'] == 'write'][['data_item', 'mem_node']]
+    writings = writings.groupby('data_item')['mem_node'].apply(lambda x: ','.join(map(str, x))).reset_index()
+    
+    if filter_spread:
+        # Step 2: Filter out items where "mem_node" contains a comma
+        writings = writings[~writings['mem_node'].str.contains(',', na=False)]
+    else:
+        # Step 2: Filter out items that do not include a comma in 'mem_node'
+        writings = writings[writings['mem_node'].str.contains(',')]
+
+    return writings
 
 def compute_data_access_pattern_performance(accesses_matrix, relatve_latencies):
     """
@@ -350,23 +364,41 @@ def compute_accesses(df_profile):
         "accesses_total": accesses_total,
     }
 
+# def print_dict(data, title):
+#     print(f"\n{Fore.CYAN}{title.replace('_', ' ').title()}{Style.RESET_ALL}")
+#     for key, value in data.items():
+#         if isinstance(value, str):
+#             print(f"  {Fore.YELLOW}{key}:{Style.RESET_ALL} {value}")
+#         else:
+#             print(f"  {Fore.YELLOW}{key}:{Style.RESET_ALL} {value:.4f}")
+
+# def print_df(data, title):
+#     print(f"\n{Fore.CYAN}{title.replace('_', ' ').title()}:{Fore.YELLOW} {eval(data[2])}{Style.RESET_ALL}")
+#     table_str = tabulate(data[0], headers=data[1], tablefmt="grid", showindex=True)
+#     print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
+
 def print_dict(data, title):
-    print(f"\n{Fore.CYAN}{title.replace('_', ' ').title()}{Style.RESET_ALL}")
+    print(f"\n{title.replace('_', ' ').title()}")
     for key, value in data.items():
         if isinstance(value, str):
-            print(f"  {Fore.YELLOW}{key}:{Style.RESET_ALL} {value}")
+            print(f"  {key}: {value}")
         else:
-            print(f"  {Fore.YELLOW}{key}:{Style.RESET_ALL} {value:.4f}")
+            print(f"  {key}: {value:.4f}")
 
 def print_df(data, title):
-    print(f"\n{Fore.CYAN}{title.replace('_', ' ').title()}:{Fore.YELLOW} {eval(data[2])}{Style.RESET_ALL}")
+    print(f"\n{title.replace('_', ' ').title()}: {eval(data[2])}")
     table_str = tabulate(data[0], headers=data[1], tablefmt="grid", showindex=True)
     print("\n" + "\n".join(f"  {line}" for line in table_str.split("\n")))
 
+
 def print_profile(data, matrix_relative_latencies, time_unit, payload_unit, export_csv):
-    df_profile = get_data_access_profile(data)
-    durations = compute_durations(data, df_profile, time_unit)
-    payloads = compute_payloads(data, df_profile, payload_unit)
+    user_data = data['user']
+    trace_data = data['trace']
+    runtime_data = data['runtime']
+
+    df_profile = get_data_access_profile(trace_data)
+    durations = compute_durations(trace_data, df_profile, time_unit)
+    payloads = compute_payloads(trace_data, df_profile, payload_unit)
     accesses = compute_accesses(df_profile)
 
     matrix_accesses_total = get_aggregation_matrix(df_profile, equal=None)
@@ -378,13 +410,16 @@ def print_profile(data, matrix_relative_latencies, time_unit, payload_unit, expo
 
     df_output_profile = df_profile[["task_name", "core_id", "cpu_node", "mem_node", "data_item", "access_type"]]
 
+    df_accesses_spread = get_memory_spreading_profile(df_profile)
+
     system = {
-        "pages_migrations": len(matrix_memory_pages_migrations)
+        "data_pages_migrations": len(matrix_memory_pages_migrations),
+        "data_pages_spreadings": len(df_accesses_spread),
     }
 
     runtime = {
-        "checksum": data.get("threads_checksum", None),
-        "threads": data.get("threads_active", None),
+        "threads_checksum": runtime_data.get("threads_checksum", None),
+        "threads_active": runtime_data.get("threads_active", None),
     }
 
     profile = {
@@ -394,7 +429,7 @@ def print_profile(data, matrix_relative_latencies, time_unit, payload_unit, expo
     }
 
     machine = {
-        "numa_factor": get_machine_average_numa_factor(data),
+        "numa_factor": get_machine_average_numa_factor(user_data),
     }
 
     ratios = {
@@ -425,7 +460,8 @@ def print_profile(data, matrix_relative_latencies, time_unit, payload_unit, expo
     # Prepare output matrices for printing
     output_matrices = {
         "accesses_compact_profile": (df_output_profile, df_output_profile.columns, 'data[0].shape[0]'),
-        "matrix_memory_pages_migrations": (matrix_memory_pages_migrations, matrix_memory_pages_migrations.columns, 'data[0].shape[0]'),
+        "data_pages_spreadings_write": (df_accesses_spread, df_accesses_spread.columns, 'data[0].shape[0]'),
+        "data_pages_migrations_read": (matrix_memory_pages_migrations, matrix_memory_pages_migrations.columns, 'data[0].shape[0]'),
         "matrix_accesses_total": (matrix_accesses_total, matrix_accesses_total.columns, 'data[0].sum().sum()'),
         "matrix_accesses_total_percent": (matrix_accesses_total_percent, matrix_accesses_total_percent.columns, 'data[0].sum().sum()'),
     }

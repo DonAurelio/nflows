@@ -1,5 +1,5 @@
 {
-    "dag_file": "./example/montage-2mass-025d-001_619.dot",
+    "dag_file": "./example/montage_619.dot",
     "scheduler_type": "fifo",
     "scheduler_params": [
         "fifo_prioritize_by_core_id=yes",
@@ -19,5 +19,5 @@
         "bandwidth_gbps": "./example/non_uniform_bw.txt"
     },
 
-    "out_file_name": "./example/montage-2mass-025d-001_619.yaml"
+    "out_file_name": "./example/montage_619.yaml"
 }

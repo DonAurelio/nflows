@@ -54,9 +54,10 @@ ANALYSIS_REL_LATENCIES_FILE := $(EVALUATION_DIR)/system/non_uniform_lat_rel.txt
 ANALYSIS_PROFILE_TIME_UNIT := s
 ANALYSIS_PROFILE_PAYLOAD_UNIT := M
 ANALYSIS_FIELDS := \
-	pages_migrations \
-	checksum \
-	threads \
+	data_pages_migrations \
+	data_pages_spreadings \
+	threads_checksum \
+	threads_active \
 	numa_factor \
 	comp_to_comm \
 	comm_to_comp \
@@ -84,7 +85,6 @@ ANALYSIS_FIELDS := \
 	write_accesses_remote \
 	write_accesses_total \
 	accesses_total
-
 
 # Directories
 TEST_DIR := ./tests
