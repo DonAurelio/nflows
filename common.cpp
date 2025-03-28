@@ -197,10 +197,10 @@ hwloc_membind_policy_t common_mapper_mem_policy_str_to_type(const std::string &t
 std::string common_mapper_mem_policy_type_to_str(hwloc_membind_policy_t &type) {
     switch (type) {
         case HWLOC_MEMBIND_DEFAULT: return "default";
-        case HWLOC_MEMBIND_FIRSTTOUCH: return "firsttouch";
+        case HWLOC_MEMBIND_FIRSTTOUCH: return "first-touch";
         case HWLOC_MEMBIND_BIND: return "bind";
         case HWLOC_MEMBIND_INTERLEAVE: return "interleave";
-        case HWLOC_MEMBIND_NEXTTOUCH: return "nexttouch";
+        case HWLOC_MEMBIND_NEXTTOUCH: return "next-touch";
         case HWLOC_MEMBIND_MIXED: return "mixed";
     }
 
@@ -441,8 +441,8 @@ void common_print_common_structure(const common_t *common, int indent = 0)
     std::ofstream out(common->out_file_name);
 
     common_print_user(common, out, indent);
-    common_print_runtime(common, out, indent);
     common_print_workflow(common, out, indent);
+    common_print_runtime(common, out, indent);
     common_print_trace(common, out, indent);
 
     out.close();

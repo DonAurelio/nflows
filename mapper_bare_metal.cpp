@@ -103,7 +103,7 @@ void *mapper_bare_metal_thread_function(void *arg)
     }
 
     XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => message: started.", thread_pid, thread_tid, exec->get_cname(), thread_core_id);
-    XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => message: %s.", thread_pid, thread_tid, exec->get_cname(), thread_core_id, thread_mem_policy.c_str());
+    XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => thread_mem_policy: %s.", thread_pid, thread_tid, exec->get_cname(), thread_core_id, thread_mem_policy.c_str());
 
     double earliest_start_time_us = common_earliest_start_time(common, exec->get_name(), assigned_core_id);
 
@@ -153,12 +153,8 @@ void *mapper_bare_metal_thread_function(void *arg)
 
         actual_read_time_us = std::max(actual_read_time_us, read_end_timestemp_us - read_start_timestemp_us);
         
-        const char* nlbr_str = common_join(nlbr).c_str();
-        const char* nlar_str = common_join(nlar).c_str();
-        const char* migration = nlbr != nlar ? "yes" : "no";
-
-        XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => read: %s, numa_locality_before_read: [%s], numa_locality_after_read: [%s], data (pages) migration: %s",
-            thread_pid, thread_tid, exec->get_cname(), thread_core_id, comm_name.c_str(), nlbr_str, nlar_str, migration);
+        XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => read: %s, numa_locality_before_read: [%s], numa_locality_after_read: [%s], pages_migration: %s",
+            thread_pid, thread_tid, exec->get_cname(), thread_core_id, comm_name.c_str(), common_join(nlbr).c_str(), common_join(nlar).c_str(), nlbr != nlar ? "yes" : "no");
 
         common_reads_active_increment(common, comm_name);
 
@@ -272,10 +268,8 @@ void *mapper_bare_metal_thread_function(void *arg)
 
         common_writes_active_increment(common, succ->get_name());
 
-        const char* nlaw_str = common_join(nlaw).c_str();
-        XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => write: %s, payload (bytes): %f, numa_locality_after_write: %s.",
-            thread_pid, thread_tid, exec->get_cname(), thread_core_id, succ->get_cname(), write_payload_bytes, nlaw_str);
-    
+        XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => write: %s, payload (bytes): %f, numa_locality_after_write: [%s].",
+            thread_pid, thread_tid, exec->get_cname(), thread_core_id, succ->get_cname(), write_payload_bytes,  common_join(nlaw).c_str());
     }
 
     // Save read + compute + write offsets
@@ -290,7 +284,7 @@ void *mapper_bare_metal_thread_function(void *arg)
     /* CLEAN UP */
 
     // Mark successors as completed.
-    for (const auto &succ_ptr : data->exec->get_successors())
+    for (const auto &succ_ptr : exec->get_successors())
         (succ_ptr.get())->complete(simgrid::s4u::Activity::State::FINISHED);
 
     // In the previous version, this worked, but in the current version, exec is a null pointer.
@@ -306,6 +300,8 @@ void *mapper_bare_metal_thread_function(void *arg)
 
     // Update core availability
     common_core_id_set_avail_until(common, assigned_core_id, actual_finish_time_us);
+
+    XBT_INFO("Process ID: %d, Thread ID: %d, Task ID: %s, Core ID: %d => message: finished.", thread_pid, thread_tid, exec->get_cname(), thread_core_id);
 
     // this pointer was created in the thread caller 'assign_exec'
     free(data);
