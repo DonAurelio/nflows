@@ -1,6 +1,7 @@
-exec_name_total_offsets:
-  Task_3:
-  Task_4:
-  Task_2:
-  Task_5:
-  Task_1:
+trace:
+  exec_name_total_offsets:
+    Task_3:
+    Task_4:
+    Task_2:
+    Task_5:
+    Task_1:

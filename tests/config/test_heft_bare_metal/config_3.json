@@ -1,9 +1,12 @@
 {
     "dag_file": "./tests/workflows/test_heft_bare_metal/config_3.dot",
+
     "scheduler_type": "heft",
     "scheduler_params": [],
-    "mapper_type": "bare_metal",
+
+    "mapper_type": "bare-metal",
     "mapper_mem_policy_type": "default",
+    "mapper_mem_bind_numa_node_ids": [],
 
     "core_avail_mask": "0x03",
     "flops_per_cycle": 32,
@@ -11,10 +14,9 @@
     "clock_frequency_hz": 1000000000,
 
     "distance_matrices": {
-        "latency": "./tests/system/test_heft_bare_metal/3_lat.txt",
-        "bandwidth": "./tests/system/test_heft_bare_metal/3_bw.txt"
+        "latency_ns": "./tests/system/test_heft_bare_metal/3_lat.txt",
+        "bandwidth_gbps": "./tests/system/test_heft_bare_metal/3_bw.txt"
     },
 
-    "log_base_name": "./tests/output/test_heft_bare_metal/config_3",
-    "log_date_format": ""
+    "out_file_name": "./tests/output/test_heft_bare_metal/config_3.yaml"
 }

@@ -13,10 +13,13 @@ Mapper_Bare_Metal::~Mapper_Bare_Metal()
 
 void Mapper_Bare_Metal::start()
 {
-    XBT_INFO("Start Mapper_Bare_Metal");
+    XBT_INFO("Start mapper_bare_metal");
     simgrid_exec_t *selected_exec;
     int selected_core_id;
     unsigned long estimated_completion_time;
+
+    // Mandatory previous to initiate any scheduling activity.
+    this->scheduler.initialize();
 
     while (this->scheduler.has_next())
     {
@@ -55,7 +58,7 @@ void Mapper_Bare_Metal::start()
     simgrid::s4u::Engine *e = simgrid::s4u::Engine::get_instance();
     e->run();
 
-    XBT_INFO("End Mapper_Bare_Metal");
+    XBT_INFO("End mapper_bare_metal");
 }
 
 /**

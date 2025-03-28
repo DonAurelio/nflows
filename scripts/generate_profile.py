@@ -383,8 +383,8 @@ def print_profile(data, matrix_relative_latencies, time_unit, payload_unit, expo
     }
 
     runtime = {
-        "checksum": data.get("checksum", None),
-        "threads": data.get("active_threads", None),
+        "checksum": data.get("threads_checksum", None),
+        "threads": data.get("threads_active", None),
     }
 
     profile = {

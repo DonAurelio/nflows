@@ -27,6 +27,22 @@ int hardware_hwloc_core_id_get_by_pu_id(const common_t *common, int os_pu_id)
 
 double hardware_hwloc_core_id_get_clock_frequency(const common_t *common, int hwloc_core_id)
 {
+    switch (common->clock_frequency_type) {
+        case COMMON_DYNAMIC_CLOCK_FREQUENCY: 
+            return hardware_hwloc_core_id_get_dynamic_clock_frequency(common, hwloc_core_id);
+        case COMMON_ARRAY_CLOCK_FREQUENCY:
+            return common->clock_frequencies_hz[hwloc_core_id];
+        case COMMON_STATIC_CLOCK_FREQUENCY:
+            return common->clock_frequency_hz;
+        default:
+            XBT_ERROR("Invalid clock frequency type: %s.", 
+                common_clock_frequency_type_to_str(common->clock_frequency_type).c_str());
+            throw std::runtime_error("Invalid clock frequency type enum value");
+    }
+}
+
+double hardware_hwloc_core_id_get_dynamic_clock_frequency(const common_t *common, int hwloc_core_id)
+{
     hwloc_obj_t core_obj = hwloc_get_obj_by_type(common->topology, HWLOC_OBJ_CORE, hwloc_core_id);
 
     // Iterate over the PUs (logical processing units) inside the core to get the OS index
@@ -66,6 +82,7 @@ int hardware_hwloc_numa_id_get_by_core_id(const common_t *common, int hwloc_core
 
     // Traverse through the topology to find the core object with the given core_id
     core_obj = hwloc_get_obj_by_type(common->topology, HWLOC_OBJ_CORE, hwloc_core_id);
+
     if (core_obj == nullptr)
     {
         XBT_ERROR("hwloc_core_id not found: %d ", hwloc_core_id);

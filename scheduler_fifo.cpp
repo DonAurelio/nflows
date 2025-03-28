@@ -10,6 +10,10 @@ FIFO_Scheduler::~FIFO_Scheduler()
 {
 }
 
+void FIFO_Scheduler::initialize()
+{
+}
+
 std::tuple<int, double> FIFO_Scheduler::get_best_core_id(const simgrid_exec_t *exec)
 {
     int best_core_id = -1;
@@ -56,6 +60,7 @@ std::tuple<int, double> FIFO_Scheduler::get_best_core_id(const simgrid_exec_t *e
         XBT_DEBUG("avail_core_id: %d, avail_core_until: %f", avail_core_id, common_core_id_get_avail_until(this->common, avail_core_id));
     }
 
+    best_core_id = avail_core_ids.front();
     if (this->common->mapper_type == COMMON_MAPPER_SIMULATION)
     {
         // Get the current simulation time.
@@ -69,9 +74,6 @@ std::tuple<int, double> FIFO_Scheduler::get_best_core_id(const simgrid_exec_t *e
         best_core_id = *std::find_if(avail_core_ids.begin(), avail_core_ids.end(), [&](int core_id) {
             return this->common->core_avail_until[core_id] <= current_simulation_time;
         });
-
-    } else {
-        best_core_id = avail_core_ids.front();
     }
 
     best_numa_id = hardware_hwloc_numa_id_get_by_core_id(this->common, best_core_id);

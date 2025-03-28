@@ -4,6 +4,7 @@
 
 int hardware_hwloc_core_id_get_by_pu_id(const common_t *common, int os_pu_id);
 double hardware_hwloc_core_id_get_clock_frequency(const common_t *common, int hwloc_core_id);
+double hardware_hwloc_core_id_get_dynamic_clock_frequency(const common_t *common, int hwloc_core_id);
 
 int hardware_hwloc_numa_id_get_by_core_id(const common_t *common, int hwloc_core_id);
 std::vector<int> hardware_hwloc_numa_id_get_by_address(const common_t *common, char *address, size_t size);

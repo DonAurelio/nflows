@@ -20,7 +20,7 @@ class HEFT_Scheduler : public EFT_Scheduler
     HEFT_Scheduler(const common_t *common, simgrid_execs_t &dag);
     ~HEFT_Scheduler();
 
-    void print();
+    void initialize() override;
 
     std::tuple<simgrid_exec_t *, int, double> next() override;
 };

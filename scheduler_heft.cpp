@@ -4,12 +4,16 @@ XBT_LOG_NEW_DEFAULT_CATEGORY(heft_scheduler, "Messages specific to this module."
 
 HEFT_Scheduler::HEFT_Scheduler(const common_t *common, simgrid_execs_t &dag) : EFT_Scheduler(common, dag)
 {
-    this->initialize_compute_and_communication_costs();
-    this->initialize_all_upward_ranks();
 }
 
 HEFT_Scheduler::~HEFT_Scheduler()
 {
+}
+
+void HEFT_Scheduler::initialize()
+{
+    this->initialize_compute_and_communication_costs();
+    this->initialize_all_upward_ranks();
 }
 
 void HEFT_Scheduler::initialize_compute_and_communication_costs()

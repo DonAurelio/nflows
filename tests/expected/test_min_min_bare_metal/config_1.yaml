@@ -1,10 +1,12 @@
-core_availability:
-  0:
-  1:
-  2:
-  3:
+runtime:
+  core_availability:
+    0:
+    1:
+    2:
+    3:
 
-name_to_thread_locality:
-  Task_3: {numa_id: 0, core_id: 1}
-  Task_2: {numa_id: 0, core_id: 2}
-  Task_1: {numa_id: 0, core_id: 3}
+trace:
+  name_to_thread_locality:
+    Task_3: {numa_id: 0, core_id: 1}
+    Task_2: {numa_id: 0, core_id: 2}
+    Task_1: {numa_id: 0, core_id: 3}

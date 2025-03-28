@@ -10,6 +10,10 @@ MIN_MIN_Scheduler::~MIN_MIN_Scheduler()
 {
 }
 
+void MIN_MIN_Scheduler::initialize()
+{
+}
+
 std::tuple<simgrid_exec_t *, int, double> MIN_MIN_Scheduler::next()
 {
     int selected_core_id = -1;

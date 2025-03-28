@@ -125,7 +125,7 @@ clock_frequency_type_t common_clock_frequency_str_to_type(const std::string &typ
     return COMMON_UNKNOWN_CLOCK_FREQUENCY;
 }
 
-std::string common_clock_frequency_type_to_str(clock_frequency_type_t type)
+std::string common_clock_frequency_type_to_str(const clock_frequency_type_t &type)
 {
     switch (type) {
         case COMMON_DYNAMIC_CLOCK_FREQUENCY: return "dynamic";
@@ -145,7 +145,7 @@ scheduler_type_t common_scheduler_str_to_type(const std::string &type)
     return COMMON_SCHED_TYPE_UNKNOWN;
 }
 
-std::string common_scheduler_type_to_str(scheduler_type_t &type)
+std::string common_scheduler_type_to_str(const scheduler_type_t &type)
 {
     switch (type) {
         case COMMON_SCHED_TYPE_MIN_MIN: return "min-min";
@@ -172,7 +172,7 @@ mapper_type_t common_mapper_str_to_type(const std::string &type)
     return COMMON_MAPPER_UNKNOWN;
 }
 
-std::string common_mapper_type_to_str(mapper_type_t &type)
+std::string common_mapper_type_to_str(const mapper_type_t &type)
 {
     switch (type) {
         case COMMON_MAPPER_BARE_METAL: return "bare-metal";
@@ -194,7 +194,7 @@ hwloc_membind_policy_t common_mapper_mem_policy_str_to_type(const std::string &t
     throw std::runtime_error("Unsupported memory policy type '" + type + "'.");
 }
 
-std::string common_mapper_mem_policy_type_to_str(hwloc_membind_policy_t &type) {
+std::string common_mapper_mem_policy_type_to_str(const hwloc_membind_policy_t &type) {
     switch (type) {
         case HWLOC_MEMBIND_DEFAULT: return "default";
         case HWLOC_MEMBIND_FIRSTTOUCH: return "first-touch";

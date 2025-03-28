@@ -13,9 +13,13 @@ Mapper_Simulation::~Mapper_Simulation()
 
 void Mapper_Simulation::start()
 {
+    XBT_INFO("Start mapper_simulation");
     simgrid_exec_t *selected_exec;
     int selected_core_id;
     double estimated_completion_time;
+
+    // Mandatory previous to initiate any scheduling activity.
+    this->scheduler.initialize();
 
     while (this->scheduler.has_next())
     {
@@ -54,6 +58,8 @@ void Mapper_Simulation::start()
     // Workaround to properly finalize SimGrid resources.
     simgrid::s4u::Engine *e = simgrid::s4u::Engine::get_instance();
     e->run();
+
+    XBT_INFO("End mapper_simulation");
 }
 
 /**
@@ -199,7 +205,7 @@ void *mapper_simulation_thread_function(void *arg)
         (succ_ptr.get())->complete(simgrid::s4u::Activity::State::FINISHED);
 
     // Mark the selected hwloc_core_id as available.
-    common_core_id_set_avail(common, assigned_core_id, true);
+    // common_core_id_set_avail(common, assigned_core_id, true);
 
     // Update core availability
     common_core_id_set_avail_until(common, assigned_core_id, actual_finish_time_us);

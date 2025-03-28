@@ -4,24 +4,51 @@ XBT_LOG_NEW_DEFAULT_CATEGORY(runtime, "Messages specific to this module.");
 
 void runtime_start(mapper_t **mapper)
 {
-    XBT_INFO("Start Runtime.");
+    XBT_INFO("Start runtime.");
     (*mapper)->start();
 }
 
 void runtime_stop(common_t **common)
 {
-    XBT_INFO("End Runtime.");
+    XBT_INFO("End runtime.");
     common_print_common_structure(*common, 0);
 }
 
 void runtime_initialize(common_t **common, simgrid_execs_t **dag, scheduler_t **scheduler, mapper_t **mapper, const std::string &config_path)
 {
-    XBT_INFO("Initialize Runtime.");
+    XBT_INFO("Initialize runtime.");
     nlohmann::json data = common_config_file_read(config_path);
     simgrid_execs_t execs = common_dag_read_from_dot(data["dag_file"]);
 
     *dag = new simgrid_execs_t(execs);
     *common = new common_t();
+
+    // Runtime system status.
+    if (hwloc_topology_init(&((*common)->topology)) != 0)
+        throw std::runtime_error("Failed to initialize topology.");
+
+    if (hwloc_topology_load((*common)->topology) != 0)
+        throw std::runtime_error("Failed to load topology.");
+
+    (*common)->threads_active = 0;
+    (*common)->threads_checksum = 0;
+
+    (*common)->threads_cond = PTHREAD_COND_INITIALIZER;
+    (*common)->threads_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+    // Counters
+    for (const simgrid_exec_t *exec :(**dag))
+    {
+        (*common)->execs_active[exec->get_name()] = 0;
+
+        for (const auto &succ_ptr : exec->get_dependencies())
+            (*common)->reads_active[(succ_ptr.get())->get_name()] = 0;
+
+        for (const auto &succ_ptr : exec->get_successors())
+            // Skipt all task_i->end communications.
+            if (common_split((succ_ptr.get())->get_cname(), "->").second != std::string("end"))
+                (*common)->writes_active[(succ_ptr.get())->get_name()] = 0;
+    }
 
     // User-defined.
     (*common)->flops_per_cycle = data["flops_per_cycle"];
@@ -82,45 +109,25 @@ void runtime_initialize(common_t **common, simgrid_execs_t **dag, scheduler_t **
 
     *mapper = nullptr;
     std::string mapper_type = data["mapper_type"];
-    switch (common_mapper_str_to_type(mapper_type)) {
+    (*common)->mapper_type = common_mapper_str_to_type(mapper_type);
+
+    switch ((*common)->mapper_type) {
         case COMMON_MAPPER_BARE_METAL:
-            *mapper = new mapper_bare_metal_t((*common), (**scheduler)); break;
+            *mapper = new mapper_bare_metal_t((*common), (**scheduler)); 
+            break;
         case COMMON_MAPPER_SIMULATION:
             *mapper = new mapper_simulation_t((*common), (**scheduler)); break;
         default:
-            XBT_ERROR("Invalid mapper type '%s'", mapper_type.c_str());
-            throw std::runtime_error("Invalid mapper type.");
+            XBT_ERROR("Invalid mapper type '%s'", 
+                common_mapper_type_to_str((*common)->mapper_type).c_str());
+            throw std::runtime_error("Invalid mapper type enum value.");
             // No break needed after throw (unreachable)
-    }
-
-    // Runtime system status.
-    hwloc_topology_init(&((*common)->topology));
-    hwloc_topology_load((*common)->topology);
-
-    (*common)->threads_active = 0;
-    (*common)->threads_checksum = 0;
-
-    (*common)->threads_cond = PTHREAD_COND_INITIALIZER;
-    (*common)->threads_mutex = PTHREAD_MUTEX_INITIALIZER;
-
-    // Counters
-    for (const simgrid_exec_t *exec :(**dag))
-    {
-        (*common)->execs_active[exec->get_name()] = 0;
-
-        for (const auto &succ_ptr : exec->get_dependencies())
-            (*common)->reads_active[(succ_ptr.get())->get_name()] = 0;
-
-        for (const auto &succ_ptr : exec->get_successors())
-            // Skipt all task_i->end communications.
-            if (common_split((succ_ptr.get())->get_cname(), "->").second != std::string("end"))
-                (*common)->writes_active[(succ_ptr.get())->get_name()] = 0;
     }
 }
 
 void runtime_finalize(common_t **common, simgrid_execs_t **dag, scheduler_t **scheduler, mapper_t **mapper) {
 
-    XBT_INFO("Finalize Runtime.");
+    XBT_INFO("Finalize runtime.");
     auto safe_delete = [](auto **ptr) {
         if (ptr && *ptr) {
             delete *ptr;

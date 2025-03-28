@@ -155,11 +155,17 @@ $(TEST_CASES): %: $(EXECUTABLE)
 		LOG_FILE="$(TEST_LOG_DIR)/$@/$${BASE_NAME}.log"; \
 		OUTPUT_FILE="$(TEST_OUTPUT_DIR)/$@/$${BASE_NAME}.yaml"; \
 		EXPECTED_FILE="$(TEST_EXPECTED_DIR)/$@/$${BASE_NAME}.yaml"; \
-		./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) $$config_file > "$$LOG_FILE" 2>&1 && \
-		$(VALIDATE_OFFSETS) "$$OUTPUT_FILE" >> "$$LOG_FILE" 2>&1 && \
-		$(VALIDATE_OUTPUT) --check-order exec_name_total_offsets "$$OUTPUT_FILE" "$$EXPECTED_FILE" >> "$$LOG_FILE" 2>&1 && \
-		echo "  [SUCCESS] $$config_file" || \
-		echo "  [FAILED] $$config_file"; \
+		./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) $$config_file > "$$LOG_FILE" 2>&1; \
+		EXECUTABLE_STATUS=$$?; \
+		$(VALIDATE_OFFSETS) "$$OUTPUT_FILE" >> "$$LOG_FILE" 2>&1; \
+		VALIDATE_STATUS_OFFSETS=$$?; \
+		$(VALIDATE_OUTPUT) --check-order exec_name_total_offsets "$$OUTPUT_FILE" "$$EXPECTED_FILE" >> "$$LOG_FILE" 2>&1; \
+		VALIDATE_STATUS_OUTPUT=$$?; \
+		if [ $$EXECUTABLE_STATUS -eq 0 ] && [ $$VALIDATE_STATUS_OFFSETS -eq 0 ] && [ $$VALIDATE_STATUS_OUTPUT -eq 0 ]; then \
+			echo "  [SUCCESS] $$config_file"; \
+		else \
+			echo "  [FAILED] $$config_file (Execute: $$EXECUTABLE_STATUS, Validate Offsets: $$VALIDATE_STATUS_OFFSETS, Validate Output: $$VALIDATE_STATUS_OUTPUT)"; \
+		fi; \
 	done
 
 .PHONY: test

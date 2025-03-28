@@ -1,10 +1,12 @@
-core_availability:
-  0: {avail_until: 0}
-  1: {avail_until: 0}
-  2: {avail_until: 0}
-  3: {avail_until: 70}
+runtime:
+  core_availability:
+    0: {avail_until: 0}
+    1: {avail_until: 0}
+    2: {avail_until: 0}
+    3: {avail_until: 70}
 
-exec_name_total_offsets:
-  Task_3: {start: 30, end: 70, payload: 320}
-  Task_2: {start: 10, end: 30, payload: 160}
-  Task_1: {start: 0, end: 10, payload: 80}
+trace:
+  exec_name_total_offsets:
+    Task_3: {start: 30, end: 70, payload: 320}
+    Task_2: {start: 10, end: 30, payload: 160}
+    Task_1: {start: 0, end: 10, payload: 80}
