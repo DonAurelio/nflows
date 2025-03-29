@@ -182,7 +182,8 @@ std::string common_mapper_type_to_str(const mapper_type_t &type)
     }
 }
 
-hwloc_membind_policy_t common_mapper_mem_policy_str_to_type(const std::string &type) {
+hwloc_membind_policy_t common_mapper_mem_policy_str_to_type(const std::string &type)
+{
     if (type.compare("default") == 0) return HWLOC_MEMBIND_DEFAULT;
     if (type.compare("first-touch") == 0) return HWLOC_MEMBIND_FIRSTTOUCH;
     if (type.compare("bind") == 0) return HWLOC_MEMBIND_BIND;
@@ -194,7 +195,8 @@ hwloc_membind_policy_t common_mapper_mem_policy_str_to_type(const std::string &t
     throw std::runtime_error("Unsupported memory policy type '" + type + "'.");
 }
 
-std::string common_mapper_mem_policy_type_to_str(const hwloc_membind_policy_t &type) {
+std::string common_mapper_mem_policy_type_to_str(const hwloc_membind_policy_t &type)
+{
     switch (type) {
         case HWLOC_MEMBIND_DEFAULT: return "default";
         case HWLOC_MEMBIND_FIRSTTOUCH: return "first-touch";
@@ -256,7 +258,12 @@ void common_core_id_set_avail(common_t *common, unsigned int core_id, bool avail
 
 double common_core_id_get_avail_until(const common_t *common, unsigned int core_id)
 {
-    return common->core_avail_until.at(core_id);
+    try {
+        return common->core_avail_until.at(core_id);
+    } catch (const std::out_of_range& e) {
+        XBT_ERROR("Not found core_id: %d", core_id);
+        throw;
+    }
 }
 
 void common_core_id_set_avail_until(common_t *common, unsigned int core_id, double duration)
@@ -293,8 +300,9 @@ double common_earliest_start_time(const common_t *common, const std::string &exe
     for (const auto &[comm_name, time_range_payload] : matches)
     {
         auto [pred_exec_name, self_exec_name] = common_split(comm_name, "->");
-        max_pred_actual_finish_time = std::max(
-            max_pred_actual_finish_time, std::get<1>(common->exec_name_to_rcw_time_offset_payload.at(pred_exec_name)));
+        time_range_payload_t rcw_time_offset_payload = common_exec_name_to_rcw_time_offset_payload_get(common, pred_exec_name);
+        double pred_exec_name_end_time_offset = std::get<1>(rcw_time_offset_payload);
+        max_pred_actual_finish_time = std::max(max_pred_actual_finish_time, pred_exec_name_end_time_offset);
     }
 
     double core_id_avail_until = common_core_id_get_avail_until(common, core_id);
@@ -353,29 +361,38 @@ void common_threads_active_wait(common_t *common)
     pthread_mutex_unlock(&(common->threads_mutex));
 }
 
-void common_execs_active_increment(common_t *common, const std::string &name) {
+void common_execs_active_increment(common_t *common, const std::string &name)
+{
     std::lock_guard<std::mutex> lock(common->counters_mutex);
     common->execs_active[name] += 1;
 }
 
-void common_reads_active_increment(common_t *common, const std::string &name) {
+void common_reads_active_increment(common_t *common, const std::string &name)
+{
     std::lock_guard<std::mutex> lock(common->counters_mutex);
     common->reads_active[name] += 1;
 }
 
-void common_writes_active_increment(common_t *common, const std::string &name) {
+void common_writes_active_increment(common_t *common, const std::string &name)
+{
     std::lock_guard<std::mutex> lock(common->counters_mutex);
     common->writes_active[name] += 1;
 }
 
-void common_comm_name_to_address_create(common_t *common, const std::string& comm_name, char* write_buffer) {
+void common_comm_name_to_address_create(common_t *common, const std::string& comm_name, char* write_buffer)
+{
     std::lock_guard<std::mutex> lock(common->comm_maps_mutex);
     common->comm_name_to_address[comm_name] = write_buffer;
 }
 
 char* common_comm_name_to_address_get(const common_t *common, const std::string& comm_name)
 {
-    return common->comm_name_to_address.at(comm_name);
+    try {
+        return common->comm_name_to_address.at(comm_name);
+    } catch (const std::out_of_range& e) {
+        XBT_ERROR("Not found comm_name: %s", comm_name.c_str());
+        throw;
+    }
 }
 
 void common_comm_name_to_numa_ids_r_create(common_t *common, const std::string& comm_name, const std::vector<int>& memory_bindings) {
@@ -391,7 +408,12 @@ void common_comm_name_to_numa_ids_w_create(common_t *common, const std::string& 
 
 std::vector<int> common_comm_name_to_numa_ids_w_get(const common_t *common, const std::string& comm_name)
 {
-    return common->comm_name_to_numa_ids_w.at(comm_name);
+    try {
+        return common->comm_name_to_numa_ids_w.at(comm_name);
+    } catch (const std::out_of_range& e) {
+        XBT_ERROR("Not found comm_name: %s", comm_name.c_str());
+        throw;
+    }
 }
 
 void common_exec_name_to_thread_locality_create(common_t *common, const std::string& exec_name, const thread_locality_t& locality) {
@@ -432,6 +454,16 @@ void common_exec_name_to_c_time_offset_payload_create(common_t *common, const st
 void common_exec_name_to_rcw_time_offset_payload_create(common_t *common, const std::string& exec_name, const time_range_payload_t& time_range_payload) {
     std::lock_guard<std::mutex> lock(common->offset_mutex);
     common->exec_name_to_rcw_time_offset_payload[exec_name] = time_range_payload;
+}
+
+time_range_payload_t common_exec_name_to_rcw_time_offset_payload_get(const common_t *common, const std::string& exec_name)
+{
+    try {
+        return common->exec_name_to_rcw_time_offset_payload.at(exec_name);
+    } catch (const std::out_of_range& e) {
+        XBT_ERROR("Not found exec_name: %s", exec_name.c_str());
+        throw;
+    }
 }
 
 /* OUTPUT */

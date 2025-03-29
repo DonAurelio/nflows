@@ -45,15 +45,15 @@ std::tuple<int, double> FIFO_Scheduler::get_best_core_id(const simgrid_exec_t *e
     {
         // Prioritize cores associated with NUMA nodes that have the most data to read.
         std::sort(avail_core_ids.begin(), avail_core_ids.end(),
-                [&](int a, int b) {
-                    int a_numa_id = hardware_hwloc_numa_id_get_by_core_id(this->common, a);
-                    int b_numa_id = hardware_hwloc_numa_id_get_by_core_id(this->common, b);
+            [&](int a, int b) {
+                int a_numa_id = hardware_hwloc_numa_id_get_by_core_id(this->common, a);
+                int b_numa_id = hardware_hwloc_numa_id_get_by_core_id(this->common, b);
 
-                    double a_score = (numa_id_to_payload.find(a_numa_id) != numa_id_to_payload.end()) ? numa_id_to_payload.at(a_numa_id) : 0.0;
-                    double b_score = (numa_id_to_payload.find(b_numa_id) != numa_id_to_payload.end()) ? numa_id_to_payload.at(b_numa_id) : 0.0; 
+                double a_score = (numa_id_to_payload.find(a_numa_id) != numa_id_to_payload.end()) ? numa_id_to_payload.at(a_numa_id) : 0.0;
+                double b_score = (numa_id_to_payload.find(b_numa_id) != numa_id_to_payload.end()) ? numa_id_to_payload.at(b_numa_id) : 0.0; 
 
-                    return a_score > b_score; 
-                });
+                return a_score > b_score; 
+            });
     }
 
     for (int avail_core_id : avail_core_ids) {

@@ -219,7 +219,9 @@ void common_exec_name_to_c_ts_range_payload_create(common_t *common, const std::
 void common_comm_name_to_r_time_offset_payload_create(common_t *common, const std::string& comm_name, const time_range_payload_t& time_range_payload);
 void common_comm_name_to_w_time_offset_payload_create(common_t *common, const std::string& comm_name, const time_range_payload_t& time_range_payload);
 void common_exec_name_to_c_time_offset_payload_create(common_t *common, const std::string& exec_name, const time_range_payload_t& time_range_payload);
+
 void common_exec_name_to_rcw_time_offset_payload_create(common_t *common, const std::string& exec_name, const time_range_payload_t& time_range_payload);
+time_range_payload_t common_exec_name_to_rcw_time_offset_payload_get(const common_t *common, const std::string& exec_name);
 
 /* OUTPUT */
 void common_print_common_structure(const common_t *common, int indent);
