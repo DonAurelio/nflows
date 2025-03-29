@@ -44,7 +44,7 @@ EVALUATION_LOG_DIR := $(EVALUATION_RESULT_DIR)/log
 EVALUATION_OUTPUT_DIR := $(EVALUATION_RESULT_DIR)/output
 EVALUATION_CONFIG_DIR := $(EVALUATION_RESULT_DIR)/config
 
-EVALUATION_REPEATS := 5
+EVALUATION_REPEATS := 10
 EVALUATION_WORKFLOWS := dis_16.dot mon_58.dot red_16.dot
 EVALUATION_GROUPS := min_min fifo heft
 EVALUATION_SLEEPTIME := 10
@@ -54,9 +54,10 @@ ANALYSIS_REL_LATENCIES_FILE := $(EVALUATION_DIR)/system/non_uniform_lat_rel.txt
 ANALYSIS_PROFILE_TIME_UNIT := s
 ANALYSIS_PROFILE_PAYLOAD_UNIT := M
 ANALYSIS_FIELDS := \
-	pages_migrations \
-	checksum \
-	threads \
+	data_pages_migrations \
+	data_pages_spreadings \
+	threads_checksum \
+	threads_active \
 	numa_factor \
 	comp_to_comm \
 	comm_to_comp \
@@ -84,7 +85,6 @@ ANALYSIS_FIELDS := \
 	write_accesses_remote \
 	write_accesses_total \
 	accesses_total
-
 
 # Directories
 TEST_DIR := ./tests
@@ -155,11 +155,17 @@ $(TEST_CASES): %: $(EXECUTABLE)
 		LOG_FILE="$(TEST_LOG_DIR)/$@/$${BASE_NAME}.log"; \
 		OUTPUT_FILE="$(TEST_OUTPUT_DIR)/$@/$${BASE_NAME}.yaml"; \
 		EXPECTED_FILE="$(TEST_EXPECTED_DIR)/$@/$${BASE_NAME}.yaml"; \
-		./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) $$config_file > "$$LOG_FILE" 2>&1 && \
-		$(VALIDATE_OFFSETS) "$$OUTPUT_FILE" >> "$$LOG_FILE" 2>&1 && \
-		$(VALIDATE_OUTPUT) --check-order exec_name_total_offsets "$$OUTPUT_FILE" "$$EXPECTED_FILE" >> "$$LOG_FILE" 2>&1 && \
-		echo "  [SUCCESS] $$config_file" || \
-		echo "  [FAILED] $$config_file"; \
+		./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) $$config_file > "$$LOG_FILE" 2>&1; \
+		EXECUTABLE_STATUS=$$?; \
+		$(VALIDATE_OFFSETS) "$$OUTPUT_FILE" >> "$$LOG_FILE" 2>&1; \
+		VALIDATE_STATUS_OFFSETS=$$?; \
+		$(VALIDATE_OUTPUT) --check-order exec_name_total_offsets "$$OUTPUT_FILE" "$$EXPECTED_FILE" >> "$$LOG_FILE" 2>&1; \
+		VALIDATE_STATUS_OUTPUT=$$?; \
+		if [ $$EXECUTABLE_STATUS -eq 0 ] && [ $$VALIDATE_STATUS_OFFSETS -eq 0 ] && [ $$VALIDATE_STATUS_OUTPUT -eq 0 ]; then \
+			echo "  [SUCCESS] $$config_file"; \
+		else \
+			echo "  [FAILED] $$config_file (Execute: $$EXECUTABLE_STATUS, Validate Offsets: $$VALIDATE_STATUS_OFFSETS, Validate Output: $$VALIDATE_STATUS_OUTPUT)"; \
+		fi; \
 	done
 
 .PHONY: test
@@ -177,16 +183,16 @@ $(EVALUATION_WORKFLOWS): %: $(EXECUTABLE)
 			mkdir -p $$CONFIG_DIR $$OUTPUT_DIR $$LOG_DIR; \
 			for repeat in $(shell seq 1 $(EVALUATION_REPEATS)); do \
 				CONFIG_FILE=$$CONFIG_DIR/$${repeat}.json; \
-				OUTPUT_FILE=$$OUTPUT_DIR/$${repeat}; \
+				OUTPUT_FILE=$$OUTPUT_DIR/$${repeat}.yaml; \
 				LOG_FILE=$$LOG_DIR/$${repeat}.log; \
 				$(GENERATE_CONFIG) \
 					--template "$$json_template" \
 					--output_file "$$CONFIG_FILE" > "$$LOG_FILE" 2>&1 \
-					--params log_base_name="$${OUTPUT_FILE}" dag_file="$(EVALUATION_WORKFLOW_DIR)/$@"; \
+					--params out_file_name="$${OUTPUT_FILE}" dag_file="$(EVALUATION_WORKFLOW_DIR)/$@"; \
 				GENERATE_STATUS=$$?; \
 				./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$${CONFIG_FILE}" >> "$$LOG_FILE" 2>&1; \
 				EXECUTABLE_STATUS=$$?; \
-				$(VALIDATE_OFFSETS) "$${OUTPUT_FILE}.yaml"  >> "$$LOG_FILE" 2>&1; \
+				$(VALIDATE_OFFSETS) "$${OUTPUT_FILE}"  >> "$$LOG_FILE" 2>&1; \
 				VALIDATE_STATUS=$$?; \
 				if [ $$GENERATE_STATUS -eq 0 ] && [ $$EXECUTABLE_STATUS -eq 0 ] && [ $$VALIDATE_STATUS -eq 0 ]; then \
 					echo "  [SUCCESS] $$CONFIG_FILE"; \

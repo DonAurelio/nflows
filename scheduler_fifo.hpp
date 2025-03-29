@@ -21,6 +21,8 @@ class FIFO_Scheduler : public Base_Scheduler
     FIFO_Scheduler(const common_t *common, simgrid_execs_t &dag);
     ~FIFO_Scheduler();
 
+    void initialize() override;
+
     std::tuple<simgrid_exec_t *, int, double> next() override;
 };
 

@@ -1,9 +1,12 @@
 {
     "dag_file": "./tests/workflows/test_heft_simulation/config_1.dot",
+
     "scheduler_type": "heft",
     "scheduler_params": [],
+
     "mapper_type": "simulation",
     "mapper_mem_policy_type": "default",
+    "mapper_mem_bind_numa_node_ids": [],
 
     "core_avail_mask": "0x0F",
     "flops_per_cycle": 1000000,
@@ -11,10 +14,9 @@
     "clock_frequencies_hz": [1, 2, 4, 8],
 
     "distance_matrices": {
-        "latency": "./tests/system/test_heft_simulation/1_lat.txt",
-        "bandwidth": "./tests/system/test_heft_simulation/1_bw.txt"
+        "latency_ns": "./tests/system/test_heft_simulation/1_lat.txt",
+        "bandwidth_gbps": "./tests/system/test_heft_simulation/1_bw.txt"
     },
 
-    "log_base_name": "./tests/output/test_heft_simulation/config_1",
-    "log_date_format": ""
+    "out_file_name": "./tests/output/test_heft_simulation/config_1.yaml"
 }

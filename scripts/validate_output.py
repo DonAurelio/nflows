@@ -8,6 +8,7 @@
 
 import yaml
 import sys
+import argparse
 
 def validate_yaml(output_path, expected_path, check_order_keys):
     with open(output_path, 'r') as output_file, open(expected_path, 'r') as expected_file:
@@ -46,24 +47,19 @@ def validate_yaml(output_path, expected_path, check_order_keys):
     return compare(expected_data, output_data)
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        print("Usage: python validate_yaml.py [--check-order key1,key2,...] <output_yaml> <expected_yaml>")
-        sys.exit(1)
-    
-    check_order_keys = set()
-    if sys.argv[1] == "--check-order":
-        if len(sys.argv) < 5:
-            print("Error: --check-order requires at least one key and two file paths.")
-            sys.exit(1)
-        check_order_keys = set(sys.argv[2].split(","))
-        output_file = sys.argv[3]
-        expected_file = sys.argv[4]
-    else:
-        output_file = sys.argv[1]
-        expected_file = sys.argv[2]
-    
+    parser = argparse.ArgumentParser(description="Validate YAML files for structural and content correctness.")
+    parser.add_argument("--check-order", metavar="KEYS", type=str, help="Comma-separated list of keys to check order")
+    parser.add_argument("output_yaml", help="Path to the output YAML file")
+    parser.add_argument("expected_yaml", help="Path to the expected YAML file")
+
+    args = parser.parse_args()
+
+    check_order_keys = set(args.check_order.split(",")) if args.check_order else set()
+    output_file = args.output_yaml
+    expected_file = args.expected_yaml
+
     if validate_yaml(output_file, expected_file, check_order_keys):
-        print(f"Ouptut validation successful: '{output_file}' matches '{expected_file}'.")
+        print(f"Output validation successful: '{output_file}' matches '{expected_file}'.")
     else:
         print(f"Output validation failed: '{output_file}' does not match '{expected_file}'.")
         sys.exit(1)

@@ -1,172 +1,144 @@
 #include "runtime.hpp"
 
+XBT_LOG_NEW_DEFAULT_CATEGORY(runtime, "Messages specific to this module.");
 
 void runtime_start(mapper_t **mapper)
 {
+    XBT_INFO("Start runtime.");
     (*mapper)->start();
 }
 
-void runtime_write(common_t **common)
+void runtime_stop(common_t **common)
 {
-    common_print_common_structure(*common);
+    XBT_INFO("End runtime.");
+    common_print_common_structure(*common, 0);
 }
 
 void runtime_initialize(common_t **common, simgrid_execs_t **dag, scheduler_t **scheduler, mapper_t **mapper, const std::string &config_path)
 {
-    std::ifstream config_file(config_path);
-    if (!config_file) {
-        throw std::runtime_error("Unable to open config file: " + config_path);
-    }
+    XBT_INFO("Initialize runtime.");
+    nlohmann::json data = common_config_file_read(config_path);
+    simgrid_execs_t execs = common_dag_read_from_dot(data["dag_file"]);
 
-    nlohmann::json data;
-    config_file >> data;
-    config_file.close();
-
+    *dag = new simgrid_execs_t(execs);
     *common = new common_t();
-    initialize_common(*common, data);
 
-    *dag = new simgrid_execs_t(common_read_dag_from_dot(data["dag_file"]));
+    // Runtime system status.
+    if (hwloc_topology_init(&((*common)->topology)) != 0)
+        throw std::runtime_error("Failed to initialize topology.");
 
-    *scheduler = create_scheduler(data["scheduler_type"], *common, **dag);
-    *mapper = create_mapper(data["mapper_type"], *common, **scheduler);
-}
+    if (hwloc_topology_load((*common)->topology) != 0)
+        throw std::runtime_error("Failed to load topology.");
 
-void runtime_finalize(common_t **common, simgrid_execs_t **dag, scheduler_t **scheduler, mapper_t **mapper) {
-    if (*mapper) {
-        delete *mapper;
-        *mapper = nullptr;
+    (*common)->threads_active = 0;
+    (*common)->threads_checksum = 0;
+
+    (*common)->threads_cond = PTHREAD_COND_INITIALIZER;
+    (*common)->threads_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+    // Counters
+    for (const simgrid_exec_t *exec :(**dag))
+    {
+        (*common)->execs_active[exec->get_name()] = 0;
+
+        for (const auto &succ_ptr : exec->get_dependencies())
+            (*common)->reads_active[(succ_ptr.get())->get_name()] = 0;
+
+        for (const auto &succ_ptr : exec->get_successors())
+            // Skipt all task_i->end communications.
+            if (common_split((succ_ptr.get())->get_cname(), "->").second != std::string("end"))
+                (*common)->writes_active[(succ_ptr.get())->get_name()] = 0;
     }
 
-    if (*scheduler) {
-        delete *scheduler;
-        *scheduler = nullptr;
+    // User-defined.
+    (*common)->flops_per_cycle = data["flops_per_cycle"];
+    (*common)->clock_frequency_type = common_clock_frequency_str_to_type(data["clock_frequency_type"]);
+
+    switch ((*common)->clock_frequency_type) {
+        case COMMON_DYNAMIC_CLOCK_FREQUENCY:
+            (*common)->clock_frequency_hz = 0;
+            break;
+            
+        case COMMON_STATIC_CLOCK_FREQUENCY:
+            (*common)->clock_frequency_hz = data["clock_frequency_hz"];
+            break;
+            
+        case COMMON_ARRAY_CLOCK_FREQUENCY:
+            (*common)->clock_frequencies_hz = data["clock_frequencies_hz"].get<std::vector<double>>();
+            break;
+            
+        default:
+            // This should never happen if the input validation was proper
+            XBT_ERROR("Invalid clock frequency type enum value");
+            throw std::runtime_error("Invalid clock frequency type enum value");
     }
 
-    if (*dag) {
-        delete *dag;
-        *dag = nullptr;
-    }
+    (*common)->out_file_name = data["out_file_name"];
 
-    if (*common) {
-        hwloc_topology_destroy((*common)->topology); // Release hwloc resources
-        delete *common;
-        *common = nullptr;
-    }
-}
-
-void initialize_common(common_t *common, const nlohmann::json &data) {
-    hwloc_topology_init(&(common->topology));
-    hwloc_topology_load(common->topology);
-
-    common->active_threads = 0;
-    common->cond = PTHREAD_COND_INITIALIZER;
-    common->mutex = PTHREAD_MUTEX_INITIALIZER;
-    common->checksum = 0;
+    (*common)->distance_lat_ns = common_distance_matrix_read_from_txt(data["distance_matrices"]["latency_ns"]);
+    (*common)->distance_bw_gbps = common_distance_matrix_read_from_txt(data["distance_matrices"]["bandwidth_gbps"]);
 
     size_t core_count;
-    common->core_avail = parse_core_avail_mask(std::stoull(data["core_avail_mask"].get<std::string>(), nullptr, 16), core_count);
-    common->core_avail_until.resize(core_count, 0.0);
+    (*common)->core_avail = common_core_avail_mask_to_vect(std::stoull(data["core_avail_mask"].get<std::string>(), nullptr, 16), core_count);
+    (*common)->core_avail_until.resize(core_count, 0.0);
 
-    common->flops_per_cycle = data["flops_per_cycle"];
-    std::string clock_frequency_type = data["clock_frequency_type"];
-
-    if (clock_frequency_type == "dynamic") {
-        common->clock_frequency_type = DYNAMIC_CLOCK_FREQUENCY;
-        common->clock_frequency_hz = 0;
-    } else if (clock_frequency_type == "static") {
-        common->clock_frequency_type = STATIC_CLOCK_FREQUENCY;
-        common->clock_frequency_hz = data["clock_frequency_hz"];
-    } else if (clock_frequency_type == "array") {
-        common->clock_frequency_type = ARRAY_CLOCK_FREQUENCY;
-        common->clock_frequencies_hz = data["clock_frequencies_hz"].get<std::vector<double>>();
-    } else {
-        throw std::runtime_error("Unsupported clock frequency type: " + clock_frequency_type);
+    *scheduler = nullptr;
+    const std::string scheduler_type = data["scheduler_type"];
+    switch (common_scheduler_str_to_type(scheduler_type)) {
+        case COMMON_SCHED_TYPE_MIN_MIN:
+            *scheduler = new min_min_scheduler_t((*common), (**dag)); break;
+        case COMMON_SCHED_TYPE_HEFT:
+            *scheduler = new heft_scheduler_t((*common), (**dag)); break;
+        case COMMON_SCHED_TYPE_FIFO:
+            *scheduler = new fifo_scheduler_t((*common), (**dag)); break;
+        case COMMON_SCHED_TYPE_UNKNOWN:
+            XBT_ERROR("Invalid scheduler type: '%s'.", scheduler_type.c_str());
+            throw std::runtime_error("Invalid scheduler type.");
+            // break not needed here due to the throw
     }
 
     for (const auto& param : data["scheduler_params"].get<std::vector<std::string>>()) {
         auto pos = param.find('=');
         if (pos != std::string::npos) {
-            common->scheduler_params[param.substr(0, pos)] = param.substr(pos + 1);
+            (*common)->scheduler_params[param.substr(0, pos)] = param.substr(pos + 1);
         }
     }
 
-    std::string mapper_mem_policy_type = data["mapper_mem_policy_type"];
+    (*common)->mapper_mem_policy_type = common_mapper_mem_policy_str_to_type(data["mapper_mem_policy_type"]);
+    (*common)->mapper_mem_bind_numa_node_ids = data["mapper_mem_bind_numa_node_ids"].get<std::vector<unsigned>>();
 
-    if (mapper_mem_policy_type == "default") {
-        common->mapper_mem_policy = HWLOC_MEMBIND_DEFAULT;
-        common->mapper_mem_bind_numa_node_id = 0; // Not used, but initialized.
-    } else if (mapper_mem_policy_type == "firsttouch") {
-        common->mapper_mem_policy = HWLOC_MEMBIND_FIRSTTOUCH;
-        common->mapper_mem_bind_numa_node_id = 0; // Not used, but initialized.
-    } else if (mapper_mem_policy_type == "bind") {
-        common->mapper_mem_policy = HWLOC_MEMBIND_BIND;
-        common->mapper_mem_bind_numa_node_id = data["mapper_mem_bind_numa_node_id"];
-    } else if (mapper_mem_policy_type == "interleave") {
-        common->mapper_mem_policy = HWLOC_MEMBIND_INTERLEAVE;
-        common->mapper_mem_bind_numa_node_id = 0; // Not used, but initialized.
-    } else if (mapper_mem_policy_type == "nexttouch") {
-        common->mapper_mem_policy = HWLOC_MEMBIND_NEXTTOUCH;
-        common->mapper_mem_bind_numa_node_id = 0; // Not used, but initialized.
-    } else if (mapper_mem_policy_type == "mixed") {
-        common->mapper_mem_policy = HWLOC_MEMBIND_MIXED;
-        common->mapper_mem_bind_numa_node_id = 0; // Not used, but initialized.
-    } else {
-        throw std::runtime_error("Unsupported memory policy type: " + mapper_mem_policy_type);
+    *mapper = nullptr;
+    std::string mapper_type = data["mapper_type"];
+    (*common)->mapper_type = common_mapper_str_to_type(mapper_type);
+
+    switch ((*common)->mapper_type) {
+        case COMMON_MAPPER_BARE_METAL:
+            *mapper = new mapper_bare_metal_t((*common), (**scheduler)); 
+            break;
+        case COMMON_MAPPER_SIMULATION:
+            *mapper = new mapper_simulation_t((*common), (**scheduler)); break;
+        default:
+            XBT_ERROR("Invalid mapper type '%s'", 
+                common_mapper_type_to_str((*common)->mapper_type).c_str());
+            throw std::runtime_error("Invalid mapper type enum value.");
+            // No break needed after throw (unreachable)
     }
-
-    common->log_base_name = data["log_base_name"];
-    common->log_date_format = data["log_date_format"];
-
-    common->distance_lat_ns = common_read_distance_matrix_from_file(data["distance_matrices"]["latency"]);
-    common->distance_bw_gbps = common_read_distance_matrix_from_file(data["distance_matrices"]["bandwidth"]);
 }
 
-std::vector<bool> parse_core_avail_mask(uint64_t mask, size_t &core_count) {
-    core_count = 0;
-    uint64_t temp_mask = mask;
-    while (temp_mask) {
-        core_count++;
-        temp_mask >>= 1;
-    }
+void runtime_finalize(common_t **common, simgrid_execs_t **dag, scheduler_t **scheduler, mapper_t **mapper) {
 
-    std::vector<bool> core_avail(core_count, false);
-    for (size_t i = 0; i < core_count; ++i) {
-        if (mask & (1ULL << i)) {
-            core_avail[i] = true;
+    XBT_INFO("Finalize runtime.");
+    auto safe_delete = [](auto **ptr) {
+        if (ptr && *ptr) {
+            delete *ptr;
+            *ptr = nullptr;
         }
-    }
-    return core_avail;
-}
-
-scheduler_t* create_scheduler(const std::string &type, common_t *common, simgrid_execs_t &dag) {
-    static const std::unordered_map<std::string, scheduler_type_t> scheduler_types = {
-        {"min_min", MIN_MIN},
-        {"heft", HEFT},
-        {"fifo", FIFO}
     };
 
-    auto it = scheduler_types.find(type);
-    if (it == scheduler_types.end()) {
-        throw std::runtime_error("Unsupported scheduler: " + type);
-    }
+    if (common && (*common)->topology) hwloc_topology_destroy((*common)->topology);
 
-    common->scheduler_type = it->second;
-
-    if (type == "min_min") return new min_min_scheduler_t(common, dag);
-    if (type == "heft") return new heft_scheduler_t(common, dag);
-    if (type == "fifo") return new fifo_scheduler_t(common, dag);
-
-    return nullptr;  // Should never reach here due to earlier check
-}
-
-mapper_t* create_mapper(const std::string &type, common_t *common, scheduler_t &scheduler) {
-    if (type == "bare_metal") {
-        common->mapper_type = BARE_METAL;
-        return new mapper_bare_metal_t(common, scheduler);
-    }
-    if (type == "simulation") {
-        common->mapper_type = SIMULATION;
-        return new mapper_simulation_t(common, scheduler);
-    }
-    throw std::runtime_error("Unsupported mapper: " + type);
+    safe_delete(mapper);
+    safe_delete(scheduler);
+    safe_delete(dag);
+    safe_delete(common);
 }

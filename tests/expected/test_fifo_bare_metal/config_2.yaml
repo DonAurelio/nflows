@@ -1,6 +1,7 @@
-name_to_thread_locality:
-  Task_5: {numa_id: 0, core_id: 0}
-  Task_4: {numa_id: 0, core_id: 3}
-  Task_3: {numa_id: 0, core_id: 2}
-  Task_1: {numa_id: 0, core_id: 0}
-  Task_2: {numa_id: 0, core_id: 1}
+trace:
+  name_to_thread_locality:
+    Task_5: {numa_id: 0, core_id: 0}
+    Task_4: {numa_id: 0, core_id: 3}
+    Task_3: {numa_id: 0, core_id: 2}
+    Task_1: {numa_id: 0, core_id: 0}
+    Task_2: {numa_id: 0, core_id: 1}

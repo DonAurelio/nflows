@@ -37,9 +37,10 @@ def compute_figure_size(resource_count):
     return (width, height)
 
 def plot_gantt(yaml_data, output_file, time_unit='us', payload_unit='B', use_numa=True, title=None, xlabel=None, ylabel=None, resource_label=None):
+    trace_data = yaml_data['trace']
     resources = sorted(set(
         locality['numa_id'] if use_numa else locality['core_id']
-        for locality in yaml_data['name_to_thread_locality'].values()
+        for locality in trace_data['name_to_thread_locality'].values()
     ))
     resource_map = {r: i for i, r in enumerate(resources)}
     fig, ax = plt.subplots(figsize=compute_figure_size(len(resources)))
@@ -49,8 +50,8 @@ def plot_gantt(yaml_data, output_file, time_unit='us', payload_unit='B', use_num
     for resource in resources:
         ax.axhline(y=resource_map[resource] * offset, color='gray', linestyle='--', linewidth=0.5)
     
-    for task, times in yaml_data['exec_name_compute_offsets'].items():
-        locality = yaml_data['name_to_thread_locality'][task]
+    for task, times in trace_data['exec_name_compute_offsets'].items():
+        locality = trace_data['name_to_thread_locality'][task]
         resource_id = locality['numa_id'] if use_numa else locality['core_id']
         y_position = resource_map[resource_id] * offset
         start = scale_time(times['start'], time_unit)
@@ -59,22 +60,22 @@ def plot_gantt(yaml_data, output_file, time_unit='us', payload_unit='B', use_num
         ax.barh(y_position, end - start, left=start, color=color, edgecolor='black', alpha=0.7)
         ax.text((start + end) / 2, y_position, f"{task}", ha='center', va='center', fontsize=8, color='black', weight='bold')
     
-    for task in yaml_data['exec_name_compute_offsets'].keys():
-        read_offsets = yaml_data['comm_name_read_offsets']
-        write_offsets = yaml_data['comm_name_write_offsets']
+    for task in trace_data['exec_name_compute_offsets'].keys():
+        read_offsets = trace_data['comm_name_read_offsets']
+        write_offsets = trace_data['comm_name_write_offsets']
         
         largest_read = max((read_offsets[comm] for comm in read_offsets if comm.endswith(f"->{task}")), key=lambda x: scale_time(x['end'] - x['start'], time_unit), default=None)
         largest_write = max((write_offsets[comm] for comm in write_offsets if comm.startswith(f"{task}->")), key=lambda x: scale_time(x['end'] - x['start'], time_unit), default=None)
         
         if largest_read:
-            resource_id = yaml_data['name_to_thread_locality'][task]['numa_id'] if use_numa else yaml_data['name_to_thread_locality'][task]['core_id']
+            resource_id = trace_data['name_to_thread_locality'][task]['numa_id'] if use_numa else trace_data['name_to_thread_locality'][task]['core_id']
             y_position = resource_map[resource_id] * offset
             start = scale_time(largest_read['start'], time_unit)
             end = scale_time(largest_read['end'], time_unit)
             ax.barh(y_position, end - start, left=start, color='blue', edgecolor='black', alpha=0.7, hatch='//')
         
         if largest_write:
-            resource_id = yaml_data['name_to_thread_locality'][task]['numa_id'] if use_numa else yaml_data['name_to_thread_locality'][task]['core_id']
+            resource_id = trace_data['name_to_thread_locality'][task]['numa_id'] if use_numa else trace_data['name_to_thread_locality'][task]['core_id']
             y_position = resource_map[resource_id] * offset
             start = scale_time(largest_write['start'], time_unit)
             end = scale_time(largest_write['end'], time_unit)
@@ -102,8 +103,8 @@ if __name__ == "__main__":
     parser.add_argument("--xlabel", type=str, help="Label for the x-axis.")
     parser.add_argument("--ylabel", type=str, help="Label for the y-axis.")
     parser.add_argument("--resource_label", type=str, help="Label for resource names.")
-    
+
     args = parser.parse_args()
-    
+
     data = load_yaml(args.yaml_file)
     plot_gantt(data, args.output_file, args.time_unit, args.payload_unit, args.use_numa, args.title, args.xlabel, args.ylabel, args.resource_label)

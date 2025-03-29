@@ -1,12 +1,15 @@
 {
     "dag_file": "./tests/workflows/test_fifo_bare_metal/config_4.dot",
+
     "scheduler_type": "fifo",
     "scheduler_params": [
         "fifo_prioritize_by_core_id=yes",
         "fifo_prioritize_by_exec_order=yes"
     ],
-    "mapper_type": "bare_metal",
+
+    "mapper_type": "bare-metal",
     "mapper_mem_policy_type": "default",
+    "mapper_mem_bind_numa_node_ids": [],
 
     "core_avail_mask": "0x01000001",
     "flops_per_cycle": 32,
@@ -14,10 +17,9 @@
     "clock_frequency_hz": 1000000000,
 
     "distance_matrices": {
-        "latency": "./tests/system/test_fifo_bare_metal/4_lat.txt",
-        "bandwidth": "./tests/system/test_fifo_bare_metal/4_bw.txt"
+        "latency_ns": "./tests/system/test_fifo_bare_metal/4_lat.txt",
+        "bandwidth_gbps": "./tests/system/test_fifo_bare_metal/4_bw.txt"
     },
 
-    "log_base_name": "./tests/output/test_fifo_bare_metal/config_4",
-    "log_date_format": ""
+    "out_file_name": "./tests/output/test_fifo_bare_metal/config_4.yaml"
 }

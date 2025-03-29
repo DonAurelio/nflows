@@ -1,13 +1,15 @@
 {
     "dag_file": "",
+
     "scheduler_type": "fifo",
     "scheduler_params": [
         "fifo_prioritize_by_core_id=no",
         "fifo_prioritize_by_exec_order=no"
     ],
-    "mapper_type": "bare_metal",
+
+    "mapper_type": "bare-metal",
     "mapper_mem_policy_type": "bind",
-    "mapper_mem_bind_numa_node_id": 0,
+    "mapper_mem_bind_numa_node_ids": [1],
 
     "core_avail_mask": "0xFFFF",
     "flops_per_cycle": 32,
@@ -15,10 +17,9 @@
     "clock_frequency_hz": 1000000000,
 
     "distance_matrices": {
-        "latency": "./evaluation/system/uniform_lat.txt",
-        "bandwidth": "./evaluation/system/uniform_bw.txt"
+        "latency_ns": "./evaluation/system/uniform_lat.txt",
+        "bandwidth_gbps": "./evaluation/system/uniform_bw.txt"
     },
 
-    "log_base_name": "",
-    "log_date_format": ""
+    "out_file_name": ""
 }

@@ -1,9 +1,12 @@
 {
     "dag_file": "./tests/workflows/test_min_min_bare_metal/config_2.dot",
-    "scheduler_type": "min_min",
+
+    "scheduler_type": "min-min",
     "scheduler_params": [],
-    "mapper_type": "bare_metal",
+
+    "mapper_type": "bare-metal",
     "mapper_mem_policy_type": "default",
+    "mapper_mem_bind_numa_node_ids": [],
 
     "core_avail_mask": "0x01000001",
     "flops_per_cycle": 32,
@@ -11,10 +14,9 @@
     "clock_frequency_hz": 1000000000,
 
     "distance_matrices": {
-        "latency": "./tests/system/test_min_min_bare_metal/2_lat.txt",
-        "bandwidth": "./tests/system/test_min_min_bare_metal/2_bw.txt"
+        "latency_ns": "./tests/system/test_min_min_bare_metal/2_lat.txt",
+        "bandwidth_gbps": "./tests/system/test_min_min_bare_metal/2_bw.txt"
     },
 
-    "log_base_name": "./tests/output/test_min_min_bare_metal/config_2",
-    "log_date_format": ""
+    "out_file_name": "./tests/output/test_min_min_bare_metal/config_2.yaml"
 }

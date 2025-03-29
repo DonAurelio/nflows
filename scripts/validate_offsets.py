@@ -38,10 +38,11 @@ def compute_max_offset_time(dependencies, target_key, position):
 
 def validate_offsets(data):
     """Validates execution offsets based on computed vs expected total times."""
-    comm_read_offsets = data.get("comm_name_read_offsets", {})
-    comm_write_offsets = data.get("comm_name_write_offsets", {})
-    exec_compute_offsets = data["exec_name_compute_offsets"]
-    exec_total_offsets = data["exec_name_total_offsets"]
+    trace = data.get("trace", {})
+    comm_read_offsets = trace.get("comm_name_read_offsets", {})
+    comm_write_offsets = trace.get("comm_name_write_offsets", {})
+    exec_compute_offsets = trace["exec_name_compute_offsets"]
+    exec_total_offsets = trace["exec_name_total_offsets"]
 
     right_hand_in_read = {key.split("->")[1] for key in comm_read_offsets.keys()}
     left_hand_in_write = {key.split("->")[0] for key in comm_write_offsets.keys()}
