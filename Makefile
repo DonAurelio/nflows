@@ -1,6 +1,6 @@
 # Compiler and Flags
 CXX := g++
-CXXFLAGS := -Wall -O2 #-g #-DNLOG # Uncomment for debugging: -fsanitize=address
+CXXFLAGS := -Wall -O2 -fno-prefetch-loop-arrays #-g #-DNLOG # Uncomment for debugging: -fsanitize=address
 LIBS := -lsimgrid -lhwloc
 
 # Sources and Headers
@@ -45,8 +45,8 @@ EVALUATION_OUTPUT_DIR := $(EVALUATION_RESULT_DIR)/output
 EVALUATION_CONFIG_DIR := $(EVALUATION_RESULT_DIR)/config
 
 EVALUATION_REPEATS := 10
-EVALUATION_WORKFLOWS := dis_16.dot mon_58.dot red_16.dot
-EVALUATION_GROUPS := min_min fifo heft
+EVALUATION_WORKFLOWS := montage-2mass-01d-001_103_agg.dot montage-2mass-01d-001_103_dis.dot montage-2mass-01d-001_103_red.dot
+EVALUATION_GROUPS := fifo
 EVALUATION_SLEEPTIME := 10
 
 ANALYSIS_WORKFLOWS := $(notdir $(shell find $(EVALUATION_OUTPUT_DIR) -mindepth 1 -maxdepth 1 -type d 2>/dev/null))
@@ -155,16 +155,20 @@ $(TEST_CASES): %: $(EXECUTABLE)
 		LOG_FILE="$(TEST_LOG_DIR)/$@/$${BASE_NAME}.log"; \
 		OUTPUT_FILE="$(TEST_OUTPUT_DIR)/$@/$${BASE_NAME}.yaml"; \
 		EXPECTED_FILE="$(TEST_EXPECTED_DIR)/$@/$${BASE_NAME}.yaml"; \
+		START_TIME=$$(date +%s.%N); \
 		./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) $$config_file > "$$LOG_FILE" 2>&1; \
 		EXECUTABLE_STATUS=$$?; \
+		END_TIME=$$(date +%s.%N); \
+		ELAPSED_TIME_SEC=$$(echo "$$END_TIME - $$START_TIME" | bc); \
+		printf "    Execution time: %.3f s\n" "$$ELAPSED_TIME_SEC" >> "$$LOG_FILE"; \
 		$(VALIDATE_OFFSETS) "$$OUTPUT_FILE" >> "$$LOG_FILE" 2>&1; \
 		VALIDATE_STATUS_OFFSETS=$$?; \
 		$(VALIDATE_OUTPUT) --check-order exec_name_total_offsets "$$OUTPUT_FILE" "$$EXPECTED_FILE" >> "$$LOG_FILE" 2>&1; \
 		VALIDATE_STATUS_OUTPUT=$$?; \
 		if [ $$EXECUTABLE_STATUS -eq 0 ] && [ $$VALIDATE_STATUS_OFFSETS -eq 0 ] && [ $$VALIDATE_STATUS_OUTPUT -eq 0 ]; then \
-			echo "  [SUCCESS] $$config_file"; \
+			printf "  [SUCCESS] $$config_file (Time: %.3f s)\n" "$$ELAPSED_TIME_SEC"; \
 		else \
-			echo "  [FAILED] $$config_file (Execute: $$EXECUTABLE_STATUS, Validate Offsets: $$VALIDATE_STATUS_OFFSETS, Validate Output: $$VALIDATE_STATUS_OUTPUT)"; \
+			printf "  [FAILED] $$config_file (Execute: $$EXECUTABLE_STATUS, Validate Offsets: $$VALIDATE_STATUS_OFFSETS, Validate Output: $$VALIDATE_STATUS_OUTPUT, Time: %.3f s)\n" "$$ELAPSED_TIME_SEC"; \
 		fi; \
 	done
 
@@ -190,14 +194,18 @@ $(EVALUATION_WORKFLOWS): %: $(EXECUTABLE)
 					--output_file "$$CONFIG_FILE" > "$$LOG_FILE" 2>&1 \
 					--params out_file_name="$${OUTPUT_FILE}" dag_file="$(EVALUATION_WORKFLOW_DIR)/$@"; \
 				GENERATE_STATUS=$$?; \
+				START_TIME=$$(date +%s.%N); \
 				./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$${CONFIG_FILE}" >> "$$LOG_FILE" 2>&1; \
 				EXECUTABLE_STATUS=$$?; \
+				END_TIME=$$(date +%s.%N); \
+				ELAPSED_TIME_SEC=$$(echo "$$END_TIME - $$START_TIME" | bc); \
+				printf "    Execution time: %.3f s\n" "$$ELAPSED_TIME_SEC" >> "$$LOG_FILE"; \
 				$(VALIDATE_OFFSETS) "$${OUTPUT_FILE}"  >> "$$LOG_FILE" 2>&1; \
 				VALIDATE_STATUS=$$?; \
 				if [ $$GENERATE_STATUS -eq 0 ] && [ $$EXECUTABLE_STATUS -eq 0 ] && [ $$VALIDATE_STATUS -eq 0 ]; then \
-					echo "  [SUCCESS] $$CONFIG_FILE"; \
+					printf "  [SUCCESS] $$CONFIG_FILE (Time: %.3f s)\n" "$$ELAPSED_TIME_SEC"; \
 				else \
-					echo "  [FAILED] $$CONFIG_FILE (Generate: $$GENERATE_STATUS, Execute: $$EXECUTABLE_STATUS, Validate: $$VALIDATE_STATUS)"; \
+					printf "  [FAILED] $$CONFIG_FILE (Generate: $$GENERATE_STATUS, Execute: $$EXECUTABLE_STATUS, Validate: $$VALIDATE_STATUS, Time: %.3f s)\n" "$$ELAPSED_TIME_SEC"; \
 				fi; \
 				sleep $(EVALUATION_SLEEPTIME); \
 			done; \
