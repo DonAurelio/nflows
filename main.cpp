@@ -21,37 +21,37 @@ int main(int argc, char *argv[])
     }
     catch (const std::out_of_range &e) {
         XBT_ERROR("Error (out of range): %s", e.what());
-        runtime_stop(&common);
+        // runtime_stop(&common);
         runtime_finalize(&common, &dag, &scheduler, &mapper);
         std::exit(EXIT_FAILURE);
     } 
     catch (const std::bad_alloc &e) {
         XBT_ERROR("Error (memory allocation failed): %s", e.what());
-        runtime_stop(&common);
+        // runtime_stop(&common);
         runtime_finalize(&common, &dag, &scheduler, &mapper);
         std::exit(EXIT_FAILURE);
     }
     catch (const nlohmann::detail::type_error &e) {
         XBT_ERROR("JSON Parse Error: %s", e.what());
-        runtime_stop(&common);
+        // runtime_stop(&common);
         runtime_finalize(&common, &dag, &scheduler, &mapper);
         std::exit(EXIT_FAILURE);
     }
     catch (const std::runtime_error &e) {
         XBT_ERROR("Runtime Error: %s", e.what());
-        runtime_stop(&common);
+        // runtime_stop(&common);
         runtime_finalize(&common, &dag, &scheduler, &mapper);
         std::exit(EXIT_FAILURE);
     }
     catch (const std::exception &e) {
         XBT_ERROR("Standard Exception: %s", e.what());
-        runtime_stop(&common);
+        // runtime_stop(&common);
         runtime_finalize(&common, &dag, &scheduler, &mapper);
         std::exit(EXIT_FAILURE);
     }
     catch (...) {
         XBT_ERROR("Unknown Error: An unexpected exception occurred.");
-        runtime_stop(&common);
+        // runtime_stop(&common);
         runtime_finalize(&common, &dag, &scheduler, &mapper);
         std::exit(EXIT_FAILURE);
     }
