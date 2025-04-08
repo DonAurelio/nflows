@@ -1,0 +1,27 @@
+strict digraph {
+mProject_ID0000037 [size=10000000];
+mDiffFit_ID0000042 [size=10000000];
+mDiffFit_ID0000046 [size=10000000];
+mDiffFit_ID0000049 [size=10000000];
+mDiffFit_ID0000050 [size=10000000];
+mDiffFit_ID0000051 [size=10000000];
+mDiffFit_ID0000052 [size=10000000];
+mBackground_ID0000061 [size=10000000];
+root [size=2];
+end [size=2];
+mProject_ID0000037 -> mDiffFit_ID0000042 [size=360788795];
+mProject_ID0000037 -> mDiffFit_ID0000046 [size=360788795];
+mProject_ID0000037 -> mDiffFit_ID0000049 [size=360788795];
+mProject_ID0000037 -> mDiffFit_ID0000050 [size=360788795];
+mProject_ID0000037 -> mDiffFit_ID0000051 [size=360788795];
+mProject_ID0000037 -> mDiffFit_ID0000052 [size=360788795];
+mProject_ID0000037 -> mBackground_ID0000061 [size=360788795];
+mDiffFit_ID0000042 -> end [size=2];
+mDiffFit_ID0000046 -> end [size=2];
+mDiffFit_ID0000049 -> end [size=2];
+mDiffFit_ID0000050 -> end [size=2];
+mDiffFit_ID0000051 -> end [size=2];
+mDiffFit_ID0000052 -> end [size=2];
+mBackground_ID0000061 -> end [size=2];
+root -> mProject_ID0000037 [size=2];
+}
