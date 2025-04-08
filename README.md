@@ -15,3 +15,7 @@
 2. **Support for Execution Trace Reproduction**  
    - Enabling the reproduction of execution traces, particularly data access patterns, in simulation could provide insights for optimizing data access performance in scheduling algorithms before real-time execution. 
    - This feature would facilitate the analysis of specific access patterns, aiding in performance investigations and improvements.  
+
+3. **Prioritize Scheduling Based on Graph Centrality Metrics**
+   - Evaluate the **betweenness centrality** to identify the most important nodes that connect different parts of the workflow.
+   - This feature would provide an alternative scheduling approach to assess its effectiveness under various scenarios.
