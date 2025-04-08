@@ -7,7 +7,8 @@
 #include <fstream>
 #include <x86intrin.h> // For _mm_clflush
 
-#define PAYLOAD_BYTES 4000000000
+#define PAYLOAD_BYTES 4ULL * 1024 * 1024 * 1024
+#define CACHE_LINE_SIZE 64
 
 XBT_LOG_NEW_DEFAULT_CATEGORY(example, "example");
 
@@ -22,8 +23,6 @@ struct thread_locality_s
 typedef struct thread_locality_s thread_locality_t;
 
 double get_time_us();
-
-void nt_memset(char* ptr, int value, size_t size);
 
 std::string join(const std::vector<int> &vec, const std::string &delimiter=",");
 std::vector<int> thread_numa_get(hwloc_topology_t topology, char *address, size_t size);
@@ -54,16 +53,23 @@ int main(int argc, char *argv[])
     // Emulate memory writting by saving data into memory.
     double write_start_timestamp_us = get_time_us();
 
+    // Step 1: Write data using memset
     memset(buffer, 0, payload_bytes);
+    // Step 2: Memory fence to ensure memset is complete
+    _mm_mfence();
 
     double write_end_timestamp_us = get_time_us();
 
     // Get data locality after writing.
     std::vector<int> nlaw = thread_numa_get(topology, buffer, payload_bytes);
 
-    // Flush cache lines to force DRAM access
-    for (size_t i = 0; i < payload_bytes; i++)
-        _mm_clflush(&buffer[i]); 
+    // Step 3: Flush every cache line in the region
+    for (size_t offset = 0; offset < payload_bytes; offset += CACHE_LINE_SIZE) {
+        _mm_clflush(buffer + offset);
+    }
+
+    // Step 4: Final fence to ensure all flushes are complete
+    _mm_mfence();
 
     double read_start_timestemp_us = get_time_us();
 
