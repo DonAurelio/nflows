@@ -11,7 +11,7 @@
     "mapper_mem_policy_type": "bind",
     "mapper_mem_bind_numa_node_ids": [0],
 
-    "core_avail_mask": "0xFF",
+    "core_avail_mask": "0xFFFF",
     "flops_per_cycle": 32,
     "clock_frequency_type": "static",
     "clock_frequency_hz": 1000000000,

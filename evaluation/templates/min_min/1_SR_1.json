@@ -1,11 +1,8 @@
 {
     "dag_file": "",
 
-    "scheduler_type": "fifo",
-    "scheduler_params": [
-        "fifo_prioritize_by_core_id=no",
-        "fifo_prioritize_by_exec_order=no"
-    ],
+    "scheduler_type": "min-min",
+    "scheduler_params": [],
 
     "mapper_type": "bare-metal",
     "mapper_mem_policy_type": "bind",
