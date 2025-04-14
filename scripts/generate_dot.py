@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-@authors: ChatGPT
+@authors: ChatGPT, DeepSeek
 @edited_by: Aurelio Vivas
 @promt:
 
@@ -20,17 +20,42 @@ The files are defined in workflow.specification.files.
 8. Add dependencies between the leave nodes and the end node. Leave nodes are those whose children's properties are an empty list. The size of these dependencies is calculated from the file property of these tasks. Sum the sizeInBytes of the output files and set this value as the dependency size.
 
 This is an example of a json file
+
+I need to update the following script by:
+
+1. Providing an option to change the scale of the calculated flops between two values, [X, Y].
+2. Providing an option to change the scale of the calculated dependency size between two values [W, Z]
+3. Provide an option to place a constant value for all flops.
+4. Provide an option to place a constant value for all deps.
 """
 
 import json
 import networkx as nx
 import argparse
 
+def scale_value(value, old_min, old_max, new_min, new_max):
+    """Scale a value from [old_min, old_max] to [new_min, new_max]"""
+    if old_max == old_min:  # avoid division by zero
+        return int(new_min)
+    return int( ((value - old_min) / (old_max - old_min)) * (new_max - new_min) + new_min )
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate a DOT file from a JSON in wfformat_v1.5.")
     parser.add_argument("input_file", help="Path to the JSON file in wfformat_v1.5.")
     parser.add_argument("output_file", help="Path to the DOT output file.")
-    parser.add_argument("--cpu_speed", default=1e9, help="CPU speed in FLOPS (default: 1e9).")
+    parser.add_argument("--flops_per_cycle", default=32, type=float, help="CPU flops per clock cycle (default: 32).")
+    parser.add_argument("--cycles_per_second", default=1e9, type=float, help="CPU clock frequency in Hz (1/s) (default: 1e9).")
+
+    # Options for FLOPS (node sizes)
+    flops_group = parser.add_mutually_exclusive_group()
+    flops_group.add_argument("--flops_scale_range", nargs=2, metavar=('MIN', 'MAX'), type=float, help="Scale FLOPS values to range [MIN, MAX].")
+    flops_group.add_argument("--flops_scale_percent", type=float, help="Percentage to scale FLOPS values (e.g., 100 for no change, 50 to reduce by half).")
+    flops_group.add_argument("--flops_constant", type=int, help="Set a constant value for all FLOPS (node sizes).")
+
+    # Options for dependency sizes (edge sizes)
+    dep_group = parser.add_mutually_exclusive_group()
+    dep_group.add_argument("--dep_scale_range", nargs=2, metavar=('MIN', 'MAX'), type=float, help="Scale dependency sizes to range [MIN, MAX].")
+    dep_group.add_argument("--dep_constant", type=int, help="Set a constant value for all dependency sizes (edge sizes).")
 
     args = parser.parse_args()
 
@@ -52,33 +77,80 @@ if __name__ == "__main__":
     # Create a dictionary to map task IDs to their runtime in seconds
     task_runtimes = {task['id']: task['runtimeInSeconds'] for task in execution_tasks}
 
+    # Calculate raw FLOPS values for all tasks
+    raw_flops = {task['id']: int(task_runtimes[task['id']] * args.flops_per_cycle * args.cycles_per_second) for task in tasks}
+
     # Add nodes to the graph
     for task in tasks:
         task_id = task['id']
-        # Calculate the size of the node based on runtimeInSeconds
-        # Assuming a hypothetical core processing speed of 1e9 FLOPS (1 GFLOPS)
-        flops = int(task_runtimes[task_id] * float(args.cpu_speed))
-        G.add_node(task_id, size=flops)
+        flops = raw_flops[task_id]
+
+        # Scale FLOPS if requested
+        if args.flops_scale_range:
+            min_flops, max_flops = min(raw_flops.values()), max(raw_flops.values())
+            new_min_flops, new_max_flops = args.flops_scale_range
+            flops = scale_value(flops, min_flops, max_flops, new_min_flops, new_max_flops)
+
+        if args.flops_scale_percent:
+            flops *= args.flops_scale_percent
+
+        if args.flops_constant:
+            flops = args.flops_constant
+        # If a constant value is provided, use it
+        # If no scaling is requested, use the raw FLOPS value
+
+        G.add_node(task_id, size=int(flops))
+
+    # Collect all dependency sizes to calculate scaling parameters if needed
+    dependency_sizes = []
+
+    # First pass to collect all dependency sizes if scaling is requested
+    if args.dep_scale_range:
+        for task in tasks:
+            task_id = task['id']
+
+            # Check parent dependencies
+            for parent in task['parents']:
+                shared_files = set(task['inputFiles']).intersection(set(next(t for t in tasks if t['id'] == parent)['outputFiles']))
+                dependency_size = sum(file_sizes[file] for file in shared_files)
+                dependency_sizes.append(dependency_size)
+
+            # Check child dependencies
+            for child in task['children']:
+                shared_files = set(task['outputFiles']).intersection(set(next(t for t in tasks if t['id'] == child)['inputFiles']))
+                dependency_size = sum(file_sizes[file] for file in shared_files)
+                dependency_sizes.append(dependency_size)
+
+        min_dep, max_dep = min(dependency_sizes), max(dependency_sizes)
+        new_min_dep, new_max_dep = args.dep_scale_range
 
     # Add edges to the graph based on children and parents
     for task in tasks:
         task_id = task['id']
-        children = task['children']
-        parents = task['parents']
-        
+
         # Add edges from parents to the current task
-        for parent in parents:
+        for parent in task['parents']:
             # Calculate the size of the dependency based on shared files
             shared_files = set(task['inputFiles']).intersection(set(next(t for t in tasks if t['id'] == parent)['outputFiles']))
             dependency_size = sum(file_sizes[file] for file in shared_files)
-            G.add_edge(parent, task_id, size=dependency_size)
-        
+            
+            # Scale dependency size if requested
+            if args.dep_scale_range:
+                dependency_size = scale_value(dependency_size, min_dep, max_dep, new_min_dep, new_max_dep)
+
+            G.add_edge(parent, task_id, size = args.dep_constant or dependency_size)
+
         # Add edges from the current task to its children
-        for child in children:
+        for child in task['children']:
             # Calculate the size of the dependency based on shared files
             shared_files = set(task['outputFiles']).intersection(set(next(t for t in tasks if t['id'] == child)['inputFiles']))
             dependency_size = sum(file_sizes[file] for file in shared_files)
-            G.add_edge(task_id, child, size=dependency_size)
+
+            # Scale dependency size if requested
+            if args.dep_scale_range:
+                dependency_size = scale_value(dependency_size, min_dep, max_dep, new_min_dep, new_max_dep)
+
+            G.add_edge(task_id, child, size = args.dep_constant or dependency_size)
 
     # Add a root node and connect it to tasks with no parents
     root_node = 'root'
@@ -87,7 +159,12 @@ if __name__ == "__main__":
         if not task['parents']:
             # Calculate the size of the dependency based on input files
             dependency_size = sum(file_sizes[file] for file in task['inputFiles'])
-            G.add_edge(root_node, task['id'], size=dependency_size)
+
+            # Scale dependency size if requested
+            if args.dep_scale_range:
+                dependency_size = scale_value(dependency_size, min_dep, max_dep, new_min_dep, new_max_dep)
+
+            G.add_edge(root_node, task['id'], size = args.dep_constant or dependency_size)
 
     # Add an end node and connect it to tasks with no children
     end_node = 'end'
@@ -96,7 +173,12 @@ if __name__ == "__main__":
         if not task['children']:
             # Calculate the size of the dependency based on output files
             dependency_size = sum(file_sizes[file] for file in task['outputFiles'])
-            G.add_edge(task['id'], end_node, size=dependency_size)
+            
+            # Scale dependency size if requested
+            if args.dep_scale_range:
+                dependency_size = scale_value(dependency_size, min_dep, max_dep, new_min_dep, new_max_dep)
+            
+            G.add_edge(task['id'], end_node, size = args.dep_constant or dependency_size)
 
     # Write the graph to a DOT file
     nx.drawing.nx_pydot.write_dot(G, args.output_file)

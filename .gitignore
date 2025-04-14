@@ -4,7 +4,7 @@ log
 output
 backups
 config
-results
+results*
 
 # Prerequisites
 *.d

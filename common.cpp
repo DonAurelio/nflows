@@ -408,6 +408,8 @@ void common_comm_name_to_numa_ids_w_create(common_t *common, const std::string& 
 
 std::vector<int> common_comm_name_to_numa_ids_w_get(const common_t *common, const std::string& comm_name)
 {
+    // Assuming common has a mutex member named 'mutex'
+    std::lock_guard<std::mutex> lock(common->comm_maps_mutex);
     try {
         return common->comm_name_to_numa_ids_w.at(comm_name);
     } catch (const std::out_of_range& e) {
@@ -458,6 +460,7 @@ void common_exec_name_to_rcw_time_offset_payload_create(common_t *common, const 
 
 time_range_payload_t common_exec_name_to_rcw_time_offset_payload_get(const common_t *common, const std::string& exec_name)
 {
+    std::lock_guard<std::mutex> lock(common->offset_mutex);
     try {
         return common->exec_name_to_rcw_time_offset_payload.at(exec_name);
     } catch (const std::out_of_range& e) {

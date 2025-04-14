@@ -325,6 +325,8 @@ def compute_payloads(data, df_profile, payload_unit):
         "write_payload_local": scale_payload(write_payload_local, payload_unit),
         "write_payload_remote": scale_payload(write_payload_remote, payload_unit),
         "write_payload_total": scale_payload(write_payload_total, payload_unit),
+        "accesses_payload_local": scale_payload(read_payload_local + write_payload_local, payload_unit),
+        "accesses_payload_remote": scale_payload(read_payload_remote + write_payload_remote, payload_unit),
         "accesses_payload_total": scale_payload(accesses_payload_total, payload_unit),
         "compute_payload_total": scale_payload(compute_payload_total, payload_unit),
     }
@@ -361,6 +363,8 @@ def compute_accesses(df_profile):
         "write_accesses_local": write_accesses_local,
         "write_accesses_remote": write_accesses_remote,
         "write_accesses_total": write_accesses_total,
+        "accesses_local": len(local_accesses),
+        "accesses_remote": len(remote_accesses),
         "accesses_total": accesses_total,
     }
 
@@ -395,6 +399,7 @@ def print_profile(data, matrix_relative_latencies, time_unit, payload_unit, expo
     user_data = data['user']
     trace_data = data['trace']
     runtime_data = data['runtime']
+    workflow_data = data['workflow']
 
     df_profile = get_data_access_profile(trace_data)
     durations = compute_durations(trace_data, df_profile, time_unit)
@@ -417,9 +422,18 @@ def print_profile(data, matrix_relative_latencies, time_unit, payload_unit, expo
         "data_pages_spreadings": len(df_accesses_spread),
     }
 
+    workflow = {
+        "execs_count": workflow_data.get("execs_count", None),
+        "reads_count": workflow_data.get("reads_count", None),
+        "writes_count": workflow_data.get("writes_count", None),
+    }
+
     runtime = {
         "threads_checksum": runtime_data.get("threads_checksum", None),
         "threads_active": runtime_data.get("threads_active", None),
+        "execs_active_count": runtime_data.get("tasks_active_count", None),
+        "reads_active_count": runtime_data.get("reads_active_count", None),
+        "writes_active_count": runtime_data.get("writes_active_count", None),
     }
 
     profile = {
@@ -443,6 +457,7 @@ def print_profile(data, matrix_relative_latencies, time_unit, payload_unit, expo
 
     output_scalars = {
         "system": system,
+        "workflow": workflow,
         "runtime": runtime,
         "machine": machine,
         "profile": profile,
@@ -454,7 +469,9 @@ def print_profile(data, matrix_relative_latencies, time_unit, payload_unit, expo
     }
 
     # Ensure the total matrix is square by reindexing
-    matrix_accesses_total = matrix_accesses_total.reindex(index=matrix_accesses_total.index, columns=matrix_accesses_total.index, fill_value=0)
+    max_dim = max(len(matrix_accesses_total.index), len(matrix_accesses_total.columns))
+    full_index = range(max_dim)
+    matrix_accesses_total = matrix_accesses_total.reindex(index=full_index, columns=full_index, fill_value=0)
     matrix_accesses_total_percent = matrix_accesses_total / matrix_accesses_total.values.sum()
 
     # Prepare output matrices for printing

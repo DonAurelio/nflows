@@ -121,7 +121,7 @@ struct common_s
     name_to_address_t comm_name_to_address;
     name_to_numa_ids_t comm_name_to_numa_ids_r;
     name_to_numa_ids_t comm_name_to_numa_ids_w;
-    std::mutex comm_maps_mutex;  // Protects the 3 maps above
+    mutable std::mutex comm_maps_mutex;  // Protects the 3 maps above
 
     // Execution mappings
     name_to_thread_locality_t exec_name_to_thread_locality;
@@ -138,7 +138,7 @@ struct common_s
     name_to_time_range_payload_t comm_name_to_w_time_offset_payload;
     name_to_time_range_payload_t exec_name_to_c_time_offset_payload;
     name_to_time_range_payload_t exec_name_to_rcw_time_offset_payload;
-    std::mutex offset_mutex;  // Protects all offset-related maps
+    mutable std::mutex offset_mutex;  // Protects all offset-related maps
 };
 typedef struct common_s common_t;
 
