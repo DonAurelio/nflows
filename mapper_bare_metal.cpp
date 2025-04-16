@@ -18,6 +18,14 @@ void Mapper_Bare_Metal::start()
     int selected_core_id;
     unsigned long estimated_completion_time;
 
+    // Timer for selected_execs timeout
+    size_t selected_execs_timeout_s = 0;
+    size_t selected_execs_timeout_max_s = 900; // 15 minutes
+
+    // Timer for selected_core_id timeout
+    size_t selected_core_id_timeout_s = 0;
+    size_t selected_core_id_timeout_max_s = 900; // 15 minutes
+
     // Mandatory previous to initiate any scheduling activity.
     this->scheduler.initialize();
 
@@ -28,15 +36,39 @@ void Mapper_Bare_Metal::start()
         if (!selected_exec)
         {
             XBT_INFO("There are not ready tasks, waiting 5 seconds.");
+            selected_execs_timeout_s += 5;
+
+            if (selected_execs_timeout_s > selected_execs_timeout_max_s)
+            {
+                XBT_ERROR("Timeout waiting for a selected_exec.");
+                throw std::runtime_error("Timeout waiting for a selected_exec.");
+            }
+
             sleep(5);
             continue;
+        }
+        else
+        {
+            selected_execs_timeout_s = 0;
         }
 
         if (selected_core_id == -1)
         {
             XBT_INFO("There are not available cores, waiting 5 seconds.");
+            selected_core_id_timeout_s += 5;
+
+            if (selected_core_id_timeout_s > selected_core_id_timeout_max_s)
+            {
+                XBT_ERROR("Timeout waiting for a selected_core_id.");
+                throw std::runtime_error("Timeout waiting for a selected_core_id.");
+            }
+
             sleep(5);
             continue;
+        }
+        else
+        {
+            selected_core_id_timeout_s = 0;
         }
 
         // Initialize thread data.

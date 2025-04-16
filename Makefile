@@ -196,7 +196,7 @@ $(EVALUATION_WORKFLOWS): %: $(EXECUTABLE)
 					--params out_file_name="$${OUTPUT_FILE}" dag_file="$(EVALUATION_WORKFLOW_DIR)/$@"; \
 				GENERATE_STATUS=$$?; \
 				START_TIME=$$(date +%s.%N); \
-				./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$${CONFIG_FILE}" >> "$$LOG_FILE" 2>&1; \
+				./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$${CONFIG_FILE}" > /dev/null 2>&1; \
 				EXECUTABLE_STATUS=$$?; \
 				END_TIME=$$(date +%s.%N); \
 				ELAPSED_TIME_SEC=$$(echo "$$END_TIME - $$START_TIME" | bc); \
