@@ -44,7 +44,7 @@ std::tuple<int, double> FIFO_Scheduler::get_best_core_id(const simgrid_exec_t *e
     if(fifo_prioritize_by_core_id == "yes")
     {
         // Prioritize cores associated with NUMA nodes that have the most data to read.
-        std::sort(avail_core_ids.begin(), avail_core_ids.end(),
+        std::stable_sort(avail_core_ids.begin(), avail_core_ids.end(),
             [&](int a, int b) {
                 int a_numa_id = hardware_hwloc_numa_id_get_by_core_id(this->common, a);
                 int b_numa_id = hardware_hwloc_numa_id_get_by_core_id(this->common, b);
@@ -142,7 +142,7 @@ std::tuple<simgrid_exec_t *, int, double> FIFO_Scheduler::next()
 
     if(common_scheduler_param_get(common, "fifo_prioritize_by_exec_order") == "yes")
     {
-        std::sort(ready_execs.begin(), ready_execs.end(), [&](simgrid_exec_t *a, simgrid_exec_t *b) {
+        std::stable_sort(ready_execs.begin(), ready_execs.end(), [&](simgrid_exec_t *a, simgrid_exec_t *b) {
             return name_to_data_locality_score[a->get_name()] >
                 name_to_data_locality_score[b->get_name()]; // Higher score first
         });
