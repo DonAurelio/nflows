@@ -4,6 +4,15 @@ XBT_LOG_NEW_DEFAULT_CATEGORY(fifo_scheduler, "Messages specific to this module."
 
 FIFO_Scheduler::FIFO_Scheduler(const common_t *common, simgrid_execs_t &dag) : Base_Scheduler(common, dag)
 {
+    this->avail_numa_ids = hardware_hwloc_numa_ids_get(this->common);
+
+    XBT_DEBUG("Found %ld NUMA nodes with logical indexes: %s", 
+        this->avail_numa_ids.size(), common_join(this->avail_numa_ids).c_str());
+
+    //  Compute priorities for each NUMA node.
+    int size = static_cast<int>(this->avail_numa_ids.size());
+    for (int i = 0; i < size; ++i)
+        this->numa_id_to_priority[this->avail_numa_ids[i]] = (size - i);
 }
 
 FIFO_Scheduler::~FIFO_Scheduler()
@@ -23,41 +32,61 @@ std::tuple<int, double> FIFO_Scheduler::get_best_core_id(const simgrid_exec_t *e
 
     if (avail_core_ids.empty()) return {best_core_id, earliest_finish_time_us};
 
-    // ASSUMPTION:
-    // If data item pages are spread across multiple NUMA domains, we assume
-    // the data is evenly distributed, i.e., all data pages have the same size.
-
-    /* Count the amount of data (bytes) to be read per memory domain. */
-    std::unordered_map<int, double> numa_id_to_payload;
+    // Get all writtings (data items) where this exec is the destination.
     name_to_time_range_payload_t matches = common_comm_name_to_w_time_offset_payload_filter(this->common, exec->get_name());
-
-    for (const auto &[comm_name, time_range_payload] : matches)
-    {
-        std::vector<int> numa_ids = common_comm_name_to_numa_ids_w_get(this->common, comm_name);
-        for (int numa_id : numa_ids)
-            numa_id_to_payload[numa_id] += std::get<2>(time_range_payload) / numa_ids.size();
-    }
 
     std::string fifo_prioritize_by_core_id = common_scheduler_param_get(common, "fifo_prioritize_by_core_id");
     XBT_DEBUG("fifo_prioritize_by_core_id: %s, enabled: %s", fifo_prioritize_by_core_id.c_str(), (fifo_prioritize_by_core_id == "yes") ? "true" : "false");
 
+    std::unordered_map<int, double> numa_id_to_payload;
+    for (int i : this->avail_numa_ids) numa_id_to_payload[i] = 0.0;
+
     if(fifo_prioritize_by_core_id == "yes")
     {
-        // Prioritize cores associated with NUMA nodes that have the most data to read.
-        std::stable_sort(avail_core_ids.begin(), avail_core_ids.end(),
-            [&](int a, int b) {
-                int a_numa_id = hardware_hwloc_numa_id_get_by_core_id(this->common, a);
-                int b_numa_id = hardware_hwloc_numa_id_get_by_core_id(this->common, b);
+        // ASSUMPTION:
+        // If data item pages are spread across multiple NUMA domains, we assume
+        // the data is evenly distributed, i.e., all data pages have the same size.
+        for (const auto &[comm_name, time_range_payload] : matches)
+        {
+            std::vector<int> numa_ids = common_comm_name_to_numa_ids_w_get(this->common, comm_name);
+            /* Count the amount of data (bytes) to be read per memory domain. */
+            for (int numa_id : numa_ids) numa_id_to_payload[numa_id] += std::get<2>(time_range_payload) / numa_ids.size();
+        }
 
-                double a_score = (numa_id_to_payload.find(a_numa_id) != numa_id_to_payload.end()) ? numa_id_to_payload.at(a_numa_id) : 0.0;
-                double b_score = (numa_id_to_payload.find(b_numa_id) != numa_id_to_payload.end()) ? numa_id_to_payload.at(b_numa_id) : 0.0; 
+        // Check if all NUMA nodes have equal payload.
+        constexpr double epsilon = 1e-9;
+        bool all_equal = std::all_of(numa_id_to_payload.begin(), numa_id_to_payload.end(), [&](const auto &pair) {
+            return std::abs(pair.second - numa_id_to_payload.begin()->second) < epsilon;
+        });
 
-                return a_score > b_score; 
-            });
+        XBT_DEBUG("numa_ids_scores_all_equal: %s.", all_equal ? "true" : "false");
+
+        if (all_equal)
+        {
+            for (int numa_id : this->avail_numa_ids)
+            {
+                numa_id_to_payload[numa_id] = static_cast<double>(this->numa_id_to_priority[numa_id]);
+                this->numa_id_to_priority[numa_id] = (this->numa_id_to_priority.at(numa_id) % this->numa_id_to_priority.size()) + 1;
+            }
+        }
+
+        // Prioritize cores associated with NUMA nodes.
+        std::stable_sort(avail_core_ids.begin(), avail_core_ids.end(), [&](int a, int b) {
+            int a_numa_id = hardware_hwloc_numa_id_get_by_core_id(this->common, a);
+            int b_numa_id = hardware_hwloc_numa_id_get_by_core_id(this->common, b);
+
+            double a_score = numa_id_to_payload.at(a_numa_id);
+            double b_score = numa_id_to_payload.at(b_numa_id);
+
+            return a_score > b_score;
+        });
     }
 
-    for (int avail_core_id : avail_core_ids) {
-        XBT_DEBUG("avail_core_id: %d, avail_core_until: %f", avail_core_id, common_core_id_get_avail_until(this->common, avail_core_id));
+    for (int avail_core_id : avail_core_ids)
+    {
+        double avail_core_score = numa_id_to_payload.at(hardware_hwloc_numa_id_get_by_core_id(this->common, avail_core_id));
+        double avail_core_until = common_core_id_get_avail_until(this->common, avail_core_id);
+        XBT_DEBUG("avail_core_id: %d, avail_core_score: %f, avail_core_until: %f", avail_core_id, avail_core_score, avail_core_until);
     }
 
     best_core_id = avail_core_ids.front();

@@ -9,6 +9,8 @@
 class FIFO_Scheduler : public Base_Scheduler
 {
   private:
+    std::vector<int> avail_numa_ids;
+    std::unordered_map<int, int> numa_id_to_priority;
     std::deque<simgrid_exec_t*> queue;
 
     double compute_data_locality_score(simgrid_exec_t *task);

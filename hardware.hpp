@@ -15,3 +15,5 @@ hwloc_membind_policy_t hardware_hwloc_thread_mem_policy_get_from_os(const common
 thread_locality_t hardware_hwloc_thread_get_locality_from_os(const common_t *common);
 
 void hardware_hwloc_thread_bind_to_core_id(thread_data_t *data);
+
+std::vector<int> hardware_hwloc_numa_ids_get(const common_t *common);

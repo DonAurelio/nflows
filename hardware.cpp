@@ -338,3 +338,23 @@ void hardware_hwloc_thread_bind_to_core_id(thread_data_t *data)
     // Clean up
     // thread_data is freed in thread_function.
 }
+
+std::vector<int> hardware_hwloc_numa_ids_get(const common_t *common)
+{
+    std::vector<int> logical_indexes;
+
+    int numa_count = hwloc_get_nbobjs_by_type(common->topology, HWLOC_OBJ_NUMANODE);
+    for (int i = 0; i < numa_count; ++i) {
+        hwloc_obj_t obj = hwloc_get_obj_by_type(common->topology, HWLOC_OBJ_NUMANODE, i);
+        if (obj) {
+            logical_indexes.push_back(obj->logical_index);  // Logical index within NUMA nodes
+        }
+    }
+
+    if (logical_indexes.empty()) {
+        XBT_ERROR("No NUMA nodes found in the topology.");
+        throw std::runtime_error("No NUMA nodes found in the topology.");
+    }
+
+    return logical_indexes;
+}
