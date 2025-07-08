@@ -90,6 +90,7 @@ if __name__ == "__main__":
             min_flops, max_flops = min(raw_flops.values()), max(raw_flops.values())
             new_min_flops, new_max_flops = args.flops_scale_range
             flops = scale_value(flops, min_flops, max_flops, new_min_flops, new_max_flops)
+            assert new_min_flops <= flops <= new_max_flops, f"flops {flops} out of range [{new_min_flops}, {new_max_flops}]"
 
         if args.flops_scale_percent:
             flops *= args.flops_scale_percent
@@ -137,6 +138,7 @@ if __name__ == "__main__":
             # Scale dependency size if requested
             if args.dep_scale_range:
                 dependency_size = scale_value(dependency_size, min_dep, max_dep, new_min_dep, new_max_dep)
+                assert new_min_dep <= dependency_size <= new_max_dep, f"dependency_size {dependency_size} out of range [{new_min_dep}, {new_max_dep}]"
 
             G.add_edge(parent, task_id, size = args.dep_constant or dependency_size)
 
@@ -149,6 +151,7 @@ if __name__ == "__main__":
             # Scale dependency size if requested
             if args.dep_scale_range:
                 dependency_size = scale_value(dependency_size, min_dep, max_dep, new_min_dep, new_max_dep)
+                assert new_min_dep <= dependency_size <= new_max_dep, f"dependency_size {dependency_size} out of range [{new_min_dep}, {new_max_dep}]"
 
             G.add_edge(task_id, child, size = args.dep_constant or dependency_size)
 
@@ -158,13 +161,15 @@ if __name__ == "__main__":
     for task in tasks:
         if not task['parents']:
             # Calculate the size of the dependency based on input files
-            dependency_size = sum(file_sizes[file] for file in task['inputFiles'])
+            # dependency_size = sum(file_sizes[file] for file in task['inputFiles'])
 
             # Scale dependency size if requested
-            if args.dep_scale_range:
-                dependency_size = scale_value(dependency_size, min_dep, max_dep, new_min_dep, new_max_dep)
+            # if args.dep_scale_range:
+                # dependency_size = scale_value(dependency_size, min_dep, max_dep, new_min_dep, new_max_dep)
+                # assert new_min_dep <= dependency_size <= new_max_dep, f"dependency_size {dependency_size} out of range [{new_min_dep}, {new_max_dep}]"
 
-            G.add_edge(root_node, task['id'], size = args.dep_constant or dependency_size)
+            # G.add_edge(root_node, task['id'], size = args.dep_constant or dependency_size)
+            G.add_edge(root_node, task['id'], size = 2) # Placeholder size for root dependencies
 
     # Add an end node and connect it to tasks with no children
     end_node = 'end'
@@ -172,13 +177,15 @@ if __name__ == "__main__":
     for task in tasks:
         if not task['children']:
             # Calculate the size of the dependency based on output files
-            dependency_size = sum(file_sizes[file] for file in task['outputFiles'])
+            # dependency_size = sum(file_sizes[file] for file in task['outputFiles'])
             
             # Scale dependency size if requested
-            if args.dep_scale_range:
-                dependency_size = scale_value(dependency_size, min_dep, max_dep, new_min_dep, new_max_dep)
+            # if args.dep_scale_range:
+            #     dependency_size = scale_value(dependency_size, min_dep, max_dep, new_min_dep, new_max_dep)
+            #     assert new_min_dep <= dependency_size <= new_max_dep, f"dependency_size {dependency_size} out of range [{new_min_dep}, {new_max_dep}]"
             
-            G.add_edge(task['id'], end_node, size = args.dep_constant or dependency_size)
+            # G.add_edge(task['id'], end_node, size = args.dep_constant or dependency_size)
+            G.add_edge(task['id'], end_node, size = 2) # Placeholder size for end dependencies
 
     # Write the graph to a DOT file
     nx.drawing.nx_pydot.write_dot(G, args.output_file)
