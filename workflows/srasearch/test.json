@@ -1,5 +1,5 @@
 {
-    "dag_file": "./workflows/soykb/dot/soykb-chameleon-50fastq-20ch-001.dot",
+    "dag_file": "./workflows/srasearch/dot/srasearch-chameleon-50a-003.dot",
 
     "scheduler_type": "fifo",
     "scheduler_params": [
@@ -21,5 +21,5 @@
         "bandwidth_gbps": "./example/non_uniform_bw.txt"
     },
 
-    "out_file_name": "./workflows/soykb/yaml/soykb-chameleon-50fastq-20ch-001.yaml"
+    "out_file_name": "./workflows/srasearch/yaml/srasearch-chameleon-50a-003.yaml"
 }
