@@ -145,7 +145,7 @@ clean: backup
 		[ -d $$dir ] && rm -rf $$dir/* && find $$dir -type d -empty -exec rmdir {} + || true; \
 	done
 
-# Run test cases
+# RUN TESTS
 .PHONY: $(TEST_CASES)
 $(TEST_CASES): %: $(EXECUTABLE)
 	@echo "Running test case: $@"
@@ -177,7 +177,7 @@ test: $(TEST_CASES)
 
 .PHONY: $(EVALUATION_WORKFLOWS)
 $(EVALUATION_WORKFLOWS): %: $(EXECUTABLE)
-	@echo "Running workflow: $@"
+	@echo "Generate experiment config for workflow: $@"
 	@for group in $(EVALUATION_GROUPS); do \
 		for json_template in $$(ls $(EVALUATION_TEMPLATE_DIR)/$$group/*.json 2>/dev/null); do \
 			BASE_NAME=$$(basename $$json_template .json); \
@@ -185,95 +185,126 @@ $(EVALUATION_WORKFLOWS): %: $(EXECUTABLE)
 			OUTPUT_DIR=$(EVALUATION_OUTPUT_DIR)/$$(basename $@ .dot)/$$group/$$BASE_NAME; \
 			LOG_DIR=$(EVALUATION_LOG_DIR)/$$(basename $@ .dot)/$$group/$$BASE_NAME; \
 			mkdir -p $$CONFIG_DIR $$OUTPUT_DIR $$LOG_DIR; \
-			for repeat in $(shell seq 1 $(EVALUATION_REPEATS)); do \
-				CONFIG_FILE=$$CONFIG_DIR/$${repeat}.json; \
-				OUTPUT_FILE=$$OUTPUT_DIR/$${repeat}.yaml; \
-				LOG_FILE=$$LOG_DIR/$${repeat}.log; \
-				$(GENERATE_CONFIG) \
-					--template "$$json_template" \
-					--output_file "$$CONFIG_FILE" > "$$LOG_FILE" 2>&1 \
-					--params out_file_name="$${OUTPUT_FILE}" dag_file="$(EVALUATION_WORKFLOW_DIR)/$@"; \
-				GENERATE_STATUS=$$?; \
-				START_TIME=$$(date +%s.%N); \
-				./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$${CONFIG_FILE}" > /dev/null 2>&1; \
-				EXECUTABLE_STATUS=$$?; \
-				END_TIME=$$(date +%s.%N); \
-				ELAPSED_TIME_SEC=$$(echo "$$END_TIME - $$START_TIME" | bc); \
-				printf "    Execution time: %.3f s\n" "$$ELAPSED_TIME_SEC" >> "$$LOG_FILE"; \
-				$(VALIDATE_OFFSETS) "$${OUTPUT_FILE}"  >> "$$LOG_FILE" 2>&1; \
-				VALIDATE_STATUS=$$?; \
-				if [ $$GENERATE_STATUS -eq 0 ] && [ $$EXECUTABLE_STATUS -eq 0 ] && [ $$VALIDATE_STATUS -eq 0 ]; then \
-					printf "  [SUCCESS] $$CONFIG_FILE (Time: %.3f s)\n" "$$ELAPSED_TIME_SEC"; \
-				else \
-					printf "  [FAILED] $$CONFIG_FILE (Generate: $$GENERATE_STATUS, Execute: $$EXECUTABLE_STATUS, Validate: $$VALIDATE_STATUS, Time: %.3f s)\n" "$$ELAPSED_TIME_SEC"; \
-				fi; \
-				sleep $(EVALUATION_SLEEPTIME); \
-			done; \
-		done; \
-	done
-
-.PHONY: $(ANALYSIS_WORKFLOWS)
-$(ANALYSIS_WORKFLOWS): %:
-	@echo "Analyzing workflow: $@"
-	@for output_yaml in $$(find $(EVALUATION_OUTPUT_DIR)/$@ -type f -name "*.yaml" 2>/dev/null); do \
-		PROFILE_DIR=$$(dirname $${output_yaml} | sed 's/output/profile/'); \
-		GANTT_DIR=$$(dirname $${output_yaml} | sed 's/output/gantt/'); \
-		LOG_DIR=$$(dirname $${output_yaml} | sed 's/output/log/'); \
-		LOG_FILE=$${LOG_DIR}/$$(basename $${output_yaml} .yaml).log; \
-		mkdir -p $${PROFILE_DIR} $${GANTT_DIR} $${LOG_DIR}; \
-		$(GENERATE_PROFILE) \
-			"$${output_yaml}" \
-			--input_file_rel_lat="$(ANALYSIS_REL_LATENCIES_FILE)" \
-			--time_unit=$(ANALYSIS_PROFILE_TIME_UNIT) \
-			--payload_unit=$(ANALYSIS_PROFILE_PAYLOAD_UNIT) \
-			--export_csv="$${PROFILE_DIR}/$$(basename $${output_yaml} .yaml).csv" >> "$${LOG_FILE}" 2>&1; \
-		PROFILE_STATUS=$$?; \
-		$(GENERATE_GANTT) \
-			"$${output_yaml}" \
-			"$${GANTT_DIR}/$$(basename $${output_yaml} .yaml).png" >> "$${LOG_FILE}" 2>&1; \
-		GANTT_STATUS=$$?; \
-		if [ $$PROFILE_STATUS -eq 0 ] && [ $$GANTT_STATUS -eq 0 ]; then \
-			echo "  [SUCCESS] Profile & Gantt: $$output_yaml"; \
-		else \
-			echo "  [FAILED] Profile & Gantt: $$output_yaml (Profile: $$PROFILE_STATUS, Gantt: $$GANTT_STATUS)"; \
-		fi; \
-	done
-
-	@for profiles_dir in $$(find $(EVALUATION_RESULT_DIR)/profile/$@/**/** -type d 2>/dev/null); do \
-		AGGREG_DIR=$$(dirname $${profiles_dir} | sed 's/profile/aggreg/'); \
-		AGGREG_FILE=$${AGGREG_DIR}/$$(basename $${profiles_dir}).csv; \
-		SUMMARY_DIR=$$(dirname $${profiles_dir} | sed 's/profile/summary/'); \
-		SUMMARY_FILE=$${SUMMARY_DIR}/$$(basename $${profiles_dir}).csv; \
-		LOG_DIR=$$(dirname $${profiles_dir} | sed 's/profile/log/'); \
-		LOG_FILE=$${LOG_DIR}/$$(basename $${profiles_dir}).log; \
-		mkdir -p $${AGGREG_DIR} $${SUMMARY_DIR} $${LOG_DIR}; \
-		$(GENERATE_AGGREG) \
-			"$${profiles_dir}" \
-			"$${SUMMARY_FILE}" \
-			"$${AGGREG_FILE}" >> "$${LOG_FILE}" 2>&1; \
-		AGGREG_STATUS=$$?; \
-		if [ $$AGGREG_STATUS -eq 0 ]; then \
-			echo "  [SUCCESS] Aggreg: $$profiles_dir"; \
-		else \
-			echo "  [FAILED] Aggreg: $$profiles_dir (Aggreg: $$AGGREG_STATUS)"; \
-		fi; \
-	done
-
-	@for aggreg_dir in $$(find $(EVALUATION_RESULT_DIR)/aggreg/$@/** -maxdepth 0 -type d 2>/dev/null); do \
-		FIGURE_DIR=$$(dirname $${aggreg_dir} | sed 's/aggreg/figure/'); \
-		LOG_DIR=$$(dirname $${aggreg_dir} | sed 's/aggreg/log/'); \
-		LOG_FILE=$${LOG_DIR}/$$(basename $${aggreg_dir}).log; \
-		mkdir -p $${FIGURE_DIR} $${LOG_DIR}; \
-		for field in $(ANALYSIS_FIELDS); do \
-			$(GENERATE_AGGREG_PLOT) \
-				"$${aggreg_dir}" \
-				"$${FIGURE_DIR}/$$(basename $${aggreg_dir})_$${field}.png" \
-				--field_name=$${field} >> "$${LOG_FILE}" 2>&1; \
-			PLOT_STATUS=$$?; \
-			if [ $$PLOT_STATUS -eq 0 ]; then \
-				echo "  [SUCCESS] Plot: $$aggreg_dir ($${field})"; \
+			CONFIG_FILE=$$CONFIG_DIR/config.json; \
+			OUTPUT_FILE=$$OUTPUT_DIR/output.yaml; \
+			LOG_FILE=$$LOG_DIR/log.txt; \
+			$(GENERATE_CONFIG) \
+				--template "$$json_template" \
+				--output_file "$$CONFIG_FILE" > "$$LOG_FILE" 2>&1 \
+				--params out_file_name="$${OUTPUT_FILE}" dag_file="$(EVALUATION_WORKFLOW_DIR)/$@"; \
+			GENERATE_STATUS=$$?; \
+			if [ $$GENERATE_STATUS -eq 0 ]; then \
+				printf "  [SUCCESS] $$CONFIG_FILE\n"; \
 			else \
-				echo "  [FAILED] Plot: $$aggreg_dir ($${field}) (Plot: $$PLOT_STATUS)"; \
+				printf "  [FAILED] $$CONFIG_FILE (Generate: $$GENERATE_STATUS)\n"; \
 			fi; \
+			sleep $(EVALUATION_SLEEPTIME); \
 		done; \
 	done
+
+.PHONY: evaluation_config
+evaluation_config: $(EVALUATION_WORKFLOWS)
+
+
+# .PHONY: $(EVALUATION_WORKFLOWS)
+# $(EVALUATION_WORKFLOWS): %: $(EXECUTABLE)
+# 	@echo "Running workflow: $@"
+# 	@for group in $(EVALUATION_GROUPS); do \
+# 		for json_template in $$(ls $(EVALUATION_TEMPLATE_DIR)/$$group/*.json 2>/dev/null); do \
+# 			BASE_NAME=$$(basename $$json_template .json); \
+# 			CONFIG_DIR=$(EVALUATION_CONFIG_DIR)/$$(basename $@ .dot)/$$group/$$BASE_NAME; \
+# 			OUTPUT_DIR=$(EVALUATION_OUTPUT_DIR)/$$(basename $@ .dot)/$$group/$$BASE_NAME; \
+# 			LOG_DIR=$(EVALUATION_LOG_DIR)/$$(basename $@ .dot)/$$group/$$BASE_NAME; \
+# 			mkdir -p $$CONFIG_DIR $$OUTPUT_DIR $$LOG_DIR; \
+# 			for repeat in $(shell seq 1 $(EVALUATION_REPEATS)); do \
+# 				CONFIG_FILE=$$CONFIG_DIR/$${repeat}.json; \
+# 				OUTPUT_FILE=$$OUTPUT_DIR/$${repeat}.yaml; \
+# 				LOG_FILE=$$LOG_DIR/$${repeat}.log; \
+# 				$(GENERATE_CONFIG) \
+# 					--template "$$json_template" \
+# 					--output_file "$$CONFIG_FILE" > "$$LOG_FILE" 2>&1 \
+# 					--params out_file_name="$${OUTPUT_FILE}" dag_file="$(EVALUATION_WORKFLOW_DIR)/$@"; \
+# 				GENERATE_STATUS=$$?; \
+# 				START_TIME=$$(date +%s.%N); \
+# 				./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$${CONFIG_FILE}" > /dev/null 2>&1; \
+# 				EXECUTABLE_STATUS=$$?; \
+# 				END_TIME=$$(date +%s.%N); \
+# 				ELAPSED_TIME_SEC=$$(echo "$$END_TIME - $$START_TIME" | bc); \
+# 				printf "    Execution time: %.3f s\n" "$$ELAPSED_TIME_SEC" >> "$$LOG_FILE"; \
+# 				$(VALIDATE_OFFSETS) "$${OUTPUT_FILE}"  >> "$$LOG_FILE" 2>&1; \
+# 				VALIDATE_STATUS=$$?; \
+# 				if [ $$GENERATE_STATUS -eq 0 ] && [ $$EXECUTABLE_STATUS -eq 0 ] && [ $$VALIDATE_STATUS -eq 0 ]; then \
+# 					printf "  [SUCCESS] $$CONFIG_FILE (Time: %.3f s)\n" "$$ELAPSED_TIME_SEC"; \
+# 				else \
+# 					printf "  [FAILED] $$CONFIG_FILE (Generate: $$GENERATE_STATUS, Execute: $$EXECUTABLE_STATUS, Validate: $$VALIDATE_STATUS, Time: %.3f s)\n" "$$ELAPSED_TIME_SEC"; \
+# 				fi; \
+# 				sleep $(EVALUATION_SLEEPTIME); \
+# 			done; \
+# 		done; \
+# 	done
+
+# .PHONY: $(ANALYSIS_WORKFLOWS)
+# $(ANALYSIS_WORKFLOWS): %:
+# 	@echo "Analyzing workflow: $@"
+# 	@for output_yaml in $$(find $(EVALUATION_OUTPUT_DIR)/$@ -type f -name "*.yaml" 2>/dev/null); do \
+# 		PROFILE_DIR=$$(dirname $${output_yaml} | sed 's/output/profile/'); \
+# 		GANTT_DIR=$$(dirname $${output_yaml} | sed 's/output/gantt/'); \
+# 		LOG_DIR=$$(dirname $${output_yaml} | sed 's/output/log/'); \
+# 		LOG_FILE=$${LOG_DIR}/$$(basename $${output_yaml} .yaml).log; \
+# 		mkdir -p $${PROFILE_DIR} $${GANTT_DIR} $${LOG_DIR}; \
+# 		$(GENERATE_PROFILE) \
+# 			"$${output_yaml}" \
+# 			--input_file_rel_lat="$(ANALYSIS_REL_LATENCIES_FILE)" \
+# 			--time_unit=$(ANALYSIS_PROFILE_TIME_UNIT) \
+# 			--payload_unit=$(ANALYSIS_PROFILE_PAYLOAD_UNIT) \
+# 			--export_csv="$${PROFILE_DIR}/$$(basename $${output_yaml} .yaml).csv" >> "$${LOG_FILE}" 2>&1; \
+# 		PROFILE_STATUS=$$?; \
+# 		$(GENERATE_GANTT) \
+# 			"$${output_yaml}" \
+# 			"$${GANTT_DIR}/$$(basename $${output_yaml} .yaml).png" >> "$${LOG_FILE}" 2>&1; \
+# 		GANTT_STATUS=$$?; \
+# 		if [ $$PROFILE_STATUS -eq 0 ] && [ $$GANTT_STATUS -eq 0 ]; then \
+# 			echo "  [SUCCESS] Profile & Gantt: $$output_yaml"; \
+# 		else \
+# 			echo "  [FAILED] Profile & Gantt: $$output_yaml (Profile: $$PROFILE_STATUS, Gantt: $$GANTT_STATUS)"; \
+# 		fi; \
+# 	done
+
+# 	@for profiles_dir in $$(find $(EVALUATION_RESULT_DIR)/profile/$@/**/** -type d 2>/dev/null); do \
+# 		AGGREG_DIR=$$(dirname $${profiles_dir} | sed 's/profile/aggreg/'); \
+# 		AGGREG_FILE=$${AGGREG_DIR}/$$(basename $${profiles_dir}).csv; \
+# 		SUMMARY_DIR=$$(dirname $${profiles_dir} | sed 's/profile/summary/'); \
+# 		SUMMARY_FILE=$${SUMMARY_DIR}/$$(basename $${profiles_dir}).csv; \
+# 		LOG_DIR=$$(dirname $${profiles_dir} | sed 's/profile/log/'); \
+# 		LOG_FILE=$${LOG_DIR}/$$(basename $${profiles_dir}).log; \
+# 		mkdir -p $${AGGREG_DIR} $${SUMMARY_DIR} $${LOG_DIR}; \
+# 		$(GENERATE_AGGREG) \
+# 			"$${profiles_dir}" \
+# 			"$${SUMMARY_FILE}" \
+# 			"$${AGGREG_FILE}" >> "$${LOG_FILE}" 2>&1; \
+# 		AGGREG_STATUS=$$?; \
+# 		if [ $$AGGREG_STATUS -eq 0 ]; then \
+# 			echo "  [SUCCESS] Aggreg: $$profiles_dir"; \
+# 		else \
+# 			echo "  [FAILED] Aggreg: $$profiles_dir (Aggreg: $$AGGREG_STATUS)"; \
+# 		fi; \
+# 	done
+
+# 	@for aggreg_dir in $$(find $(EVALUATION_RESULT_DIR)/aggreg/$@/** -maxdepth 0 -type d 2>/dev/null); do \
+# 		FIGURE_DIR=$$(dirname $${aggreg_dir} | sed 's/aggreg/figure/'); \
+# 		LOG_DIR=$$(dirname $${aggreg_dir} | sed 's/aggreg/log/'); \
+# 		LOG_FILE=$${LOG_DIR}/$$(basename $${aggreg_dir}).log; \
+# 		mkdir -p $${FIGURE_DIR} $${LOG_DIR}; \
+# 		for field in $(ANALYSIS_FIELDS); do \
+# 			$(GENERATE_AGGREG_PLOT) \
+# 				"$${aggreg_dir}" \
+# 				"$${FIGURE_DIR}/$$(basename $${aggreg_dir})_$${field}.png" \
+# 				--field_name=$${field} >> "$${LOG_FILE}" 2>&1; \
+# 			PLOT_STATUS=$$?; \
+# 			if [ $$PLOT_STATUS -eq 0 ]; then \
+# 				echo "  [SUCCESS] Plot: $$aggreg_dir ($${field})"; \
+# 			else \
+# 				echo "  [FAILED] Plot: $$aggreg_dir ($${field}) (Plot: $$PLOT_STATUS)"; \
+# 			fi; \
+# 		done; \
+# 	done

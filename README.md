@@ -72,12 +72,9 @@ make test
 
 The runtime system relies on three system configuration input files. This information is made available to scheduling algorithms exclusively through the runtime API, allowing them to make decisions based on these values. In parallel, the runtime system obtains information about memory and core locality through the hwloc `library`. System configurations files are described as follows.
 
-
 1. Bandwidth distance matrix (values in GB/s). Examples: [non_uniform_bw.txt](./evaluation/system/non_uniform_bw.txt), [uniform_bw.txt](./evaluation/system/uniform_bw.txt).
-
 2. Latency distance matrix (values in nanoseconds). Examples: [non_uniform_lat.txt](./evaluation/system/non_uniform_bw.txt), [uniform_lat.txt](./evaluation/system/uniform_bw.txt).
-
 3. Relative distances among NUMA domains (dimensionless). Example: [non_uniform_lat_rel.txt](./evaluation/non_uniform_lat_rel.txt).
 
-#### Create the experiment configuration files (or templates) use the existing ones.
+#### Create the experiment configuration files (templates) or use the existing ones.
 #### Generate workflow instances for evaluation.

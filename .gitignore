@@ -40,3 +40,4 @@ results*
 *.out
 *.app
 scheduler
+nflows
