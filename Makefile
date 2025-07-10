@@ -7,7 +7,7 @@ LIBS := -lsimgrid -lhwloc
 HEADERS := $(wildcard *.hpp)
 SOURCES := $(wildcard *.cpp)
 OBJECTS := $(SOURCES:.cpp=.o)
-EXECUTABLE := scheduler
+EXECUTABLE := nflows
 
 # Runtime logging configuration
 RUNTIME_LOG_FLAGS := \
@@ -43,7 +43,6 @@ EVALUATION_RESULT_DIR := ./results
 EVALUATION_LOG_DIR := $(EVALUATION_RESULT_DIR)/log
 EVALUATION_OUTPUT_DIR := $(EVALUATION_RESULT_DIR)/output
 EVALUATION_CONFIG_DIR := $(EVALUATION_RESULT_DIR)/config
-
 
 EVALUATION_SLEEPTIME := 10
 EVALUATION_REPEATS := 5
