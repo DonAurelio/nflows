@@ -205,7 +205,6 @@ $(EVALUATION_WORKFLOWS): %: $(EXECUTABLE)
 .PHONY: evaluation_config
 evaluation_config: $(EVALUATION_WORKFLOWS)
 
-
 # .PHONY: $(EVALUATION_WORKFLOWS)
 # $(EVALUATION_WORKFLOWS): %: $(EXECUTABLE)
 # 	@echo "Running workflow: $@"
