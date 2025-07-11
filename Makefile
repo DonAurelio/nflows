@@ -45,9 +45,10 @@ EVALUATION_OUTPUT_DIR := $(EVALUATION_RESULT_DIR)/output
 EVALUATION_CONFIG_DIR := $(EVALUATION_RESULT_DIR)/config
 
 EVALUATION_SLEEPTIME := 10
-EVALUATION_REPEATS := 5
+EVALUATION_REPEATS := 1
 EVALUATION_GROUPS := $(notdir $(shell find $(EVALUATION_TEMPLATE_DIR) -mindepth 1 -maxdepth 1 -type d))
 EVALUATION_WORKFLOWS := $(notdir $(shell find $(EVALUATION_WORKFLOW_DIR) -mindepth 1 -maxdepth 1 -type f -name "*.dot" 2>/dev/null))
+EVALUATION_CONFIG_DIRS :=  $(notdir $(shell find $(EVALUATION_CONFIG_DIR) -mindepth 1 -maxdepth 1 -type d 2>/dev/null))
 
 ANALYSIS_WORKFLOWS := $(notdir $(shell find $(EVALUATION_OUTPUT_DIR) -mindepth 1 -maxdepth 1 -type d 2>/dev/null))
 ANALYSIS_REL_LATENCIES_FILE := $(EVALUATION_DIR)/system/non_uniform_lat_rel.txt
@@ -175,23 +176,23 @@ $(TEST_CASES): %: $(EXECUTABLE)
 .PHONY: test
 test: $(TEST_CASES)
 
-.PHONY: $(EVALUATION_WORKFLOWS)
-$(EVALUATION_WORKFLOWS): %: $(EXECUTABLE)
-	@echo "Generate experiment config for workflow: $@"
+# Rule: sentinel file depends on input DOT file
+$(EVALUATION_CONFIG_DIR)/%/.generated: $(EVALUATION_WORKFLOW_DIR)/%.dot
+	@echo "[INFO] Generating configs for workflow: $*"
 	@for group in $(EVALUATION_GROUPS); do \
 		for json_template in $$(ls $(EVALUATION_TEMPLATE_DIR)/$$group/*.json 2>/dev/null); do \
 			BASE_NAME=$$(basename $$json_template .json); \
-			CONFIG_DIR=$(EVALUATION_CONFIG_DIR)/$$(basename $@ .dot)/$$group/$$BASE_NAME; \
-			OUTPUT_DIR=$(EVALUATION_OUTPUT_DIR)/$$(basename $@ .dot)/$$group/$$BASE_NAME; \
-			LOG_DIR=$(EVALUATION_LOG_DIR)/$$(basename $@ .dot)/$$group/$$BASE_NAME; \
+			CONFIG_DIR=$(EVALUATION_CONFIG_DIR)/$*/$$group/$$BASE_NAME; \
+			OUTPUT_DIR=$(EVALUATION_OUTPUT_DIR)/$*/$$group/$$BASE_NAME; \
+			LOG_DIR=$(EVALUATION_LOG_DIR)/$*; \
 			mkdir -p $$CONFIG_DIR $$OUTPUT_DIR $$LOG_DIR; \
 			CONFIG_FILE=$$CONFIG_DIR/config.json; \
 			OUTPUT_FILE=$$OUTPUT_DIR/output.yaml; \
 			LOG_FILE=$$LOG_DIR/log.txt; \
 			$(GENERATE_CONFIG) \
 				--template "$$json_template" \
-				--output_file "$$CONFIG_FILE" > "$$LOG_FILE" 2>&1 \
-				--params out_file_name="$${OUTPUT_FILE}" dag_file="$(EVALUATION_WORKFLOW_DIR)/$@"; \
+				--output_file "$$CONFIG_FILE" >> "$$LOG_FILE" 2>&1 \
+				--params out_file_name="$$OUTPUT_FILE" dag_file="$(EVALUATION_WORKFLOW_DIR)/$*.dot"; \
 			GENERATE_STATUS=$$?; \
 			if [ $$GENERATE_STATUS -eq 0 ]; then \
 				printf "  [SUCCESS] $$CONFIG_FILE\n"; \
@@ -201,13 +202,135 @@ $(EVALUATION_WORKFLOWS): %: $(EXECUTABLE)
 			sleep $(EVALUATION_SLEEPTIME); \
 		done; \
 	done
+	@touch $@ # Create the sentinel file to indicate completion
 
-.PHONY: evaluation_config
-evaluation_config: $(EVALUATION_WORKFLOWS)
+
+.PRECIOUS: $(EVALUATION_CONFIG_DIR)/%/.generated
+
+%.json: $(EVALUATION_CONFIG_DIR)/%/.generated
+	@true # This rule is a placeholder to ensure the directory exists
+
+%.yaml: %.json $(EXECUTABLE)
+	@echo "[INFO] Running workflow executions for: $*"
+	@CONFIG_DIR=$(EVALUATION_CONFIG_DIR)/$*; \
+	find $$CONFIG_DIR -name config.json | while read -r CONFIG_FILE; do \
+		for repeat in $(shell seq 1 $(EVALUATION_REPEATS)); do \
+			LOG_FILE=$$(echo "$$CONFIG_FILE" | sed 's|/config/|/log/|' | sed 's|config.json|'"$$repeat"'.log|'); \
+			SRC_FILE=$$(echo "$$CONFIG_FILE" | sed 's|/config/|/output/|' | sed 's|config.json|output.yaml|'); \
+			DST_FILE=$$(echo "$$CONFIG_FILE" | sed 's|/config/|/output/|' | sed 's|config.json|'"$$repeat"'.yaml|'); \
+			mkdir -p "$$(dirname $$LOG_FILE)"; \
+			START_TIME=$$(date +%s.%N); \
+			./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$${CONFIG_FILE}" >  "$$LOG_FILE" 2>&1; \
+			EXECUTABLE_STATUS=$$?; \
+			END_TIME=$$(date +%s.%N); \
+			ELAPSED_TIME_SEC=$$(echo "$$END_TIME - $$START_TIME" | bc); \
+			mv $$SRC_FILE $$DST_FILE; \
+			printf "    Execution time: %.3f s\n" "$$ELAPSED_TIME_SEC" >> "$$LOG_FILE"; \
+			$(VALIDATE_OFFSETS) "$${DST_FILE}"  >> "$$LOG_FILE" 2>&1; \
+			VALIDATE_STATUS=$$?; \
+			if [ $$EXECUTABLE_STATUS -eq 0 ] && [ $$VALIDATE_STATUS -eq 0 ]; then \
+				printf "  [SUCCESS] $$CONFIG_FILE (Time: %.3f s)\n" "$$ELAPSED_TIME_SEC"; \
+			else \
+				printf "  [FAILED] $$CONFIG_FILE (Execute: $$EXECUTABLE_STATUS, Validate: $$VALIDATE_STATUS, Time: %.3f s)\n" "$$ELAPSED_TIME_SEC"; \
+			fi; \
+			sleep $(EVALUATION_SLEEPTIME); \
+		done; \
+	done
+
+# %.yaml: %.json $(EXECUTABLE)
+# 	@CONFIG_DIR=$(EVALUATION_CONFIG_DIR)/$*; \
+# 	find $$CONFIG_DIR -name config.json | while read -r CONFIG_FILE; do \
+# 		for repeat in $(shell seq 1 $(EVALUATION_REPEATS)); do \
+# 			LOG_FILE=$$(echo "$$CONFIG_FILE" | sed 's|/config/|/log/;s|/config\.json$$|/'"$$repeat"'.log|'); \
+# 			START_TIME=$$(date +%s.%N); \
+# 			./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$$CONFIG_FILE" > "$$LOG_FILE" 2>&1; \
+# 			EXECUTABLE_STATUS=$$?; \
+# 			END_TIME=$$(date +%s.%N); \
+# 			ELAPSED_TIME_SEC=$$(echo "$$END_TIME - $$START_TIME" | bc); \
+# 			printf "    Execution time: %.3f s\n" "$$ELAPSED_TIME_SEC" >> "$$LOG_FILE"; \
+# 			$(VALIDATE_OFFSETS) "$${OUTPUT_FILE}" >> "$$LOG_FILE" 2>&1; \
+# 			VALIDATE_STATUS=$$?; \
+# 			if [ $$EXECUTABLE_STATUS -eq 0 ] && [ $$VALIDATE_STATUS -eq 0 ]; then \
+# 				printf "  [SUCCESS] $$CONFIG_FILE (Time: %.3f s)\n" "$$ELAPSED_TIME_SEC"; \
+# 			else \
+# 				printf "  [FAILED] $$CONFIG_FILE (Execute: $$EXECUTABLE_STATUS, Validate: $$VALIDATE_STATUS, Time: %.3f s)\n" "$$ELAPSED_TIME_SEC"; \
+# 			fi; \
+# 			sleep $(EVALUATION_SLEEPTIME); \
+# 		done; \
+# 	done
+
+# Generate configs
+# .PHONY: all-workflows $(addsuffix .json, $(basename $(EVALUATION_WORKFLOWS)))
+
+# all-workflows: $(addsuffix .json, $(basename $(EVALUATION_WORKFLOWS)))
+# 	@echo "All workflow configurations generated."
+
+# .PHONY: $(addsuffix .json, $(basename $(EVALUATION_WORKFLOWS)))
+# $(addsuffix .json, $(basename $(EVALUATION_WORKFLOWS))): %.json: $(EVALUATION_WORKFLOW_DIR)/%.dot
+# 	@echo "Generate experiment configuration for workflow: $*"
+# 	@for group in $(EVALUATION_GROUPS); do \
+# 		for json_template in $$(ls $(EVALUATION_TEMPLATE_DIR)/$$group/*.json 2>/dev/null); do \
+# 			BASE_NAME=$$(basename $$json_template .json); \
+# 			CONFIG_DIR=$(EVALUATION_CONFIG_DIR)/$*/$$group/$$BASE_NAME; \
+# 			OUTPUT_DIR=$(EVALUATION_OUTPUT_DIR)/$*/$$group/$$BASE_NAME; \
+# 			LOG_DIR=$(EVALUATION_LOG_DIR)/$*/$$group/$$BASE_NAME; \
+# 			mkdir -p $$CONFIG_DIR $$OUTPUT_DIR $$LOG_DIR; \
+# 			CONFIG_FILE=$$CONFIG_DIR/config.json; \
+# 			OUTPUT_FILE=$$OUTPUT_DIR/output.yaml; \
+# 			LOG_FILE=$$LOG_DIR/log.txt; \
+# 			$(GENERATE_CONFIG) \
+# 				--template "$$json_template" \
+# 				--output_file "$$CONFIG_FILE" > "$$LOG_FILE" 2>&1 \
+# 				--params out_file_name="$$OUTPUT_FILE" dag_file="$(EVALUATION_WORKFLOW_DIR)/$*.dot"; \
+# 			GENERATE_STATUS=$$?; \
+# 			if [ $$GENERATE_STATUS -eq 0 ]; then \
+# 				printf "  [SUCCESS] $$CONFIG_FILE\n"; \
+# 			else \
+# 				printf "  [FAILED] $$CONFIG_FILE (Generate: $$GENERATE_STATUS)\n"; \
+# 			fi; \
+# 			sleep $(EVALUATION_SLEEPTIME); \
+# 		done; \
+# 	done
+
+# # Allow the directory to be a proxy for completion
+# $(EVALUATION_CONFIG_DIR)/%/: %.json
+# 	@true
+
+# # Run workflow executions if directory exists
+# .PHONY: $(addsuffix .yaml, $(basename $(EVALUATION_WORKFLOWS)))
+# $(addsuffix .yaml, $(basename $(EVALUATION_WORKFLOWS))): %.yaml: $(EVALUATION_CONFIG_DIR)/%/ $(EXECUTABLE)
+# 	@echo "Running workflow executions for: $*"
+
+# .PHONY: $(addsuffix .yaml, $(basename $(EVALUATION_WORKFLOWS)))
+
+# $(addsuffix .yaml, $(basename $(EVALUATION_WORKFLOWS))): %.yaml: $(EVALUATION_CONFIG_DIR)/%/ $(EXECUTABLE)
+# 	@echo "Running workflow executions for: $*"
+
+
+# .PHONY: $(EVALUATION_CONFIG_FILES)
+# $(EVALUATION_CONFIG_FILES): %: $(EXECUTABLE)
+# 	@echo "Running workflow: $@"
+# 	@for repeat in $(shell seq 1 $(EVALUATION_REPEATS)); do \
+# 		LOG_FILE=$$LOG_DIR/$${repeat}.log; \
+# 		START_TIME=$$(date +%s.%N); \
+# 		./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$${CONFIG_FILE}" > /dev/null 2>&1; \
+# 		EXECUTABLE_STATUS=$$?; \
+# 		END_TIME=$$(date +%s.%N); \
+# 		ELAPSED_TIME_SEC=$$(echo "$$END_TIME - $$START_TIME" | bc); \
+# 		printf "    Execution time: %.3f s\n" "$$ELAPSED_TIME_SEC" >> "$$LOG_FILE"; \
+# 		$(VALIDATE_OFFSETS) "$${OUTPUT_FILE}"  >> "$$LOG_FILE" 2>&1; \
+# 		VALIDATE_STATUS=$$?; \
+# 		if [ $$EXECUTABLE_STATUS -eq 0 ] && [ $$VALIDATE_STATUS -eq 0 ]; then \
+# 			printf "  [SUCCESS] $$CONFIG_FILE (Time: %.3f s)\n" "$$ELAPSED_TIME_SEC"; \
+# 		else \
+# 			printf "  [FAILED] $$CONFIG_FILE (Execute: $$EXECUTABLE_STATUS, Validate: $$VALIDATE_STATUS, Time: %.3f s)\n" "$$ELAPSED_TIME_SEC"; \
+# 		fi; \
+# 		sleep $(EVALUATION_SLEEPTIME); \
+# 	done
 
 # .PHONY: $(EVALUATION_WORKFLOWS)
-# $(EVALUATION_WORKFLOWS): %: $(EXECUTABLE)
-# 	@echo "Running workflow: $@"
+# $(EVALUATION_WORKFLOWS): %:
+# 	@echo "Generate experiment configuration for workflow: $@"
 # 	@for group in $(EVALUATION_GROUPS); do \
 # 		for json_template in $$(ls $(EVALUATION_TEMPLATE_DIR)/$$group/*.json 2>/dev/null); do \
 # 			BASE_NAME=$$(basename $$json_template .json); \
@@ -215,31 +338,42 @@ evaluation_config: $(EVALUATION_WORKFLOWS)
 # 			OUTPUT_DIR=$(EVALUATION_OUTPUT_DIR)/$$(basename $@ .dot)/$$group/$$BASE_NAME; \
 # 			LOG_DIR=$(EVALUATION_LOG_DIR)/$$(basename $@ .dot)/$$group/$$BASE_NAME; \
 # 			mkdir -p $$CONFIG_DIR $$OUTPUT_DIR $$LOG_DIR; \
-# 			for repeat in $(shell seq 1 $(EVALUATION_REPEATS)); do \
-# 				CONFIG_FILE=$$CONFIG_DIR/$${repeat}.json; \
-# 				OUTPUT_FILE=$$OUTPUT_DIR/$${repeat}.yaml; \
-# 				LOG_FILE=$$LOG_DIR/$${repeat}.log; \
-# 				$(GENERATE_CONFIG) \
-# 					--template "$$json_template" \
-# 					--output_file "$$CONFIG_FILE" > "$$LOG_FILE" 2>&1 \
-# 					--params out_file_name="$${OUTPUT_FILE}" dag_file="$(EVALUATION_WORKFLOW_DIR)/$@"; \
-# 				GENERATE_STATUS=$$?; \
-# 				START_TIME=$$(date +%s.%N); \
-# 				./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$${CONFIG_FILE}" > /dev/null 2>&1; \
-# 				EXECUTABLE_STATUS=$$?; \
-# 				END_TIME=$$(date +%s.%N); \
-# 				ELAPSED_TIME_SEC=$$(echo "$$END_TIME - $$START_TIME" | bc); \
-# 				printf "    Execution time: %.3f s\n" "$$ELAPSED_TIME_SEC" >> "$$LOG_FILE"; \
-# 				$(VALIDATE_OFFSETS) "$${OUTPUT_FILE}"  >> "$$LOG_FILE" 2>&1; \
-# 				VALIDATE_STATUS=$$?; \
-# 				if [ $$GENERATE_STATUS -eq 0 ] && [ $$EXECUTABLE_STATUS -eq 0 ] && [ $$VALIDATE_STATUS -eq 0 ]; then \
-# 					printf "  [SUCCESS] $$CONFIG_FILE (Time: %.3f s)\n" "$$ELAPSED_TIME_SEC"; \
-# 				else \
-# 					printf "  [FAILED] $$CONFIG_FILE (Generate: $$GENERATE_STATUS, Execute: $$EXECUTABLE_STATUS, Validate: $$VALIDATE_STATUS, Time: %.3f s)\n" "$$ELAPSED_TIME_SEC"; \
-# 				fi; \
-# 				sleep $(EVALUATION_SLEEPTIME); \
-# 			done; \
+# 			CONFIG_FILE=$$CONFIG_DIR/config.json; \
+# 			OUTPUT_FILE=$$OUTPUT_DIR/output.yaml; \
+# 			LOG_FILE=$$LOG_DIR/log.txt; \
+# 			$(GENERATE_CONFIG) \
+# 				--template "$$json_template" \
+# 				--output_file "$$CONFIG_FILE" > "$$LOG_FILE" 2>&1 \
+# 				--params out_file_name="$${OUTPUT_FILE}" dag_file="$(EVALUATION_WORKFLOW_DIR)/$@"; \
+# 			GENERATE_STATUS=$$?; \
+# 			if [ $$GENERATE_STATUS -eq 0 ]; then \
+# 				printf "  [SUCCESS] $$CONFIG_FILE\n"; \
+# 			else \
+# 				printf "  [FAILED] $$CONFIG_FILE (Generate: $$GENERATE_STATUS)\n"; \
+# 			fi; \
+# 			sleep $(EVALUATION_SLEEPTIME); \
 # 		done; \
+# 	done
+
+# .PHONY: $(EVALUATION_CONFIG_FILES)
+# $(EVALUATION_CONFIG_FILES): %: $(EXECUTABLE)
+# 	@echo "Running workflow: $@"
+# 	@for repeat in $(shell seq 1 $(EVALUATION_REPEATS)); do \
+# 		LOG_FILE=$$LOG_DIR/$${repeat}.log; \
+# 		START_TIME=$$(date +%s.%N); \
+# 		./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$${CONFIG_FILE}" > /dev/null 2>&1; \
+# 		EXECUTABLE_STATUS=$$?; \
+# 		END_TIME=$$(date +%s.%N); \
+# 		ELAPSED_TIME_SEC=$$(echo "$$END_TIME - $$START_TIME" | bc); \
+# 		printf "    Execution time: %.3f s\n" "$$ELAPSED_TIME_SEC" >> "$$LOG_FILE"; \
+# 		$(VALIDATE_OFFSETS) "$${OUTPUT_FILE}"  >> "$$LOG_FILE" 2>&1; \
+# 		VALIDATE_STATUS=$$?; \
+# 		if [ $$EXECUTABLE_STATUS -eq 0 ] && [ $$VALIDATE_STATUS -eq 0 ]; then \
+# 			printf "  [SUCCESS] $$CONFIG_FILE (Time: %.3f s)\n" "$$ELAPSED_TIME_SEC"; \
+# 		else \
+# 			printf "  [FAILED] $$CONFIG_FILE (Execute: $$EXECUTABLE_STATUS, Validate: $$VALIDATE_STATUS, Time: %.3f s)\n" "$$ELAPSED_TIME_SEC"; \
+# 		fi; \
+# 		sleep $(EVALUATION_SLEEPTIME); \
 # 	done
 
 # .PHONY: $(ANALYSIS_WORKFLOWS)
