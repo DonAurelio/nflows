@@ -1,6 +1,6 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15811369.svg)](https://doi.org/10.5281/zenodo.15811369)
 
-# nflows: NUMA-aware Runtime Workflow Scheduling System
+# nFlows: NUMA-aware Runtime Workflow Scheduling System
 
 **nFlows** (**N**UMA-Aware Work**flow** Execution Runtime **S**ystem), a C/C++ program built to model, execute (both in simulation and on actual hardware), and analyze scientific workflow scheduling algorithms, specifically considering NUMA (Non-uniform Memory Access) effects in HPC systems. nFlows emulates the execution of workflows with clearly defined structures. It models computational tasks using floating-point operations (FLOPs) and communication payloads in bytes. During execution, it traces tasks and data locality, and records data access performance. This collected data can be accessed by dynamic scheduling algorithms at runtime to improve scheduling decisions. The system leverages POSIX threads (pthreads) for asynchronous task execution and core binding, and the Portable Hardware Locality (hwloc) library to monitor task placement and data locality across NUMA nodes.
 
@@ -46,7 +46,7 @@ source simgrid_source.sh
 ./nflows --log=fifo_scheduler.thres:debug --log=heft_scheduler.thres:debug --log=eft_scheduler.thres:debug --log=hardware.thres:debug ./example/config.json
 ```
 
-## Run tests
+## Run validations [[info](./tests/README.MD)]
 
 1. Create a Python virtualenv.
 
@@ -68,13 +68,48 @@ make test
 
 ## Run evaluation
 
-#### Create the system configuration files or use the existing ones.
+The [evaluation](./evaluation/) folder contains three subfolders [system](./evaluation/system/), [templates](./evaluation/templates/), and [workflows](./evaluation/workflows/).
 
-The runtime system relies on three system configuration input files. This information is made available to scheduling algorithms exclusively through the runtime API, allowing them to make decisions based on these values. In parallel, the runtime system obtains information about memory and core locality through the hwloc `library`. System configurations files are described as follows.
+The **system folder** contains three configuration files:
 
 1. Bandwidth distance matrix (values in GB/s). Examples: [non_uniform_bw.txt](./evaluation/system/non_uniform_bw.txt), [uniform_bw.txt](./evaluation/system/uniform_bw.txt).
 2. Latency distance matrix (values in nanoseconds). Examples: [non_uniform_lat.txt](./evaluation/system/non_uniform_bw.txt), [uniform_lat.txt](./evaluation/system/uniform_bw.txt).
-3. Relative distances among NUMA domains (dimensionless). Example: [non_uniform_lat_rel.txt](./evaluation/non_uniform_lat_rel.txt).
+3. Relative distances among NUMA domains (dimensionless) [Optional]. Example: [non_uniform_lat_rel.txt](./evaluation/non_uniform_lat_rel.txt).
 
-#### Create the experiment configuration files (templates) or use the existing ones.
-#### Generate workflow instances for evaluation.
+These configuration values are exposed exclusively to scheduling algorithms through the runtime API, enabling informed decision-making during execution. In parallel, the runtime system retrieves memory and core locality information via the `hwloc` library. This information is also made accessible to scheduling algorithms at runtime.
+
+The **workflows folder** contains the workflows used for evaluation. 
+
+```
+C_montage-chameleon-2mass-01d-001.dot  
+C_montage-chameleon-2mass-015d-001.dot  
+C_montage-chameleon-2mass-025d-001.dot  
+C_montage-chameleon-dss-05d-001.dot  
+C_montage-chameleon-dss-10d-001.dot  
+C_montage-chameleon-dss-075d-001.dot  
+L_montage-chameleon-2mass-01d-001.dot  
+L_montage-chameleon-2mass-015d-001.dot  
+L_montage-chameleon-2mass-025d-001.dot  
+L_montage-chameleon-dss-05d-001.dot  
+L_montage-chameleon-dss-10d-001.dot  
+L_montage-chameleon-dss-075d-001.dot  
+S_montage-chameleon-2mass-01d-001.dot  
+S_montage-chameleon-2mass-015d-001.dot  
+S_montage-chameleon-2mass-025d-001.dot  
+S_montage-chameleon-dss-05d-001.dot  
+S_montage-chameleon-dss-10d-001.dot  
+S_montage-chameleon-dss-075d-001.dot
+```
+
+```sh
+./scripts/env/bin/python3 ./scripts/generate_dot.py ./workflows/srasearch/raw/srasearch-chameleon-50a-003.json ./workflows/srasearch/dot/srasearch-chameleon-50a-003.dot --dep_constant 4e7 1e8 --flops_constant 10000000
+```
+
+```sh
+./scripts/env/bin/python3 ./scripts/generate_dot.py ./workflows/srasearch/raw/srasearch-chameleon-50a-003.json ./workflows/srasearch/dot/srasearch-chameleon-50a-003.dot --dep_scale_range 4e7 5e7 --flops_constant 10000000
+```
+
+```sh
+./scripts/env/bin/python3 ./scripts/generate_dot.py ./workflows/srasearch/raw/srasearch-chameleon-50a-003.json ./workflows/srasearch/dot/srasearch-chameleon-50a-003.dot --dep_scale_range 4e7 1e8 --flops_constant 10000000
+```
+
