@@ -1,10 +1,6 @@
-# Validation
+# Tests
 
-The proposed and implemented scheduling algorithms, along with the underlying modeling runtime system, were validated based on two credibility and assessment aspects for modeling and simulations proposed in [1]: code verification and solution verification.
-
-The code and solution verification processes in this work integrate *mathematical analysis*, *logical verification*, and *empirical testing*.
-
-Validation is performed through simulation, as the implemented algorithms produce deterministic results (i.e., workflow makespan), which are easily predictable for basic instances.
+**nFlows** was validated following the credibility framework in \cite{blattnig2008towards}, focusing on code and solution verification. To assess runtime correctness, three traditional scheduling algorithms were extended with NUMA awareness, and functional tests were conducted to ensure that the system produces the expected outputs for each algorithm under specific configurations.
 
 ## Min-Min Algorithm 
 

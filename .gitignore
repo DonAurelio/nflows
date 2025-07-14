@@ -5,7 +5,9 @@ log
 output
 backups
 config
-results*
+results
+bin
+obj
 
 # Prerequisites
 *.d
@@ -39,5 +41,4 @@ results*
 *.exe
 *.out
 *.app
-scheduler
 nflows
