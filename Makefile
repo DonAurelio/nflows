@@ -240,7 +240,7 @@ $(EVALUATION_CONFIG_DIR)/%/.generated: $(EVALUATION_WORKFLOW_DIR)/%.dot
 
 .PRECIOUS: $(EVALUATION_SLURM_DIR)/%.slurm
 
-$(EVALUATION_SLURM_DIR)/%.slurm: $(EVALUATION_CONFIG_DIR)/%/.generated
+$(EVALUATION_SLURM_DIR)/%.slurm: $(EVALUATION_CONFIG_DIR)/%/.generated $(EXECUTABLE)
 	@echo "[INFO] Generating SLURM job for: $*"
 	@mkdir -p "$(EVALUATION_SLURM_DIR)"
 	@CONFIG_DIR=$(EVALUATION_CONFIG_DIR)/$*; \
@@ -264,19 +264,3 @@ $(EVALUATION_SLURM_DIR)/%.slurm: $(EVALUATION_CONFIG_DIR)/%/.generated
 # Redirect target (so `make NAME.slurm` works)
 %.slurm: $(EVALUATION_SLURM_DIR)/%.slurm
 	@true
-
-# SLURM_FILE=$(EVALUATION_SLURM_DIR)/$*.slurm; \
-# mkdir -p $$(dirname $$SLURM_FILE); \
-# REPEATS=$(EVALUATION_REPEATS); \
-# GENERATE_SUBMIT --job "$*" \
-# 	--config_file "$$CONFIG_DIR" \
-# 	--execute_command "./$(EXECUTABLE)" \
-# 	--validate_command "$(VALIDATE_OFFSETS)" \
-# 	--repeats $$REPEATS \
-# 	--output "$$SLURM_FILE" >> "$(EVALUATION_LOG_DIR)/$*/slurm_generation.log" 2>&1; \
-# GENERATE_STATUS=$$?; \
-# if [ $$GENERATE_STATUS -eq 0 ]; then \
-# 	printf "  [SUCCESS] $$SLURM_FILE\n"; \
-# else \
-# 	printf "  [FAILED] $$SLURM_FILE (Generate: $$GENERATE_STATUS)\n"; \
-# fi
