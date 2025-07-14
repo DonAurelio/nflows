@@ -6,13 +6,13 @@
 
 ### Content
 
-1. evaluation.
-2. example.
-3. notebooks.
-4. prefetchers.
-5. scripts.
-6. tests.
-7. workflows.
+1. [evaluation](./evaluation/README.MD).
+2. [example](./example/README.MD).
+3. [notebooks](./notebooks/README.MD).
+4. [prefetchers](./prefetchers/README.MD).
+5. [scripts](./scripts/README.MD).
+6. [tests](./tests/README.MD).
+7. [workflows](./workflows/README.MD).
 
 ### Requirements
 
@@ -46,7 +46,7 @@ source simgrid_source.sh
 ./nflows --log=fifo_scheduler.thres:debug --log=heft_scheduler.thres:debug --log=eft_scheduler.thres:debug --log=hardware.thres:debug ./example/config.json
 ```
 
-## Run validations [[info](./tests/README.MD)]
+## Run tests [[more](./tests/README.MD)]
 
 1. Create a Python virtualenv.
 
@@ -66,19 +66,15 @@ virtualenv --python=python3 ./scripts/.env
 make test
 ```
 
-## Run evaluation
+## Run evaluation [[more](./evaluation/README.MD)]
 
-The [evaluation](./evaluation/) folder contains three subfolders [system](./evaluation/system/), [templates](./evaluation/templates/), and [workflows](./evaluation/workflows/).
+1. Ajust [Makefile](./Makefile) to reflect the number of times each workflow should be executed (to compute averages or reduce the impact of outliers).
 
-The **system folder** contains three configuration files:
+```sh
+EVALUATION_REPEATS := 1
+```
 
-1. Bandwidth distance matrix (values in GB/s). Examples: [non_uniform_bw.txt](./evaluation/system/non_uniform_bw.txt), [uniform_bw.txt](./evaluation/system/uniform_bw.txt).
-2. Latency distance matrix (values in nanoseconds). Examples: [non_uniform_lat.txt](./evaluation/system/non_uniform_bw.txt), [uniform_lat.txt](./evaluation/system/uniform_bw.txt).
-3. Relative distances among NUMA domains (dimensionless) [Optional]. Example: [non_uniform_lat_rel.txt](./evaluation/non_uniform_lat_rel.txt).
-
-These configuration values are exposed exclusively to scheduling algorithms through the runtime API, enabling informed decision-making during execution. In parallel, the runtime system retrieves memory and core locality information via the `hwloc` library. This information is also made accessible to scheduling algorithms at runtime.
-
-The **workflows folder** contains the workflows used for evaluation. 
+2. Select one or more of the preconfigured workflows from [./evaluation/workflows](./evaluation/workflows/) for evaluation.
 
 ```
 C_montage-chameleon-2mass-01d-001.dot  
@@ -101,15 +97,50 @@ S_montage-chameleon-dss-10d-001.dot
 S_montage-chameleon-dss-075d-001.dot
 ```
 
-```sh
-./scripts/env/bin/python3 ./scripts/generate_dot.py ./workflows/srasearch/raw/srasearch-chameleon-50a-003.json ./workflows/srasearch/dot/srasearch-chameleon-50a-003.dot --dep_constant 4e7 1e8 --flops_constant 10000000
-```
+3. **[Option 1]** execute one or more of the preconfigured workflows. Each workflow will be executed `EVALUATION_REPEATS` times for every experimental configuration defined in [./evaluation/templates/](./evaluation/templates/).
+All workflow execution and experimental automation logic are defined in the main Makefile. Note: The name of the workflow must end with .yaml. This triggers the execution of the workflow and the generation of the runtime system output.
 
 ```sh
-./scripts/env/bin/python3 ./scripts/generate_dot.py ./workflows/srasearch/raw/srasearch-chameleon-50a-003.json ./workflows/srasearch/dot/srasearch-chameleon-50a-003.dot --dep_scale_range 4e7 5e7 --flops_constant 10000000
+make C_montage-chameleon-2mass-01d-001.yaml
 ```
+
+4. **[Option 2]** generate a slurm submission file for the Slurm Workload Manager System. Note: The name of the workflow must end with .slurm.
 
 ```sh
-./scripts/env/bin/python3 ./scripts/generate_dot.py ./workflows/srasearch/raw/srasearch-chameleon-50a-003.json ./workflows/srasearch/dot/srasearch-chameleon-50a-003.dot --dep_scale_range 4e7 1e8 --flops_constant 10000000
+make C_montage-chameleon-2mass-01d-001.slurm
 ```
 
+The system will create a single submission file per experimental configuration file defined in [./evaluation/templates/](./evaluation/templates/).
+
+```sh 
+[INFO] Generating SLURM job for: S_montage-chameleon-2mass-015d-001
+  [SUCCESS] ./results/slurm/S_montage-chameleon-2mass-015d-001/fifo_8/1_M_1/submit.sbatch
+```
+
+5. Results will be stored in a newly created `results` folder. This folder will include the configuration files generated from [./evaluation/templates/](./evaluation/templates/), the log files (`.log`) produced during each repetition, the output files (`.yaml`) for each repetition, and the Slurm submission file if Option 2 is selected.
+
+```sh
+results/
+├── config
+│   └── S_montage-chameleon-2mass-015d-001
+│       └── fifo_8
+│           └── 1_M_1
+│               └── config.json
+├── log
+│   └── S_montage-chameleon-2mass-015d-001
+│       ├── fifo_8
+│       │   └── 1_M_1
+│       │       └── 1.log
+│       └── log.txt
+├── output
+│   └── S_montage-chameleon-2mass-015d-001
+│       └── fifo_8
+│           └── 1_M_1
+│               └── 1.yaml
+└── slurm
+    ├── S_montage-chameleon-2mass-015d-001
+    │   └── fifo_8
+    │       └── 1_M_1
+    │           └── submit.sbatch
+    └── S_montage-chameleon-2mass-015d-001.slurm
+````
