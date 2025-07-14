@@ -8,6 +8,7 @@ RUNTIME_LOG_FLAGS := \
 	--log=heft_scheduler.thres:debug \
 	--log=eft_scheduler.thres:debug \
 	--log=hardware.thres:debug
+EXECUTABLE := ../bin/nflows $(RUNTIME_LOG_FLAGS)
 
 # Directories and Executables
 SCRIPTS_DIR := ../scripts
@@ -48,6 +49,8 @@ EVALUATION_CONFIG_DIRS :=  $(notdir $(shell find $(EVALUATION_CONFIG_DIR) -minde
 BACKUP_DIR := ../backups
 BACKUP_DIRS := $(EVALUATION_DIR)
 CLEAN_PATHS :=$(EVALUATION_RESULT_DIR)
+
+all: backup
 
 print-%:
 	@echo '$*=$($*)'
@@ -104,7 +107,7 @@ $(EVALUATION_CONFIG_DIR)/%/.generated: $(EVALUATION_WORKFLOW_DIR)/%.dot
 
 .PRECIOUS: $(EVALUATION_CONFIG_DIR)/%/.generated
 
-%.yaml: %.json $(EXECUTABLE)
+%.yaml: %.json
 	@echo "[INFO] Running workflow executions for: $*"
 	@CONFIG_DIR=$(EVALUATION_CONFIG_DIR)/$*; \
 	find $$CONFIG_DIR -name config.json | while read -r CONFIG_FILE; do \
@@ -114,12 +117,12 @@ $(EVALUATION_CONFIG_DIR)/%/.generated: $(EVALUATION_WORKFLOW_DIR)/%.dot
 			DST_FILE=$$(echo "$$CONFIG_FILE" | sed 's|/config/|/output/|' | sed 's|config.json|'"$$repeat"'.yaml|'); \
 			mkdir -p "$$(dirname $$LOG_FILE)"; \
 			START_TIME=$$(date +%s.%N); \
-			./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) "$${CONFIG_FILE}" >  "$$LOG_FILE" 2>&1; \
+			./$(EXECUTABLE) "$${CONFIG_FILE}" >  "$$LOG_FILE" 2>&1; \
 			EXECUTABLE_STATUS=$$?; \
 			END_TIME=$$(date +%s.%N); \
 			ELAPSED_TIME_SEC=$$(echo "$$END_TIME - $$START_TIME" | bc); \
 			mv $$SRC_FILE $$DST_FILE; \
-			printf "    Execution time: %.3f s\n" "$$ELAPSED_TIME_SEC" >> "$$LOG_FILE"; \
+			printf "Execution time: %.3f s\n" "$$ELAPSED_TIME_SEC" >> "$$LOG_FILE"; \
 			$(VALIDATE_OFFSETS) "$${DST_FILE}"  >> "$$LOG_FILE" 2>&1; \
 			VALIDATE_STATUS=$$?; \
 			if [ $$EXECUTABLE_STATUS -eq 0 ] && [ $$VALIDATE_STATUS -eq 0 ]; then \
@@ -133,7 +136,7 @@ $(EVALUATION_CONFIG_DIR)/%/.generated: $(EVALUATION_WORKFLOW_DIR)/%.dot
 
 .PRECIOUS: $(EVALUATION_SLURM_DIR)/%.slurm
 
-$(EVALUATION_SLURM_DIR)/%.slurm: $(EVALUATION_CONFIG_DIR)/%/.generated $(EXECUTABLE)
+$(EVALUATION_SLURM_DIR)/%.slurm: $(EVALUATION_CONFIG_DIR)/%/.generated
 	@echo "[INFO] Generating SLURM job for: $*"
 	@mkdir -p "$(EVALUATION_SLURM_DIR)"
 	@CONFIG_DIR=$(EVALUATION_CONFIG_DIR)/$*; \
