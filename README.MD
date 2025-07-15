@@ -20,7 +20,7 @@
 2. **System Memory Archuitecture:** Non-Uniform Memory Access (NUMA). At least two available NUMA nodes.
 3. **Software:**  simgrid-3.35, python3.10, hwloc 2.7.0, etc. See `simgrid_install.sh` for the list of all dependecies.
 
-### Getting started
+### Run example [more](./example/README.MD)
 
 1. Install requirements
 
@@ -46,7 +46,7 @@ source simgrid_source.sh
 ./bin/nflows --log=fifo_scheduler.thres:debug --log=heft_scheduler.thres:debug --log=eft_scheduler.thres:debug --log=hardware.thres:debug ./example/config.json
 ```
 
-## Run tests [[more](./tests/README.MD)]
+### Run tests [[more](./tests/README.MD)]
 
 1. Create a Python virtualenv.
 
@@ -65,4 +65,3 @@ virtualenv --python=python3 ./scripts/.env
 ```sh
 make test
 ```
-
