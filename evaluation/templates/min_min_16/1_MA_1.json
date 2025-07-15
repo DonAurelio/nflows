@@ -14,8 +14,8 @@
     "clock_frequency_hz": 1000000000,
 
     "distance_matrices": {
-        "latency_ns": "./evaluation/system/non_uniform_lat.txt",
-        "bandwidth_gbps": "./evaluation/system/non_uniform_bw.txt"
+        "latency_ns": "./system/non_uniform_lat.txt",
+        "bandwidth_gbps": "./system/non_uniform_bw.txt"
     },
 
     "out_file_name": ""

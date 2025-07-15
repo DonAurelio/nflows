@@ -73,7 +73,13 @@ void runtime_initialize(common_t **common, simgrid_execs_t **dag, scheduler_t **
             throw std::runtime_error("Invalid clock frequency type enum value");
     }
 
-    (*common)->out_file_name = data["out_file_name"];
+    const char* nflows_output_file_name = std::getenv("NFLOWS_OUTPUT_FILE_NAME");
+
+    if (nflows_output_file_name) {
+        (*common)->out_file_name = nflows_output_file_name;
+    } else {
+        (*common)->out_file_name = data["out_file_name"];
+    }
 
     (*common)->distance_lat_ns = common_distance_matrix_read_from_txt(data["distance_matrices"]["latency_ns"]);
     (*common)->distance_bw_gbps = common_distance_matrix_read_from_txt(data["distance_matrices"]["bandwidth_gbps"]);
