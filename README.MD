@@ -20,7 +20,7 @@
 2. **System Memory Archuitecture:** Non-Uniform Memory Access (NUMA). At least two available NUMA nodes.
 3. **Software:**  simgrid-3.35, python3.10, hwloc 2.7.0, etc. See `simgrid_install.sh` for the list of all dependecies.
 
-### Run example [more](./example/README.MD)
+### Run example [[more](./example/README.MD)]
 
 1. Install requirements
 
