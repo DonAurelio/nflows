@@ -20,6 +20,57 @@ This enables the scheduler to make NUMA-aware scheduling decisions. In parallel,
 
 ### The `templates` folder
 
+Contains experimental configuration files grouped into folders. These groups determine how the results will be organized. Each workflow is evaluated against all experimental configurations defined in the templates folder. A new configuration is automatically created by varying the `dag_file` and `out_file_name` fields in the configuration file when the workflow is executed.
+
+```sh
+templates
+├── fifo_16
+│   ├── 1_MA_1.json
+│   ├── 1_M_1.json
+│   ├── 1_SL_1.json
+│   └── 1_SR_1.json
+├── fifo_24
+│   ├── 1_MA_1.json
+│   ├── 1_M_1.json
+│   ├── 1_SL_1.json
+│   └── 1_SR_1.json
+├── fifo_8
+│   ├── 1_MA_1.json
+│   ├── 1_M_1.json
+│   ├── 1_SL_1.json
+│   └── 1_SR_1.json
+├── heft_16
+│   ├── 1_MA_1.json
+│   ├── 1_M_1.json
+│   ├── 1_SL_1.json
+│   └── 1_SR_1.json
+├── heft_24
+│   ├── 1_MA_1.json
+│   ├── 1_M_1.json
+│   ├── 1_SL_1.json
+│   └── 1_SR_1.json
+├── heft_8
+│   ├── 1_MA_1.json
+│   ├── 1_M_1.json
+│   ├── 1_SL_1.json
+│   └── 1_SR_1.json
+├── min_min_16
+│   ├── 1_MA_1.json
+│   ├── 1_M_1.json
+│   ├── 1_SL_1.json
+│   └── 1_SR_1.json
+├── min_min_24
+│   ├── 1_MA_1.json
+│   ├── 1_M_1.json
+│   ├── 1_SL_1.json
+│   └── 1_SR_1.json
+└── min_min_8
+    ├── 1_MA_1.json
+    ├── 1_M_1.json
+    ├── 1_SL_1.json
+    └── 1_SR_1.json
+```
+
 ### The `workflows` folder 
 
 Contains the workflows used for evaluation. The workflows were downloaded from the [WfInstances browser](https://wfinstances.ics.hawaii.edu/).. Since the workflow traces were provided in JSON format, the [generate_dot.py](../scripts/generate_dot.py) script was used to generate the DOT input files required by the runtime system. To handle parallel dependencies between tasks sharing multiple files, the script consolidates data items with identical filenames between parent outputs and child inputs.
