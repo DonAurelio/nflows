@@ -5,16 +5,33 @@ from pathlib import Path
 
 TEMPLATE = """#!/bin/bash
 #SBATCH --job-name={job}
-#SBATCH --output={log_dir}/slurm_%A_%a.out
-#SBATCH --error={log_dir}/slurm_%A_%a.err
-#SBATCH --exclusive
+#SBATCH --output={log_dir}/%a.out
+#SBATCH --error={log_dir}/%a.err
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=$(nproc)
 #SBATCH --mem=0
 #SBATCH --array=1-{repeats}
+#SBATCH --exclusive
+
+# --- Validation block ---
+# Get physical cores on the node (physical cores = sockets * cores per socket)
+PHYSICAL_CORES=$(nproc)
+
+# Get what SLURM allocated
+ALLOCATED_CORES=${{SLURM_CPUS_PER_TASK:-0}}
+
+# Compare
+if [[ "$ALLOCATED_CORES" -ne "$PHYSICAL_CORES" ]]; then
+  echo "ERROR: SLURM allocated $ALLOCATED_CORES CPUs, but $PHYSICAL_CORES physical cores are available."
+  echo "Make sure to submit the job with --cpus-per-task=$PHYSICAL_CORES"
+  exit 1
+fi
+
+echo "Validation OK: SLURM_CPUS_PER_TASK=$ALLOCATED_CORES matches physical cores=$PHYSICAL_CORES"
+
+# --- Run your program here ---
 
 export NFLOWS_CONFIG_FILE="{config_file}"
-export NFLOWS_OUTPUT_FILE_NAME="$(echo "$NFLOWS_CONFIG_FILE" | sed 's|/config/|/output/|' | sed "s|config.json|${{SLURM_ARRAY_JOB_ID}}_${{SLURM_ARRAY_TASK_ID}}.yaml|")"
+export NFLOWS_OUTPUT_FILE_NAME="$(echo "$NFLOWS_CONFIG_FILE" | sed 's|/config/|/output/|' | sed "s|config.json|${{SLURM_ARRAY_TASK_ID}}.yaml|")"
 
 START_TIME=$(date +%s.%N)
 {execute_command}
