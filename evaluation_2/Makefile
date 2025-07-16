@@ -117,7 +117,7 @@ $(EVALUATION_CONFIG_DIR)/%/.generated: $(EVALUATION_WORKFLOW_DIR)/%.dot
 			DST_FILE=$$(echo "$$CONFIG_FILE" | sed 's|/config/|/output/|' | sed 's|config.json|'"$$repeat"'.yaml|'); \
 			mkdir -p "$$(dirname $$LOG_FILE)"; \
 			START_TIME=$$(date +%s.%N); \
-			./$(EXECUTABLE) "$${CONFIG_FILE}" >  "$$LOG_FILE" 2>&1; \
+			$(EXECUTABLE) "$${CONFIG_FILE}" >  "$$LOG_FILE" 2>&1; \
 			EXECUTABLE_STATUS=$$?; \
 			END_TIME=$$(date +%s.%N); \
 			ELAPSED_TIME_SEC=$$(echo "$$END_TIME - $$START_TIME" | bc); \
@@ -134,6 +134,9 @@ $(EVALUATION_CONFIG_DIR)/%/.generated: $(EVALUATION_WORKFLOW_DIR)/%.dot
 		done; \
 	done
 
+.PHONY: all-yamls
+all-yamls: $(addsuffix .yaml, $(basename $(EVALUATION_WORKFLOWS)))
+
 .PRECIOUS: $(EVALUATION_SLURM_DIR)/%.slurm
 
 $(EVALUATION_SLURM_DIR)/%.slurm: $(EVALUATION_CONFIG_DIR)/%/.generated
@@ -142,11 +145,14 @@ $(EVALUATION_SLURM_DIR)/%.slurm: $(EVALUATION_CONFIG_DIR)/%/.generated
 	@CONFIG_DIR=$(EVALUATION_CONFIG_DIR)/$*; \
 	find $$CONFIG_DIR -name config.json | while read -r CONFIG_FILE; do \
 		SLURM_FILE=$$(echo "$$CONFIG_FILE" | sed 's|/config/|/slurm/|' | sed 's|config.json|submit.sbatch|'); \
+		LOG_DIR=$$(echo "$$CONFIG_FILE" | sed 's|/config/|/log/|' | sed 's|config.json||'); \
+		mkdir -p "$$LOG_DIR"; \
 		$(GENERATE_SUBMIT) --job "$*" \
-			--config_file "$$CONFIG_DIR" \
+			--config_file "$$CONFIG_FILE" \
 			--execute_command "./$(EXECUTABLE) $(RUNTIME_LOG_FLAGS) $${CONFIG_FILE}" \
 			--validate_command "$(VALIDATE_OFFSETS)" \
 			--repeats $(EVALUATION_REPEATS) \
+			--log_dir "$$LOG_DIR" \
 			--output "$$SLURM_FILE" > /dev/null 2>&1; \
 		GENERATE_STATUS=$$?; \
 		if [ $$GENERATE_STATUS -eq 0 ]; then \
@@ -156,7 +162,7 @@ $(EVALUATION_SLURM_DIR)/%.slurm: $(EVALUATION_CONFIG_DIR)/%/.generated
 		fi; \
 	done
 	@touch $@ # Create the sentinel file to indicate completion
-	
+
 # Redirect target (so `make NAME.slurm` works)
 %.slurm: $(EVALUATION_SLURM_DIR)/%.slurm
 	@true
