@@ -84,9 +84,16 @@ void runtime_initialize(common_t **common, simgrid_execs_t **dag, scheduler_t **
     (*common)->distance_lat_ns = common_distance_matrix_read_from_txt(data["distance_matrices"]["latency_ns"]);
     (*common)->distance_bw_gbps = common_distance_matrix_read_from_txt(data["distance_matrices"]["bandwidth_gbps"]);
 
-    size_t core_count;
-    (*common)->core_avail = common_core_avail_mask_to_vect(std::stoull(data["core_avail_mask"].get<std::string>(), nullptr, 16), core_count);
-    (*common)->core_avail_until.resize(core_count, 0.0);
+    std::string core_avail_mask = data["core_avail_mask"].get<std::string>();
+    if (!core_avail_mask.empty()) {
+        size_t core_count;
+        (*common)->core_avail = common_core_avail_mask_to_vect(std::stoull(data["core_avail_mask"].get<std::string>(), nullptr, 16), core_count);
+        (*common)->core_avail_until.resize(core_count, 0.0);
+    } else {
+        std::vector<unsigned> core_avail_ids = data["core_avail_ids"].get<std::vector<unsigned>>();
+        (*common)->core_avail = common_core_avail_ids_to_vect(core_avail_ids);
+        (*common)->core_avail_until.resize(((*common)->core_avail).size(), 0.0);
+    }
 
     *scheduler = nullptr;
     const std::string scheduler_type = data["scheduler_type"];
