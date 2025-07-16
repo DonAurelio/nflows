@@ -42,7 +42,7 @@ EVALUATION_CONFIG_DIR := $(EVALUATION_RESULT_DIR)/config
 EVALUATION_SLURM_DIR := $(EVALUATION_RESULT_DIR)/slurm
 
 EVALUATION_SLEEPTIME := 10
-EVALUATION_REPEATS := 1
+EVALUATION_REPEATS := 5
 EVALUATION_GROUPS := $(notdir $(shell find $(EVALUATION_TEMPLATE_DIR) -mindepth 1 -maxdepth 1 -type d))
 EVALUATION_WORKFLOWS := $(notdir $(shell find $(EVALUATION_WORKFLOW_DIR) -mindepth 1 -maxdepth 1 -type f -name "*.dot" 2>/dev/null))
 EVALUATION_CONFIG_DIRS :=  $(notdir $(shell find $(EVALUATION_CONFIG_DIR) -mindepth 1 -maxdepth 1 -type d 2>/dev/null))
