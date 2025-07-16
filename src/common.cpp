@@ -51,10 +51,32 @@ std::vector<bool> common_core_avail_mask_to_vect(uint64_t mask, size_t &core_cou
 
     std::vector<bool> core_avail(core_count, false);
     for (size_t i = 0; i < core_count; ++i) {
-        if (mask & (1ULL << i)) {
+        size_t idx = core_count - 1 - i;
+        if (mask & (1ULL << idx)) {
             core_avail[i] = true;
         }
     }
+    return core_avail;
+}
+
+std::vector<bool> common_core_avail_ids_to_vect(std::vector<unsigned>& avail_core_ids)
+{
+    // Step 1: Find the maximum ID to determine the vector size
+    unsigned max_id = 0;
+    for (unsigned id : avail_core_ids) {
+        if (id > max_id) {
+            max_id = id;
+        }
+    }
+
+    // Step 2: Create a boolean vector of size max_id + 1
+    std::vector<bool> core_avail(max_id + 1, false);
+
+    // Step 3: Set true at each position indicated by the input IDs
+    for (unsigned id : avail_core_ids) {
+        core_avail[id] = true;
+    }
+
     return core_avail;
 }
 
