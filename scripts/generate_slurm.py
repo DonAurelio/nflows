@@ -5,8 +5,8 @@ from pathlib import Path
 
 TEMPLATE = """#!/bin/bash
 #SBATCH --job-name={job}
-#SBATCH --output={log_dir}/%a.out
-#SBATCH --error={log_dir}/%a.err
+#SBATCH --output={log_dir}%a.out
+#SBATCH --error={log_dir}%a.err
 #SBATCH --ntasks=1
 #SBATCH --mem=0
 #SBATCH --array=1-{repeats}
