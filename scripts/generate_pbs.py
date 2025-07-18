@@ -4,16 +4,6 @@ import argparse
 from pathlib import Path
 
 TEMPLATE = """#!/bin/bash
-#PBS -q cpl_8354H 
-#PBS -N {job}
-#PBS -o {log_dir}$PBS_ARRAYID.out
-#PBS -e {log_dir}$PBS_ARRAYID.err
-#PBS -l select=1:ncpus=1:mem=0
-#PBS -J 1-{repeats}
-#PBS -l walltime=01:00:00
-
-cd $PBS_O_WORKDIR
-
 # --- Validation block ---
 # Get physical cores on the node
 PHYSICAL_CORES=$(nproc)
@@ -32,7 +22,7 @@ fi
 # --- Run your program here ---
 
 export NFLOWS_CONFIG_FILE="{config_file}"
-export NFLOWS_OUTPUT_FILE_NAME="$(echo "$NFLOWS_CONFIG_FILE" | sed 's|/config/|/output/|' | sed "s|config.json|${{PBS_ARRAYID}}.yaml|")"
+export NFLOWS_OUTPUT_FILE_NAME="$(echo "$NFLOWS_CONFIG_FILE" | sed 's|/config/|/output/|' | sed "s|config.json|${{COBALT_JOBID}}.yaml|")"
 
 START_TIME=$(date +%s.%N)
 {execute_command}
