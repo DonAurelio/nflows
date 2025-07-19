@@ -25,9 +25,9 @@ for json_file in "$INPUT_FOLDER"/*.json; do
   dot_L="$OUTPUT_FOLDER/L_${filename}.dot"
 
   # Generate the workflows
-  python3 ./scripts/generate_dot.py "$json_file" "$dot_C" --dep_constant 40000000 --flops_constant 10000000
-  python3 ./scripts/generate_dot.py "$json_file" "$dot_S" --dep_scale_range 4e7 5e7 --flops_constant 10000000
-  python3 ./scripts/generate_dot.py "$json_file" "$dot_L" --dep_scale_range 4e7 1e8 --flops_constant 10000000
+  python3 generate_dot.py "$json_file" "$dot_C" --dep_constant 40000000 --flops_constant 10000000
+  python3 generate_dot.py "$json_file" "$dot_S" --dep_scale_range 4e7 5e7 --flops_constant 10000000
+  python3 generate_dot.py "$json_file" "$dot_L" --dep_scale_range 4e7 1e8 --flops_constant 10000000
 done
 
 echo "Workflows generated in $OUTPUT_FOLDER"

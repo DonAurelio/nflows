@@ -11,7 +11,7 @@ TEMPLATE = """#!/bin/bash
 #SBATCH --mem=0
 #SBATCH --array=1-{repeats}
 #SBATCH --exclusive
-#SBATCH --time=00:30:00
+#SBATCH --time=00:20:00
 
 # --- Validation block ---
 # Get physical cores on the node (physical cores = sockets * cores per socket)
