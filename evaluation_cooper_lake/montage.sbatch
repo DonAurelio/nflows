@@ -15,4 +15,10 @@ else
 fi
 
 # --- Run your program here ---
-
+COMM_PAYLOAD_SIZE=("C" "S" "L")
+for size in "${COMM_PAYLOAD_SIZE[@]}"; do
+  make \
+    "${size}_montage-chameleon-2mass-015d-001.yaml" \
+    "${size}_montage-chameleon-2mass-025d-001.yaml" \
+    "${size}_montage-chameleon-dss-05d-001.yaml"
+done
