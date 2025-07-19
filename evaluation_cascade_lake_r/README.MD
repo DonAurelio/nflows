@@ -73,7 +73,7 @@ templates
 
 ### The `workflows` folder 
 
-Contains the workflows used for evaluation. The workflows were downloaded from the [WfInstances browser](https://wfinstances.ics.hawaii.edu/).. Since the workflow traces were provided in JSON format, the [generate_dot.py](../scripts/generate_dot.py) script was used to generate the DOT input files required by the runtime system. To handle parallel dependencies between tasks sharing multiple files, the script consolidates data items with identical filenames between parent outputs and child inputs.
+Contains the workflows used for evaluation. The workflows were downloaded from the [WfInstances browser](https://wfinstances.ics.hawaii.edu/). Since the workflow traces were provided in JSON format, the [generate_dot.py](../scripts/generate_dot.py) script was used to generate the DOT input files required by the runtime system. To handle parallel dependencies between tasks sharing multiple files, the script consolidates data items with identical filenames between parent outputs and child inputs.
 
 We considered three variations of each workflow. All variations use a constant computation payload of 10 MFlops but differ in communication payload: constant (40 MB), small (40–50 MB), and large (40–100 MB). The communication payload ranges scale the original values in the workflow traces to match the specified range while preserving the original statistical distribution. Input and output files defined in the workflows are not considered during scaling or execution.
 
