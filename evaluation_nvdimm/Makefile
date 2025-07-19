@@ -161,6 +161,7 @@ $(EVALUATION_SLURM_DIR)/%.slurm: $(EVALUATION_CONFIG_DIR)/%/.generated
 			--log_dir "$$LOG_DIR" \
 			--output "$$SLURM_FILE" >> "$$WORKFLOW_LOG_FILE" 2>&1; \
 		GENERATE_STATUS=$$?; \
+		chmod +x "$$SLURM_FILE"; \
 		if [ $$GENERATE_STATUS -eq 0 ]; then \
 			printf "  [SUCCESS] $$SLURM_FILE\n"; \
 		else \
@@ -213,6 +214,7 @@ $(EVALUATION_PBS_DIR)/%.pbs: $(EVALUATION_CONFIG_DIR)/%/.generated
 			--log_dir "$$LOG_DIR" \
 			--output "$$PBS_FILE" >> "$$WORKFLOW_LOG_FILE" 2>&1; \
 		GENERATE_STATUS=$$?; \
+		chmod +x "$$PBS_FILE"; \
 		if [ $$GENERATE_STATUS -eq 0 ]; then \
 			printf "  [SUCCESS] $$PBS_FILE\n"; \
 		else \
