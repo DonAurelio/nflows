@@ -8,7 +8,7 @@
     "mapper_mem_policy_type": "default",
     "mapper_mem_bind_numa_node_ids": [],
 
-    "core_avail_mask": "0x0F",
+    "core_avail_mask": "0xF",
     "flops_per_cycle": 1000000,
     "clock_frequency_type": "array",
     "clock_frequencies_hz": [1, 2, 4, 8],
