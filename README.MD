@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/DonAurelio/nflows/refs/heads/main/logo.png"
      align="right"
-     width="30%"
+     width="10%"
      alt="nFlows logo\">
 
 # nFlows: NUMA-Aware Workflow Execution System
