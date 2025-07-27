@@ -4,14 +4,19 @@
 
 # Compiler and Flags
 CXX := g++
-CXXFLAGS := -Wall -O2 -fno-prefetch-loop-arrays -Iinclude #-g #-DNLOG # Uncomment for debugging: -fsanitize=address
+#-g -DNLOG -fsanitize=address
+CXXFLAGS := -Wall -O2 -fno-prefetch-loop-arrays -Iinclude -Wl,-rpath,/usr/local/lib
 LIBS := -lsimgrid -lhwloc
 
 SRC_DIR := src
 INC_DIR := include
 OBJ_DIR := obj
 BIN_DIR := bin
-TEST_DIR := tests
+
+# Installation
+PREFIX ?= /usr/local
+INSTALL_BIN_DIR := $(PREFIX)/bin
+INSTALL_INC_DIR := $(PREFIX)/include/nflows
 
 # Source and object files
 SOURCES := $(wildcard $(SRC_DIR)/*.cpp)
@@ -19,20 +24,17 @@ OBJECTS := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SOURCES))
 TARGET := $(BIN_DIR)/nflows
 
 # Validation Scripts
-SCRIPTS_DIR := ./scripts
-PYTHON_EXEC := $(SCRIPTS_DIR)/.env/bin/python3
-
+SCRIPTS_DIR := ./validators
+PYTHON_EXEC := python3
 VALIDATE_OFFSETS := $(PYTHON_EXEC) $(SCRIPTS_DIR)/validate_offsets.py
 VALIDATE_OUTPUT := $(PYTHON_EXEC) $(SCRIPTS_DIR)/validate_output.py
 
+# Test Config
 TEST_DIR := ./tests
 TEST_CONFIG_DIR := $(TEST_DIR)/config
 TEST_EXPECTED_DIR := $(TEST_DIR)/expected
-
 TEST_LOG_DIR := $(TEST_DIR)/log
 TEST_OUTPUT_DIR := $(TEST_DIR)/output
-
-# Test Targets
 TEST_CASES := $(patsubst $(TEST_CONFIG_DIR)/%,%,$(wildcard $(TEST_CONFIG_DIR)/test_*))
 
 # Build Target
@@ -45,9 +47,23 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+# Install Target
+.PHONY: install
+install: $(TARGET)
+	@echo "Installing to $(PREFIX)..."
+	install -d $(INSTALL_BIN_DIR)
+	install -m 755 $(TARGET) $(INSTALL_BIN_DIR)
+	install -d $(INSTALL_INC_DIR)
+
+# Uninstall Target
+.PHONY: uninstall
+uninstall:
+	@echo "Uninstalling from $(PREFIX)..."
+	rm -f $(INSTALL_BIN_DIR)/nflows
+
 # Test Execution
 .PHONY: $(TEST_CASES)
-$(TEST_CASES): %: $(EXECUTABLE)
+$(TEST_CASES): %: $(TARGET)
 	@echo "Running test case: $@"
 	@mkdir -p "$(TEST_OUTPUT_DIR)/$@" "$(TEST_LOG_DIR)/$@"
 	@for config_file in $(wildcard $(TEST_CONFIG_DIR)/$@/*.json); do \
@@ -76,6 +92,7 @@ $(TEST_CASES): %: $(EXECUTABLE)
 test: $(TEST_CASES)
 
 # Clean Rule
+.PHONY: clean
 clean:
 	@echo "[INFO] Cleaning build files..."
 	@rm -rf $(OBJ_DIR) $(BIN_DIR) $(TEST_OUTPUT_DIR) $(TEST_LOG_DIR)

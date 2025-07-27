@@ -1,8 +1,7 @@
 runtime:
   core_availability:
     0: {avail_until: 12}
-    24: {avail_until: 14}
-    25: {avail_until: 29}
+    24: {avail_until: 29}
 
 trace:
   exec_name_total_offsets:

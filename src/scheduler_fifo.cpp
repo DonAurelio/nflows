@@ -57,25 +57,26 @@ std::tuple<int, double> FIFO_Scheduler::get_best_core_id(const simgrid_exec_t *e
     }
 
     for (int avail_core_id : avail_core_ids) {
-        XBT_DEBUG("avail_core_id: %d, avail_core_until: %f", avail_core_id, common_core_id_get_avail_until(this->common, avail_core_id));
+        int core_numa_id = hardware_hwloc_numa_id_get_by_core_id(this->common, avail_core_id);
+        double core_avail_until = common_core_id_get_avail_until(this->common, avail_core_id);
+        double avail_core_score = (numa_id_to_payload.find(core_numa_id) == numa_id_to_payload.end()) ? 0.0 : numa_id_to_payload.at(core_numa_id);
+        XBT_DEBUG("avail_core_id: %d, avail_core_numa_id: %d, avail_core_until: %f, avail_core_score: %f",
+            avail_core_id, core_numa_id, core_avail_until, avail_core_score);
     }
+
+    bool all_equal = numa_id_to_payload.empty() ? true :
+        std::all_of(
+            numa_id_to_payload.begin(),
+            numa_id_to_payload.end(),
+            [first = numa_id_to_payload.begin(), eps = 1e-9](const auto& pair) {
+                return std::fabs(pair.second - first->second) < eps;
+            }
+        );
+
+    XBT_DEBUG("all_core_ids_equal_score: %s", all_equal ? "true" : "false");
 
     best_core_id = avail_core_ids.front();
-    if (this->common->mapper_type == COMMON_MAPPER_SIMULATION)
-    {
-        // Get the current simulation time.
-        double current_simulation_time = std::numeric_limits<double>::max();
-        for (int avail_core_id : avail_core_ids)
-            current_simulation_time = std::min(current_simulation_time, common_core_id_get_avail_until(this->common, avail_core_id));
-
-        XBT_DEBUG("current_simulation_time: %f", current_simulation_time);
-
-        // Find the first available core
-        best_core_id = *std::find_if(avail_core_ids.begin(), avail_core_ids.end(), [&](int core_id) {
-            return this->common->core_avail_until[core_id] <= current_simulation_time;
-        });
-    }
-
+    best_core_id = all_equal && (this->common->mapper_type == COMMON_MAPPER_SIMULATION) ? common_simulation_find_first_available_core_id(this->common) : best_core_id;
     best_numa_id = hardware_hwloc_numa_id_get_by_core_id(this->common, best_core_id);
 
     XBT_DEBUG("best_core_id: %d, best_numa_id: %d", best_core_id, best_numa_id);
