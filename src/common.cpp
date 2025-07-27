@@ -51,8 +51,7 @@ std::vector<bool> common_core_avail_mask_to_vect(uint64_t mask, size_t &core_cou
 
     std::vector<bool> core_avail(core_count, false);
     for (size_t i = 0; i < core_count; ++i) {
-        size_t idx = core_count - 1 - i;
-        if (mask & (1ULL << idx)) {
+        if (mask & (1ULL << i)) {
             core_avail[i] = true;
         }
     }
@@ -348,6 +347,23 @@ double common_compute_time(const common_t *common, double flops, double clock_fr
 {
     // Calculate the compute time in microseconds.
     return (flops / (common->flops_per_cycle * clock_frequency_hz)) * 1000000;
+}
+
+int common_simulation_find_first_available_core_id(const common_t *common)
+{
+    double current_simulation_time = std::numeric_limits<double>::max();
+    std::vector<int> avail_core_ids = common_core_id_get_avail(common);
+
+    for (int avail_core_id : avail_core_ids)
+        current_simulation_time = std::min(current_simulation_time, common_core_id_get_avail_until(common, avail_core_id));
+
+    XBT_DEBUG("current_simulation_time: %f", current_simulation_time);
+
+    int first_core_id = *std::find_if(avail_core_ids.begin(), avail_core_ids.end(), [&](int core_id) {
+        return common->core_avail_until.at(core_id) <= current_simulation_time;
+    });
+
+    return first_core_id;
 }
 
 /* RUNTIME */

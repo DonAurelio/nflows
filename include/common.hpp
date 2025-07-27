@@ -192,6 +192,7 @@ name_to_time_range_payload_t common_comm_name_to_w_time_offset_payload_filter(co
 double common_earliest_start_time(const common_t *common, const std::string &exec_name, unsigned int core_id);
 double common_communication_time(const common_t *common, unsigned int src_numa_id, unsigned int dst_numa_id, double payload);
 double common_compute_time(const common_t *common, double flops, double clock_frequency_hz);
+int common_simulation_find_first_available_core_id(const common_t *common);
 
 /* RUNTIME */
 void common_threads_checksum_update(common_t *common, size_t checksum);
