@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15811369.svg)](https://doi.org/10.5281/zenodo.15811369)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15986001.svg)](https://doi.org/10.5281/zenodo.15986001)
 
 <img src="https://raw.githubusercontent.com/DonAurelio/nflows/refs/heads/main/logo.png"
      align="right"
