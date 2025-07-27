@@ -5,7 +5,7 @@
      width="15%"
      alt="nFlows logo\">
 
-# nFlows: NUMA-Aware Workflow Execution System
+## nFlows: NUMA-Aware Workflow Execution System
 
 nFlows is a C/C++ runtime system primarily developed to enable the development and evaluation of NUMA-aware scheduling algorithms for scientific workflows. It executes scientific workflows on both simulated and real NUMA (Non-Uniform Memory Access) hardware.
 
