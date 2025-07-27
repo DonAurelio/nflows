@@ -22,7 +22,7 @@ The Min-Min algorithm schedules tasks by selecting the task with the minimum com
     * `Task1 [size=80]`  
     * `Task2 [size=160]`  
     * `Task3 [size=320]`  
-  * Tasks are independent (no dependencies exist).  
+  * Tasks are independent.  
   * Memory channel latencies and bandwidths are uniform across all memory domains, leading to a **Uniform Memory Access (UMA) system** (i.e., no NUMA effects).  
   * Processor speeds and clock frequencies are set so that **computation time can be directly obtained** by dividing the task size (in FLOPs) by the processor frequency.  
 
@@ -88,7 +88,7 @@ The HEFT (Heterogeneous Earliest Finish Time) scheduling algorithm prioritizes t
     * `Task1 [size=80]`  
     * `Task2 [size=160]`  
     * `Task3 [size=320]`  
-  * Tasks are independent (no dependencies exist).  
+  * Tasks are independent.  
   * Memory channel latencies and bandwidths are uniform across all memory domains, leading to a **Uniform Memory Access (UMA) system** (i.e., no NUMA effects).  
   * Processor speeds and clock frequencies are set so that **computation time can be directly obtained** by dividing the task size (in FLOPs) by the processor frequency.  
 
@@ -100,9 +100,7 @@ The HEFT (Heterogeneous Earliest Finish Time) scheduling algorithm prioritizes t
 
 * Expected Outcome: 
   * Task, `Task2 [size=320]`, will be executed on the first core, while `Task1 [size=160]` will be executed on the second core.  
-  * Each core writes a data item to its **local memory**, but `Task3 [size=80]` must perform:  
-    * **One local access** to read the first item.  
-    * **One remote access** to read the second item.  
+  * Each core writes a data item to its **local memory**, but `Task3 [size=80]` must perform: one local access and one remote access.
   * The final core availabilities should be **340** and **460** (corresponding to the **workflow makespan**), respectively.
   * Although it provides the same workflow makespan as Min-Min, it differs in core selection.
  
@@ -186,7 +184,7 @@ Task_3  Task_4
   * Confirms that **core availability** is correctly updated throughout the scheduling process.
 
 * System Setup:  
-  * Same workflow as **Test 2**, but `Task_1 -> Task_5 [size=20]` and `Task_1 -> Task_5 [size=20]` to enforce them to be executed first and break FIFO task selection order.
+  * Identical to Test 2, but with modified edges: `Task_1 -> Task_5 [size=20]` and `Task_2 -> Task_4 [size=20]`, which break the FIFO task selection order to prioritize by data locality scores.
 
 * Expected Outcome: 
   * FIFO task selection order and round-robin like core selection: `Task_1 (core 0) → Task_5 (core 1) → Task_2 (core 2) → Task_4 (core 3) → Task_3 (core 0)`  
@@ -194,27 +192,27 @@ Task_3  Task_4
 
 ### Test 4 [`config_4.json`](./config/fifo_simulation/config_4.json)
 
-## Validation Criteria
-- Ensure that the scheduler selects the core local to the memory domain that holds the majority of a task's data.  
-- Verify that **core availability** is correctly updated throughout the scheduling process.  
+* Validation Criteria
+  * Ensure that the scheduler selects the core local to the memory domain that holds the majority of a task's data.  
+  * Verify that **core availability** is correctly updated throughout the scheduling process.  
 
-## Expected Outcome  
-- Since `Task2` is executed on the second NUMA node and performs the most significant data writing (`Task2 -> Task3 [size=20]`), `Task3` should be executed in the second memory domain. This is because it holds most of the data required by `Task3`, even though `Task3` must perform a remote access to retrieve `Task1 -> Task3 [size=10]` from the first memory domain.  
+* Expected Outcome  
+  * Since `Task2` is executed on the second NUMA node and performs the most significant data writing (`Task2 -> Task3 [size=20]`), `Task3` should be executed in the second memory domain. 
 
-## System Setup  
-- Two physical cores operating at the same frequency: `1`.  
-- Each processor belongs to a different memory domain.  
-- Three tasks with the same computational requirements (in FLOPs):  
-  - `Task1 [size=10]`  
-  - `Task2 [size=10]`  
-  - `Task3 [size=10]`  
-- Task dependencies:  
-  - `Task1 -> Task3 [size=10]`  
-  - `Task2 -> Task3 [size=20]`  
-- Memory channel latencies are set to `0`, so communication cost **depends only on bandwidth**.  
-- Memory channel bandwidths are **non-uniform** across memory domains:  
-  - **Local access:** 4 GB/s  
-  - **Remote access:** 2 GB/s 
+* System Setup  
+  * Two physical cores operating at the same frequency: `1`.  
+  * Each processor belongs to a different memory domain.  
+  * Three tasks with the same computational requirements (in FLOPs):  
+    - `Task1 [size=10]`  
+    - `Task2 [size=10]`  
+    - `Task3 [size=10]`  
+  * Task dependencies:  
+    - `Task1 -> Task3 [size=10]`  
+    - `Task2 -> Task3 [size=20]`  
+  * Memory channel latencies are set to `0`, so communication cost **depends only on bandwidth**.  
+  * Memory channel bandwidths are **non-uniform** across memory domains:  
+    - **Local access:** 4 GB/s  
+    - **Remote access:** 2 GB/s 
 
 ## Generic Validations
 
@@ -285,7 +283,7 @@ Task 1:
 - *Computed Total:*  `0` (Max Read Time) + `160` (Compute Time) + `20` (Max Write Time) = `180`
 - *Expected Total:* `180` (Validation Passed)
 
-### Script 2 [validate_output_and_order.py](./validators/validate_output_and_order.py)
+### Script 2 [validate_output.py](./validators/validate_output_and_order.py)
 
 This script validates whether the contents of a YAML file match an expected reference YAML file. It ensures that the keys and values are correctly structured and, optionally, checks whether the key order at the first depth level is preserved.
 
