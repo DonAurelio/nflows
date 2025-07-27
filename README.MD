@@ -5,7 +5,7 @@
      width="15%"
      alt="nFlows logo\">
 
-## nFlows: NUMA-Aware Workflow Execution System
+# nFlows: NUMA-Aware Workflow Execution Runtime System
 
 nFlows is a C/C++ runtime system primarily developed to enable the development and evaluation of NUMA-aware scheduling algorithms for scientific workflows. It executes scientific workflows on both simulated and real NUMA (Non-Uniform Memory Access) hardware.
 
@@ -14,8 +14,8 @@ The system leverages `simgrid` to load DOT-formatted workflows, emulating them a
 ### Requirements
 
 1. **OS:** Ubuntu 22.04 
-2. **Hardware:** Non-Uniform Memory Access (NUMA) Memory Archuitecture. At least two available NUMA nodes.
-3. **Software:**  simgrid-3.35, python3.10, hwloc 2.7.0, etc. See `requirements.sh` for the list of all dependecies.
+2. **Hardware:** Non-Uniform Memory Access (NUMA) Memory Architecture. At least two available NUMA nodes.
+3. **Software:**  simgrid-3.35, python3.10, hwloc 2.7.0, etc. See `requirements.sh` for the list of all dependencies.
 
 ### Install
 
