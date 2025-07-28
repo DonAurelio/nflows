@@ -15,15 +15,23 @@ The system leverages `simgrid` to load DOT-formatted workflows, emulating them a
 
 1. **OS:** Ubuntu 22.04 
 2. **Hardware:** Non-Uniform Memory Access (NUMA) Memory Architecture. At least two available NUMA nodes.
-3. **Software:**  simgrid-3.35, python3.10, hwloc 2.7.0, etc. See `requirements.sh` for the list of all dependencies.
+3. **Software:**  simgrid-3.35, python3.10, hwloc 2.7.0, etc. See `install_simgrid.sh` for the list of all dependencies.
 
 ### Install
 
 ```sh
-sudo ./requirements.sh
+sudo ./install_simgrid.sh
 make -j
 sudo make install
 ```
+
+_Install to default /usr/local_
+* `./install_simgrid.sh`
+* make install
+
+_Install to a custom prefix_
+* `./install_simgrid.sh /path/to/custom/dir`
+* `make install PREFIX=/path/to/custom/dir`. Add `/path/to/custom/dir` to the `$PATH`.
 
 ### Example
 
