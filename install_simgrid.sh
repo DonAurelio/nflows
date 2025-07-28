@@ -5,19 +5,6 @@ PREFIX=${1:-${SIMGRID_PREFIX:-/usr/local}}
 
 echo "Installing SimGrid to: $PREFIX"
 
-# Install dependencies
-apt update
-apt install -y \
-    build-essential \
-    nlohmann-json3-dev \
-    graphviz graphviz-dev libgraphviz-dev \
-    hwloc libhwloc-dev \
-    numactl libnuma-dev \
-    cmake \
-    zip \
-    unzip \
-    wget
-
 # Download and build SimGrid
 wget https://github.com/simgrid/simgrid/releases/download/v3.35/simgrid-3.35.tar.gz
 tar xf simgrid-3.35.tar.gz
