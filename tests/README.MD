@@ -6,7 +6,7 @@
 
 The Min-Min algorithm schedules tasks by selecting the task with the minimum completion time first and assigning it to the resource that can complete it the earliest.
 
-### Test 1 [`config_1.json`](./config/min_min_simulation/config_1.json)
+### Test 1 [`config_1.json`](./config/test_min_min_simulation/config_1.json)
 
 * Validation Criteria:
   * Ensures the scheduler selects the task with the **minimum completion time first** and assigns it to the resource where the **earliest completion time** is achieved.  
@@ -26,7 +26,7 @@ The Min-Min algorithm schedules tasks by selecting the task with the minimum com
   * Memory channel latencies and bandwidths are uniform across all memory domains, leading to a **Uniform Memory Access (UMA) system** (i.e., no NUMA effects).  
   * Processor speeds and clock frequencies are set so that **computation time can be directly obtained** by dividing the task size (in FLOPs) by the processor frequency.  
 
-### Test 2 [`config_2.json`](./config/min_min_simulation/config_2.json)
+### Test 2 [`config_2.json`](./config/test_min_min_simulation/config_2.json)
 
 * Validation Criteria:  
   * Ensures the scheduler selects the task with the **minimum completion time first** and assigns it to the resource where the **earliest completion time** is achieved, considering **non-uniform memory access times**.  
@@ -54,7 +54,7 @@ The Min-Min algorithm schedules tasks by selecting the task with the minimum com
     * **Local access:** 4 GB/s  
     * **Remote access:** 2 GB/s  
 
-### Test 3 [`config_3.json`](./config/min_min_simulation/config_3.json)
+### Test 3 [`config_3.json`](./config/test_min_min_simulation/config_3.json)
 
 * Validation Criteria:
   * Compares the **workflow makespan** between **Test 2** and **Test 3** to evaluate the impact of uniform vs. non-uniform memory access.  
@@ -72,7 +72,7 @@ The Min-Min algorithm schedules tasks by selecting the task with the minimum com
 
 The HEFT (Heterogeneous Earliest Finish Time) scheduling algorithm prioritizes tasks in a task dependency graph based on their upward rank, which considers task execution time and communication delays. It then assigns each task to the processor that minimizes its earliest finish time [2].
 
-### Test 1 [`config_1.json`](./config/heft_simulation/config_1.json)
+### Test 1 [`config_1.json`](./config/test_heft_simulation/config_1.json)
 
 * Validation Criteria:
   * Ensures the scheduler selects the task with the **maximum upward rank** and assigns it to the resource where the **earliest completion time** is achieved.
@@ -92,7 +92,7 @@ The HEFT (Heterogeneous Earliest Finish Time) scheduling algorithm prioritizes t
   * Memory channel latencies and bandwidths are uniform across all memory domains, leading to a **Uniform Memory Access (UMA) system** (i.e., no NUMA effects).  
   * Processor speeds and clock frequencies are set so that **computation time can be directly obtained** by dividing the task size (in FLOPs) by the processor frequency.  
 
-### Test 2 [`config_2.json`](./config/heft_simulation/config_2.json)
+### Test 2 [`config_2.json`](./config/test_heft_simulation/config_2.json)
 
 * Validation Criteria:  
   * Ensures the scheduler selects the task with the **highest upward rank** and assigns it to the resource where the **earliest completion time** is achieved, considering **non-uniform memory access times**.
@@ -119,7 +119,7 @@ The HEFT (Heterogeneous Earliest Finish Time) scheduling algorithm prioritizes t
     * **Local access:** 4 GB/s  
     * **Remote access:** 2 GB/s  
 
-### Test 3 [`config_3.json`](./config/heft_simulation/config_3.json)
+### Test 3 [`config_3.json`](./config/test_heft_simulation/config_3.json)
 
 * Validation Criteria:
   * Compares the **workflow makespan** between **Test 2** and **Test 3** to evaluate the impact of uniform vs. non-uniform memory access.  
@@ -139,7 +139,7 @@ The FIFO (First-In, First-Out) scheduling algorithm selects tasks in the order o
 
 To introduce NUMA-awareness into the algorithm, task and core selection were prioritized as suggested in [3]. In task prioritization, a data locality score is computed for each task in the ready queue, representing the amount of data (in bytes) the task must read from memory. Tasks are then sorted in decreasing order, prioritizing those with higher data locality scores. For core prioritization, available cores are ranked based on the amount of local data accessible to the task on each core. Cores with the most accessible data are listed first, and the highest-ranked core is selected.
 
-### Test 1 [`config_1.json`](./config/fifo_simulation/config_1.json)
+### Test 1 [`config_1.json`](./config/test_fifo_simulation/config_1.json)
 
 * Validation Criteria:
   * Verify that the scheduler maintains **FIFO order in task selection** when all tasks at the same level of the DAG have identical data locality scores.
@@ -163,7 +163,7 @@ To introduce NUMA-awareness into the algorithm, task and core selection were pri
 Task_3  Task_4
 ```
 
-### Test 2 [`config_2.json`](./config/fifo_simulation/config_2.json)
+### Test 2 [`config_2.json`](./config/test_fifo_simulation/config_2.json)
 
 * Validation Criteria:
   * Ensures the scheduler **selects the first available core** when core priorities are equal for every task to be scheduled. 
@@ -177,7 +177,7 @@ Task_3  Task_4
   * Same as **Test 1**, with the following difference:  
   * Four processors (physical cores) operating at **1 Hz**. 
 
-### Test 3 [`config_3.json`](./config/fifo_simulation/config_3.json)
+### Test 3 [`config_3.json`](./config/test_fifo_simulation/config_3.json)
 
 * Validation Criteria:  
   * Ensures the scheduler selects first tasks with higher data locality score (data to be read).
@@ -190,7 +190,7 @@ Task_3  Task_4
   * FIFO task selection order and round-robin like core selection: `Task_1 (core 0) → Task_5 (core 1) → Task_2 (core 2) → Task_4 (core 3) → Task_3 (core 0)`  
   * The final core availability should be **70**, which corresponds to the **workflow makespan**.
 
-### Test 4 [`config_4.json`](./config/fifo_simulation/config_4.json)
+### Test 4 [`config_4.json`](./config/test_fifo_simulation/config_4.json)
 
 * Validation Criteria
   * Ensure that the scheduler selects the core local to the memory domain that holds the majority of a task's data.  
@@ -216,7 +216,7 @@ Task_3  Task_4
 
 ## Generic Validations
 
-### Script 1 [validate_offsets.py](./validators/validate_offsets.py)
+### Script 1 [validate_offsets.py](../validators/validate_offsets.py)
 
 This script verifies that the execution offsets collected by the tool align with expected total execution times. Specifically, it ensures that the sum of the **read, compute, and write offsets** matches the total execution time for each task.  
 
@@ -283,7 +283,7 @@ Task 1:
 - *Computed Total:*  `0` (Max Read Time) + `160` (Compute Time) + `20` (Max Write Time) = `180`
 - *Expected Total:* `180` (Validation Passed)
 
-### Script 2 [validate_output.py](./validators/validate_output_and_order.py)
+### Script 2 [validate_output.py](../validators/validate_output.py)
 
 This script validates whether the contents of a YAML file match an expected reference YAML file. It ensures that the keys and values are correctly structured and, optionally, checks whether the key order at the first depth level is preserved.
 
